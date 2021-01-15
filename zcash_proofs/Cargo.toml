@@ -16,7 +16,7 @@ all-features = true
 
 [dependencies]
 # bellman = { version = "0.8", default-features = false, features = ["groth16"] }
-bellman = { default-features = false, features = ["groth16"], git = "https://github.com/dannywillems/bellman", branch = "export-more" }
+bellman = { default-features = false, features = ["groth16"], git = "https://github.com/dannywillems/bellman", rev = "fc62cb5f58b78b8a020397ecf794274eb621ea6f" }
 blake2b_simd = "0.5"
 bls12_381 = "0.3.1"
 byteorder = "1"
