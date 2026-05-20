@@ -43,6 +43,10 @@ const config: Config = {
           routeBasePath: '/',
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
+          // "Edit this page" link at the bottom of each chapter,
+          // pointing to the Markdown source on the onboarding branch.
+          editUrl:
+            'https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/',
         },
         blog: false,
         theme: {
@@ -109,13 +113,46 @@ const config: Config = {
         },
         {
           href: 'https://github.com/dannywillems/librustzcash/tree/onboarding',
-          label: 'GitHub',
           position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository (onboarding branch)',
         },
       ],
     },
     footer: {
       style: 'dark',
+      links: [
+        {
+          title: 'Source',
+          items: [
+            {
+              label: 'Repository (onboarding branch)',
+              href: 'https://github.com/dannywillems/librustzcash/tree/onboarding',
+            },
+            {
+              label: 'Documentation source',
+              href: 'https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding',
+            },
+            {
+              label: 'Upstream (zcash/librustzcash)',
+              href: 'https://github.com/zcash/librustzcash',
+            },
+          ],
+        },
+        {
+          title: 'Zcash',
+          items: [
+            {
+              label: 'Protocol Specification',
+              href: 'https://zips.z.cash/protocol/protocol.pdf',
+            },
+            {
+              label: 'ZIPs',
+              href: 'https://zips.z.cash/',
+            },
+          ],
+        },
+      ],
       copyright:
         'librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.',
     },
