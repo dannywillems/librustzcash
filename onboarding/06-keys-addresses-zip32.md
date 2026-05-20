@@ -8,6 +8,12 @@ each step. Then explain how the various key types are bundled into
 Addresses**, including the F4Jumble transformation that protects them
 from visual-forgery attacks.
 
+For a per-symbol reference of every key in this chapter and the
+others ($\mathsf{sk}, \mathsf{ask}, \mathsf{nsk}, \mathsf{ak}, \mathsf{nk},
+\mathsf{ivk}, \mathsf{ovk}, \mathsf{dk}, d, g_d, \mathsf{pk}_d,
+\mathsf{rivk}, \ldots$) plus their concrete types and code locations,
+keep [chapter 23](./23-key-catalog.md) open in another tab.
+
 This is mostly bookkeeping cryptography (key derivation, encoding) but
 the bookkeeping is where the wallet meets the protocol, and bugs here
 have caused real-world incidents.

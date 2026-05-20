@@ -66,6 +66,13 @@ reviewing crypto PRs.
 | 21 | [Active research and the road to NU7](./21-active-research-and-nu7.md) | v6 tx, ZSAs, ZIP 233 burn, recursion, PQ |
 | 22 | [Cryptographer's code review checklist](./22-cryptographer-code-review.md) | The operational checklist for every crypto PR |
 
+### Part III - Authoritative references
+
+| # | Title | Focus |
+| --- | --- | --- |
+| 23 | [The complete key catalog](./23-key-catalog.md) | Every key symbol (ask, ak, nsk, nk, ivk, ovk, dk, esk, epk, ock, rsk, rk, rcm, rcv, rho, cv, cm, nf, bvk, ...) defined, derived, typed, and located in code |
+| 24 | [Circuits, constraint by constraint](./24-circuits-constraint-by-constraint.md) | Sapling Spend, Sapling Output, Orchard Action: every clause with its constraint count and the attack each clause prevents |
+
 ## Notation used throughout
 
 - $\mathbb{F}_p$: a prime field of order $p$.

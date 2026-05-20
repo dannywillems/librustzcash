@@ -8,6 +8,15 @@ shielded Zcash today, and almost everything in `zcash_primitives`,
 `zcash_proofs`, `zcash_keys` revolves around it. We will linger on
 Sapling.
 
+This chapter is the *narrative* introduction to Sprout and Sapling.
+For the **authoritative symbol-by-symbol reference** of every key
+($\mathsf{ask}, \mathsf{nsk}, \mathsf{ak}, \mathsf{nk}, \mathsf{ivk},
+\mathsf{ovk}, \mathsf{dk}, \mathsf{esk}, \mathsf{epk}, \ldots$),
+see [chapter 23 - The complete key catalog](./23-key-catalog.md). For
+the **clause-by-clause walk** of the Spend and Output circuits with
+constraint counts, see [chapter 24 - Circuits, constraint by
+constraint](./24-circuits-constraint-by-constraint.md).
+
 ## Part A - Sprout (1-page summary)
 
 Sprout is the original Zerocash protocol, BCTV14-style SNARK, SHA-256

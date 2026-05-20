@@ -7,6 +7,14 @@ setup. Orchard is its successor: a cleaner abstraction (unified
 **Action** instead of separate Spend/Output), a new proof system
 (**Halo 2**), and curves chosen for recursion (**Pallas/Vesta** cycle).
 
+This chapter is the narrative introduction. For the full Orchard
+key catalog (including the distinction that $\mathsf{nk}$ is a field
+element, not a curve point, and the role of $\mathsf{rivk}$),
+see [chapter 23](./23-key-catalog.md). For the Action circuit's
+clauses written out one by one (Sinsemilla path, the
+$\rho^{\text{new}} = \mathsf{nf}^{\text{old}}$ trick, flag-conditional
+logic), see [chapter 24](./24-circuits-constraint-by-constraint.md).
+
 This chapter develops the math behind Orchard and the relevant Halo 2
 internals. The implementation lives in the `orchard` crate (separate
 repo); we describe what is essential for understanding the integration

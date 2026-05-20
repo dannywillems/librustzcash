@@ -8,6 +8,11 @@ content to anyone else. The Zcash construction is sometimes called
 *in-band secret distribution* because the encrypted note plaintext
 rides inside the transaction itself.
 
+The encryption-specific keys ($\mathsf{esk}, \mathsf{epk},
+\mathsf{ock}, K_{\text{enc}}$) and their relationships are summarised
+here and recorded as authoritative reference entries in
+[chapter 23 - The complete key catalog](./23-key-catalog.md).
+
 This chapter explains the math and the slot the implementation
 occupies in the codebase (the actual code lives in the external crate
 `zcash_note_encryption`, used by both `sapling-crypto` and `orchard`).
