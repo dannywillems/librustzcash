@@ -75,6 +75,10 @@ const config: Config = {
       {
         hashed: true,
         indexDocs: true,
+        // The site has no blog (we set `blog: false` above); tell
+        // the search plugin not to look for one, which otherwise
+        // emits a `blogDir doesn't exist` warning at build time.
+        indexBlog: false,
         indexPages: true,
         language: ['en'],
         highlightSearchTermsOnTargetPage: true,
