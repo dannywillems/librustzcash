@@ -27,6 +27,15 @@ Every chapter has the same skeleton:
 
 ## Chapters
 
+The course splits into two halves. The first eleven chapters are the
+"reading" course: protocol math, code layout, study plan. The second
+half goes deeper into the parts a senior cryptographer must really
+internalise: known bugs, low-level pitfalls, side channels, trusted
+setups, anonymity-set analysis, and the practical checklist for
+reviewing crypto PRs.
+
+### Part I - Reading course
+
 | # | Title | Focus |
 | --- | --- | --- |
 | 01 | [Overview and roadmap](./01-overview-and-roadmap.md) | Crate graph, layering, how the pieces fit |
@@ -40,6 +49,22 @@ Every chapter has the same skeleton:
 | 09 | [Equihash and consensus rules](./09-equihash-and-consensus.md) | Generalised birthday, history tree, PoW math |
 | 10 | [Wallet stack](./10-wallet-stack.md) | client_backend, scanning, fees, SQLite storage |
 | 11 | [Study plan and exercises](./11-study-plan-and-exercises.md) | Week-by-week schedule with self-tests |
+
+### Part II - Deep dives and operational rigour
+
+| # | Title | Focus |
+| --- | --- | --- |
+| 12 | [Historical bugs and security incidents](./12-historical-bugs.md) | 2018 counterfeit bug, ZIP 212, audit findings catalog |
+| 13 | [Cofactors, subgroups, canonical encodings](./13-cofactors-subgroups-canonical.md) | Jubjub cofactor 8, ZIP 216, subgroup checks |
+| 14 | [Side channels and constant-time](./14-side-channels-and-constant-time.md) | `subtle`, `zeroize`, vartime APIs to avoid |
+| 15 | [Trusted setup ceremonies](./15-trusted-setup.md) | Powers of Tau, Sapling MPC, toxic waste, Halo 2 alternative |
+| 16 | [Pedersen hash deep dive](./16-pedersen-hash-deep-dive.md) | Windowed encoding, generators, constraint counts |
+| 17 | [Halo 2 deep dive](./17-halo2-deep-dive.md) | PLONKish, custom gates, lookups, IPA, transcript |
+| 18 | [Anonymity set and metadata](./18-anonymity-set-and-metadata.md) | Privacy beyond cryptography: behaviour, network, dummies |
+| 19 | [ZIP catalog and reading order](./19-zip-catalog.md) | Curated index of the ZIPs you must know |
+| 20 | [Audits and cross-implementation testing](./20-audits-and-cross-impl.md) | Public audit reports, test vectors, Zebra / zcashd parity |
+| 21 | [Active research and the road to NU7](./21-active-research-and-nu7.md) | v6 tx, ZSAs, ZIP 233 burn, recursion, PQ |
+| 22 | [Cryptographer's code review checklist](./22-cryptographer-code-review.md) | The operational checklist for every crypto PR |
 
 ## Notation used throughout
 
