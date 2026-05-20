@@ -1,0 +1,82 @@
+name: Deploy onboarding docs
+
+# Builds the Docusaurus site under `onboarding/` and publishes the
+# static output to the ROOT of the `onboarding` branch so that
+# GitHub Pages (configured as "Deploy from a branch" -> `onboarding`
+# -> `/ (root)`) can serve it directly.
+#
+# The bot's deploy commit carries `[skip ci]` so it does not
+# re-trigger this workflow. A `paths-ignore` block also filters the
+# built artefacts as a second line of defence.
+
+on:
+  push:
+    branches:
+      - onboarding
+    paths-ignore:
+      - 'index.html'
+      - '404.html'
+      - 'assets/**'
+      - 'sitemap.xml'
+      - 'opensearch.xml'
+      - 'manifest.json'
+      - 'search-index-*.json'
+      - 'katex/**'
+      - 'img/**'
+      - 'styles.*.css'
+      - 'runtime~main.*.js'
+      - 'main.*.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-onboarding-docs
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy site to onboarding branch root
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: onboarding
+        run: npm install
+
+      - name: Build Docusaurus site
+        working-directory: onboarding
+        run: npx docusaurus build
+
+      - name: Publish to onboarding branch root
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: onboarding
+          publish_dir: ./onboarding/build
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'docs: deploy onboarding site [skip ci]'
+          full_commit_message: |
+            docs: deploy onboarding site [skip ci]
+
+            Built from ${{ github.sha }} on the `onboarding` branch.
+            Source under `onboarding/`; built static files land at
+            the repo root so that GitHub Pages can serve them with
+            its "Deploy from a branch" mode pointing at the
+            `onboarding` branch root.

@@ -113,24 +113,25 @@ Reference: ZIP 244 https://zips.z.cash/zip-0244.
 ## Network upgrades and BranchId
 
 Zcash mutates by **network upgrades** (NU). Each NU is identified by a
-`BranchId` (a 32-bit constant) and an activation height. Critical types
-in code:
+`BranchId` (a 32-bit constant) and an activation height. The canonical
+types live in `components/zcash_protocol/src/consensus.rs`:
 
-```rust
-// components/zcash_protocol/src/consensus.rs
-pub enum NetworkUpgrade {
-    Overwinter,
-    Sapling,
-    Blossom,
-    Heartwood,
-    Canopy,
-    Nu5,
-    Nu6,
-    // optionally Nu7 behind cfg flag
-}
+<!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L18-L20 -->
 
-pub struct BranchId(u32);
-pub struct BlockHeight(u32);
+```rust reference title="components/zcash_protocol/src/consensus.rs"
+https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/consensus.rs#L18-L20
+```
+
+<!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L568-L614 -->
+
+```rust reference title="components/zcash_protocol/src/consensus.rs"
+https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/consensus.rs#L568-L614
+```
+
+<!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L701-L728 -->
+
+```rust reference title="components/zcash_protocol/src/consensus.rs"
+https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/consensus.rs#L701-L728
 ```
 
 Almost every consensus rule is parameterised by `BranchId`. Sighash code

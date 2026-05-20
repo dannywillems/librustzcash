@@ -1,0 +1,37 @@
+{
+  "name": "librustzcash-onboarding",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Graduate-level onboarding documentation for librustzcash",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.9.0",
+    "@docusaurus/preset-classic": "^3.9.0",
+    "@easyops-cn/docusaurus-search-local": "^0.52.0",
+    "docusaurus-theme-github-codeblock": "^2.0.2",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.9.0",
+    "@docusaurus/types": "^3.9.0",
+    "typescript": "^5.7.3"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

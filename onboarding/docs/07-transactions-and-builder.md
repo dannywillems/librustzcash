@@ -24,13 +24,10 @@ The relevant versions:
 Each version is uniquely identified by `(tx_version, version_group_id)`.
 Defined in `components/zcash_protocol/src/constants.rs`:
 
-```rust
-pub const V4_TX_VERSION: u32 = 4;
-pub const V4_VERSION_GROUP_ID: u32 = 0x892F2085;
-pub const V5_TX_VERSION: u32 = 5;
-pub const V5_VERSION_GROUP_ID: u32 = 0x26A7270A;
-pub const V6_TX_VERSION: u32 = 6;
-pub const V6_VERSION_GROUP_ID: u32 = ...;
+<!-- CODE_REFERENCE: components/zcash_protocol/src/constants.rs#L16-L44 -->
+
+```rust reference title="components/zcash_protocol/src/constants.rs"
+https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/constants.rs#L16-L44
 ```
 
 The parser at `zcash_primitives/src/transaction/mod.rs::Transaction::read`

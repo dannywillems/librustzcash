@@ -1,0 +1,40 @@
+/* Custom theme tweaks for the librustzcash onboarding site. */
+
+:root {
+  --ifm-color-primary: #f4b728;
+  --ifm-color-primary-dark: #e2a90b;
+  --ifm-color-primary-darker: #d59f0a;
+  --ifm-color-primary-darkest: #b08308;
+  --ifm-color-primary-light: #f5be3f;
+  --ifm-color-primary-lighter: #f6c34d;
+  --ifm-color-primary-lightest: #f8d077;
+  --ifm-code-font-size: 92%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #f4b728;
+  --ifm-color-primary-dark: #e2a90b;
+  --ifm-color-primary-darker: #d59f0a;
+  --ifm-color-primary-darkest: #b08308;
+  --ifm-color-primary-light: #f5be3f;
+  --ifm-color-primary-lighter: #f6c34d;
+  --ifm-color-primary-lightest: #f8d077;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Slightly larger line-height for chapters dense with math. */
+article {
+  line-height: 1.65;
+}
+
+/* Make tables (we use a lot of them in reference chapters) breathe. */
+table {
+  display: table;
+  width: 100%;
+}
+
+/* KaTeX display blocks need a bit of vertical air. */
+.katex-display {
+  margin: 1em 0;
+}

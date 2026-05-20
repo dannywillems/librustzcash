@@ -252,24 +252,20 @@ model.
 
 ## 12. Verifying parameter integrity in `librustzcash`
 
-The integrity-check flow:
+The hardcoded SHA-256 hashes are in `zcash_proofs/src/lib.rs`:
 
-```rust
-// zcash_proofs/src/lib.rs (paraphrased)
-pub fn load_parameters(...) -> ... {
-    let spend_hash = read_and_hash(spend_path);
-    assert_eq!(spend_hash, SAPLING_SPEND_HASH);
+<!-- CODE_REFERENCE: zcash_proofs/src/lib.rs#L49-L52 -->
 
-    let output_hash = read_and_hash(output_path);
-    assert_eq!(output_hash, SAPLING_OUTPUT_HASH);
+```rust reference title="zcash_proofs/src/lib.rs"
+https://github.com/zcash/librustzcash/blob/main/zcash_proofs/src/lib.rs#L49-L52
+```
 
-    let sprout_hash = if let Some(p) = sprout_path {
-        Some(read_and_hash(p))
-    } else {
-        None
-    };
-    // ...
-}
+The integrity-check flow is in `load_parameters`:
+
+<!-- CODE_REFERENCE: zcash_proofs/src/lib.rs#L288-L343 -->
+
+```rust reference title="zcash_proofs/src/lib.rs"
+https://github.com/zcash/librustzcash/blob/main/zcash_proofs/src/lib.rs#L288-L343
 ```
 
 The SHA-256 of the on-disk bytes uniquely identifies the parameter
