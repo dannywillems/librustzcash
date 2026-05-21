@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-audits-and-cross-impl" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.10.1">
+<title data-rh="true">20 - Audits and cross-implementation testing | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/audits-and-cross-impl"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="20 - Audits and cross-implementation testing | librustzcash Onboarding"><meta data-rh="true" name="description" content="Goal"><meta data-rh="true" property="og:description" content="Goal"><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/audits-and-cross-impl"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/audits-and-cross-impl" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/audits-and-cross-impl" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"20 - Audits and cross-implementation testing","item":"https://dannywillems.github.io/librustzcash/audits-and-cross-impl"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
+<script src="/librustzcash/assets/js/runtime~main.cf7378b2.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/main.116ecaf6.js" defer="defer"></script>
+</head>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/librustzcash/"><b class="navbar__title text--truncate">librustzcash Onboarding</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/librustzcash/">Course</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository (onboarding branch)"></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search searchBarContainer_NW3z" dir="ltr"><input placeholder="Search" aria-label="Search" class="navbar__search-input searchInput_YFbd" value=""><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/"><span title="librustzcash Onboarding" class="linkLabel_WmDU">librustzcash Onboarding</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/overview-and-roadmap"><span title="01 - Overview and roadmap" class="linkLabel_WmDU">01 - Overview and roadmap</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zcash-protocol-foundations"><span title="02 - Zcash protocol foundations" class="linkLabel_WmDU">02 - Zcash protocol foundations</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptography-primer"><span title="03 - Cryptography primer" class="linkLabel_WmDU">03 - Cryptography primer</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/sprout-and-sapling"><span title="04 - Sprout and Sapling" class="linkLabel_WmDU">04 - Sprout and Sapling</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/orchard-and-halo2"><span title="05 - Orchard and Halo 2" class="linkLabel_WmDU">05 - Orchard and Halo 2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/keys-addresses-zip32"><span title="06 - Keys, addresses, ZIP 32, unified addresses" class="linkLabel_WmDU">06 - Keys, addresses, ZIP 32, unified addresses</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/transactions-and-builder"><span title="07 - Transactions, sighash, builder, PCZT" class="linkLabel_WmDU">07 - Transactions, sighash, builder, PCZT</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/note-encryption"><span title="08 - Note encryption" class="linkLabel_WmDU">08 - Note encryption</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/equihash-and-consensus"><span title="09 - Equihash and consensus structures" class="linkLabel_WmDU">09 - Equihash and consensus structures</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/wallet-stack"><span title="10 - The wallet stack" class="linkLabel_WmDU">10 - The wallet stack</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/study-plan-and-exercises"><span title="11 - Study plan and exercises" class="linkLabel_WmDU">11 - Study plan and exercises</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/historical-bugs"><span title="12 - Historical bugs and security incidents" class="linkLabel_WmDU">12 - Historical bugs and security incidents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cofactors-subgroups-canonical"><span title="13 - Cofactors, subgroups, canonical encodings" class="linkLabel_WmDU">13 - Cofactors, subgroups, canonical encodings</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/side-channels-and-constant-time"><span title="14 - Side channels and constant-time" class="linkLabel_WmDU">14 - Side channels and constant-time</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/trusted-setup"><span title="15 - Trusted setup ceremonies" class="linkLabel_WmDU">15 - Trusted setup ceremonies</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pedersen-hash-deep-dive"><span title="16 - Pedersen hash deep dive" class="linkLabel_WmDU">16 - Pedersen hash deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/halo2-deep-dive"><span title="17 - Halo 2 deep dive" class="linkLabel_WmDU">17 - Halo 2 deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/anonymity-set-and-metadata"><span title="18 - Anonymity set and metadata" class="linkLabel_WmDU">18 - Anonymity set and metadata</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zip-catalog"><span title="19 - ZIP catalog and reading order" class="linkLabel_WmDU">19 - ZIP catalog and reading order</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/librustzcash/audits-and-cross-impl"><span title="20 - Audits and cross-implementation testing" class="linkLabel_WmDU">20 - Audits and cross-implementation testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/active-research-and-nu7"><span title="21 - Active research and the road to NU7" class="linkLabel_WmDU">21 - Active research and the road to NU7</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptographer-code-review"><span title="22 - Cryptographer&#x27;s code-review checklist" class="linkLabel_WmDU">22 - Cryptographer&#x27;s code-review checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/key-catalog"><span title="23 - The complete key catalog" class="linkLabel_WmDU">23 - The complete key catalog</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/circuits-constraint-by-constraint"><span title="24 - Circuits, constraint by constraint" class="linkLabel_WmDU">24 - Circuits, constraint by constraint</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/librustzcash/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">20 - Audits and cross-implementation testing</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>20 - Audits and cross-implementation testing</h1></header>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="goal">Goal<a href="#goal" class="hash-link" aria-label="Direct link to Goal" title="Direct link to Goal" translate="no">​</a></h2>
+<p>This chapter does two things. First it surveys the <em>public audit
+history</em> of Zcash and points you to the documents you should read.
+Second it explains the <em>cross-implementation testing</em> practice that
+underwrites consensus correctness across the Rust libraries here,
+<code>zcashd</code> (the C++ reference implementation), and Zebra (the
+alternative Rust full node).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-the-audit-firms">1. The audit firms<a href="#1-the-audit-firms" class="hash-link" aria-label="Direct link to 1. The audit firms" title="Direct link to 1. The audit firms" translate="no">​</a></h2>
+<p>Zcash has had reviews by, in rough chronological order:</p>
+<ul>
+<li class=""><strong>NCC Group</strong> (multiple engagements, 2016 onwards).</li>
+<li class=""><strong>Trail of Bits</strong> (Sapling, Orchard, Halo 2).</li>
+<li class=""><strong>Least Authority</strong> (Sapling, Orchard, ZSA).</li>
+<li class=""><strong>Cure53</strong> (cryptographic primitives).</li>
+<li class=""><strong>Kudelski Security</strong> (BLS12-381 and pairing-curve concerns).</li>
+<li class=""><strong>Aumasson / Teserakt</strong> (independent reviews).</li>
+</ul>
+<p>Public reports are linked from the Electric Coin Co. and Zcash
+Foundation websites. Read these before claiming to know what&#x27;s
+been reviewed.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-notable-engagements">2. Notable engagements<a href="#2-notable-engagements" class="hash-link" aria-label="Direct link to 2. Notable engagements" title="Direct link to 2. Notable engagements" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="ncc-group-sapling-2018">NCC Group, Sapling (2018)<a href="#ncc-group-sapling-2018" class="hash-link" aria-label="Direct link to NCC Group, Sapling (2018)" title="Direct link to NCC Group, Sapling (2018)" translate="no">​</a></h3>
+<p>Reviewed the entire Sapling cryptographic stack, including
+<code>bellman</code>, <code>bls12_381</code>, <code>jubjub</code>, and the Sapling circuit. The
+report includes:</p>
+<ul>
+<li class="">Several findings on subgroup-check omissions.</li>
+<li class="">Findings on non-canonical encodings.</li>
+<li class="">Recommendations on constant-time implementations.</li>
+<li class="">The motivation for many of the ZIP 215 / 216 rules.</li>
+</ul>
+<p>The findings were fixed before the Sapling activation. The report
+is the canonical example of &quot;find class of bugs <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> adopt
+discipline <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> codify in ZIP&quot; pattern.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="trail-of-bits-orchard--halo-2">Trail of Bits, Orchard / Halo 2<a href="#trail-of-bits-orchard--halo-2" class="hash-link" aria-label="Direct link to Trail of Bits, Orchard / Halo 2" title="Direct link to Trail of Bits, Orchard / Halo 2" translate="no">​</a></h3>
+<p>Reviewed the Halo 2 proof system and the Orchard circuit. Findings
+included:</p>
+<ul>
+<li class="">Incomplete-addition edge cases (chapter 17).</li>
+<li class="">Lookup-table soundness.</li>
+<li class="">Witness-encoding tightness.</li>
+</ul>
+<p>Trail of Bits&#x27; &quot;Audit Reports&quot; repository archives these.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="least-authority-zsa-2024">Least Authority, ZSA (2024)<a href="#least-authority-zsa-2024" class="hash-link" aria-label="Direct link to Least Authority, ZSA (2024)" title="Direct link to Least Authority, ZSA (2024)" translate="no">​</a></h3>
+<p>The Zcash Shielded Asset (ZSA) extension to Orchard. Findings
+involved the new Sinsemilla-based &quot;issuance&quot; and burn flows
+(chapter 21).</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="kudelski-pairing-curve-review-2018">Kudelski, Pairing-Curve Review (2018)<a href="#kudelski-pairing-curve-review-2018" class="hash-link" aria-label="Direct link to Kudelski, Pairing-Curve Review (2018)" title="Direct link to Kudelski, Pairing-Curve Review (2018)" translate="no">​</a></h3>
+<p>Specifically about BLS12-381 security parameters and subgroup
+membership for <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">G</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\mathbb{G}_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathbb">G</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> (which has historically had subtle
+bugs in implementations).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-common-audit-findings-consolidated">3. Common audit findings (consolidated)<a href="#3-common-audit-findings-consolidated" class="hash-link" aria-label="Direct link to 3. Common audit findings (consolidated)" title="Direct link to 3. Common audit findings (consolidated)" translate="no">​</a></h2>
+<p>From reading these reports, the recurring categories:</p>
+<ol>
+<li class=""><strong>Subgroup checks missing</strong> on points read from the wire (Jubjub
+and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">G</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">\mathbb{G}_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathbb">G</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span>).</li>
+<li class=""><strong>Non-canonical encodings</strong> accepted by parsers.</li>
+<li class=""><strong>Domain separation collisions</strong>: two protocols using the same
+personalisation.</li>
+<li class=""><strong>Constant-time violations</strong> in error paths, especially in
+<code>Option::ok_or</code> patterns over <code>CtOption</code>.</li>
+<li class=""><strong>Witness underconstrainedness</strong> in circuits (Halo 2 advice
+cells not bound by a gate).</li>
+<li class=""><strong>Test vectors missing edge cases</strong>: zero values, identity
+points, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi></mrow><annotation encoding="application/x-tex">\rho</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em"></span><span class="mord mathnormal">ρ</span></span></span></span> at boundary, max bit lengths.</li>
+<li class=""><strong>Toolchain dependencies</strong>: a vendored upstream library lagging
+on a fixed bug.</li>
+</ol>
+<p>This list is your &quot;first pass&quot; when reviewing a new feature.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-the-cross-implementation-testing-model">4. The cross-implementation testing model<a href="#4-the-cross-implementation-testing-model" class="hash-link" aria-label="Direct link to 4. The cross-implementation testing model" title="Direct link to 4. The cross-implementation testing model" translate="no">​</a></h2>
+<p>There are three implementations of Zcash consensus rules:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Implementation</th><th>Language</th><th>Role</th></tr></thead><tbody><tr><td><code>zcashd</code></td><td>C++</td><td>Historical reference; consensus-authoritative</td></tr><tr><td>Zebra</td><td>Rust</td><td>Modern reference; consensus-authoritative</td></tr><tr><td><code>librustzcash</code></td><td>Rust</td><td>Library; <em>not</em> consensus-authoritative</td></tr></tbody></table>
+<p>The two full nodes (<code>zcashd</code> and Zebra) must produce identical
+consensus decisions on every block. They share parts of their stack
+(e.g. both use <code>sapling-crypto</code> and <code>orchard</code> for shielded
+verification, both use <code>equihash</code> for PoW verification), so a bug
+in this workspace would affect both.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="differential-testing">Differential testing<a href="#differential-testing" class="hash-link" aria-label="Direct link to Differential testing" title="Direct link to Differential testing" translate="no">​</a></h3>
+<p>The practice: every consensus-significant change in <code>librustzcash</code>
+must be re-tested against:</p>
+<ul>
+<li class=""><strong>Mainnet sync</strong>: a node using the changed library should sync
+mainnet identically to the canonical history.</li>
+<li class=""><strong>Testnet sync</strong>: same for testnet.</li>
+<li class=""><strong>Regtest</strong>: deterministic test chain for unit-test purposes.</li>
+<li class=""><strong>Cross-impl test vectors</strong>: shared between <code>zcashd</code>, Zebra, and
+<code>librustzcash</code>.</li>
+</ul>
+<p>The CI infrastructure tests against these.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="shared-test-vectors">Shared test vectors<a href="#shared-test-vectors" class="hash-link" aria-label="Direct link to Shared test vectors" title="Direct link to Shared test vectors" translate="no">​</a></h3>
+<p>A test vector is a tuple <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mtext>input</mtext><mo separator="true">,</mo><mtext>expected output</mtext><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\text{input}, \text{expected output})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mopen">(</span><span class="mord text"><span class="mord">input</span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord text"><span class="mord">expected output</span></span><span class="mclose">)</span></span></span></span>.
+For Zcash:</p>
+<ul>
+<li class="">Transaction parse/serialise round trips for v4, v5, v6.</li>
+<li class="">Sighash computation for sample transactions across versions.</li>
+<li class="">BLAKE2b/Pedersen hash outputs for sample inputs.</li>
+<li class="">TxId for sample transactions.</li>
+<li class="">Address encoding/decoding.</li>
+<li class="">F4Jumble forward/inverse.</li>
+</ul>
+<p>These live in <code>&lt;crate&gt;/src/test_vectors.rs</code> (auto-generated where
+possible) and in the central <code>zips/test-vectors/</code> directory in the
+<code>zcash/zips</code> repo. The latter is the inter-implementation
+specification.</p>
+<p>Adding a new test vector that catches a real bug is one of the most
+valuable contributions a maintainer can make.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-property-based-testing">5. Property-based testing<a href="#5-property-based-testing" class="hash-link" aria-label="Direct link to 5. Property-based testing" title="Direct link to 5. Property-based testing" translate="no">​</a></h2>
+<p><code>proptest</code> is used in this workspace for property-based testing.
+Patterns:</p>
+<ul>
+<li class="">For each protocol type, a <code>arb_&lt;type&gt;</code> proptest strategy is
+defined behind <code>#[cfg(feature = &quot;test-dependencies&quot;)]</code>.</li>
+<li class="">Round-trip serialisation tests verify
+<code>T == parse(serialise(T))</code> for arbitrary <code>T</code>.</li>
+<li class="">Builder invariants are checked over arbitrary inputs.</li>
+</ul>
+<p>Example:</p>
+<div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token attribute attr-name" style="color:#00a4db">#[cfg(feature = </span><span class="token attribute attr-name string" style="color:#e3116c">&quot;test-dependencies&quot;</span><span class="token attribute attr-name" style="color:#00a4db">)]</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">pub</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">fn</span><span class="token plain"> </span><span class="token function-definition function" style="color:#d73a49">arb_tx_id</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">-&gt;</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">impl</span><span class="token plain"> </span><span class="token class-name">Strategy</span><span class="token operator" style="color:#393A34">&lt;</span><span class="token class-name">Value</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token class-name">TxId</span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">...</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token macro property" style="color:#36acaa">proptest!</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token attribute attr-name" style="color:#00a4db">#[test]</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token keyword" style="color:#00009f">fn</span><span class="token plain"> </span><span class="token function-definition function" style="color:#d73a49">txid_round_trip</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">t </span><span class="token keyword" style="color:#00009f">in</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">arb_tx_id</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">{</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">        </span><span class="token keyword" style="color:#00009f">let</span><span class="token plain"> bytes </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> t</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">write_to_bytes</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">        </span><span class="token keyword" style="color:#00009f">let</span><span class="token plain"> parsed </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token class-name">TxId</span><span class="token punctuation" style="color:#393A34">::</span><span class="token function" style="color:#d73a49">read_from_bytes</span><span class="token punctuation" style="color:#393A34">(</span><span class="token operator" style="color:#393A34">&amp;</span><span class="token plain">bytes</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">.</span><span class="token function" style="color:#d73a49">unwrap</span><span class="token punctuation" style="color:#393A34">(</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">        </span><span class="token macro property" style="color:#36acaa">assert_eq!</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">t</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> parsed</span><span class="token punctuation" style="color:#393A34">)</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">    </span><span class="token punctuation" style="color:#393A34">}</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">}</span><br></div></code></pre></div></div>
+<p>The <code>arb_*</code> strategies are exported via the <code>test-dependencies</code>
+feature so downstream crates can re-use them for their own
+proptests.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-test-vectors-specifically-for-cryptography">6. Test vectors specifically for cryptography<a href="#6-test-vectors-specifically-for-cryptography" class="hash-link" aria-label="Direct link to 6. Test vectors specifically for cryptography" title="Direct link to 6. Test vectors specifically for cryptography" translate="no">​</a></h2>
+<p>These are sanity-checks for the cryptographic primitives:</p>
+<ul>
+<li class=""><strong>BLAKE2b/BLAKE2s vectors</strong>: each personalisation has its own
+vector set.</li>
+<li class=""><strong>Pedersen-hash vectors</strong>: per domain (note commitment, Merkle
+hash, <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi></mrow><annotation encoding="application/x-tex">\rho</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em"></span><span class="mord mathnormal">ρ</span></span></span></span> mixing).</li>
+<li class=""><strong>Sinsemilla vectors</strong>: per domain.</li>
+<li class=""><strong>Note encryption round trips</strong>: an <code>(ivk, ovk, output)</code> triple
+with expected decrypted plaintexts.</li>
+<li class=""><strong>Key derivation vectors</strong>: <code>(seed, path)</code> <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> derived keys.</li>
+</ul>
+<p>When you add a new variant (new personalisation, new key path),
+you must add the corresponding vectors. CI will catch the missing
+vectors via the <code>expensive-tests</code> feature.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-fuzzing">7. Fuzzing<a href="#7-fuzzing" class="hash-link" aria-label="Direct link to 7. Fuzzing" title="Direct link to 7. Fuzzing" translate="no">​</a></h2>
+<p>A few crates have <code>cargo-fuzz</code> harnesses:</p>
+<ul>
+<li class="">Transaction parsing: feed random bytes to <code>Transaction::read</code>,
+expect no panics, no unsafe behaviour.</li>
+<li class="">Address parsing: feed random bytes to UA decoder.</li>
+<li class="">BLAKE2b: feed random bytes; output must match a reference
+implementation.</li>
+</ul>
+<p>Look in <code>fuzz/</code> subdirectories of each crate (when present).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-the-nu7-cfg-flag">8. The <code>nu7</code> cfg flag<a href="#8-the-nu7-cfg-flag" class="hash-link" aria-label="Direct link to 8-the-nu7-cfg-flag" title="Direct link to 8-the-nu7-cfg-flag" translate="no">​</a></h2>
+<p>For in-flight network upgrades, the workspace uses <code>RUSTFLAGS=&#x27;--cfg zcash_unstable=&quot;nu7&quot;&#x27;</code> to gate the new code. This lets the team:</p>
+<ul>
+<li class="">Develop the new transaction format and consensus rules.</li>
+<li class="">Run tests against the upcoming activation.</li>
+<li class="">Keep stable releases unaffected.</li>
+</ul>
+<p>Testing the <code>nu7</code> variant requires explicitly setting the cfg flag.
+CI runs both with and without.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-production-readiness-checklist">9. Production-readiness checklist<a href="#9-production-readiness-checklist" class="hash-link" aria-label="Direct link to 9. Production-readiness checklist" title="Direct link to 9. Production-readiness checklist" translate="no">​</a></h2>
+<p>Before a feature reaches production:</p>
+<ol>
+<li class="">Spec drafted (often a ZIP).</li>
+<li class="">Test vectors generated and reviewed.</li>
+<li class="">Implementation in <code>librustzcash</code> behind a cfg flag.</li>
+<li class="">Implementation in Zebra behind a feature flag.</li>
+<li class="">Cross-impl test of identical consensus decisions.</li>
+<li class="">External audit covering the new code paths.</li>
+<li class="">Testnet activation with monitoring.</li>
+<li class="">Mainnet activation at a coordinated height.</li>
+</ol>
+<p>This is the rhythm. New work happens behind flags; production
+release follows audits and testnet runs.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-the-role-of-lightwalletd">10. The role of <code>lightwalletd</code><a href="#10-the-role-of-lightwalletd" class="hash-link" aria-label="Direct link to 10-the-role-of-lightwalletd" title="Direct link to 10-the-role-of-lightwalletd" translate="no">​</a></h2>
+<p><code>lightwalletd</code> (separate repo) is the gRPC gateway used by light
+wallets. It is <em>not</em> a consensus node; it pre-processes blocks
+from a full node into compact form. Bugs in <code>lightwalletd</code> do not
+affect consensus but can affect wallet correctness and privacy:</p>
+<ul>
+<li class="">Selectively withholding outputs would let an attacker know which
+outputs a target wallet sees.</li>
+<li class="">Buggy compaction could drop outputs entirely.</li>
+</ul>
+<p>Light wallets typically connect to multiple <code>lightwalletd</code>
+instances and cross-check.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-vendored-audits-in-the-repo">11. Vendored audits in the repo<a href="#11-vendored-audits-in-the-repo" class="hash-link" aria-label="Direct link to 11. Vendored audits in the repo" title="Direct link to 11. Vendored audits in the repo" translate="no">​</a></h2>
+<p>Some audits result in code-level annotations. Look for comments
+referencing &quot;NCC&quot;, &quot;audit finding&quot;, &quot;Trail of Bits&quot;, etc. These
+annotations are not common but exist; they often mark code that
+was specifically changed in response to a finding.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-how-to-read-an-audit-report-critically">12. How to read an audit report critically<a href="#12-how-to-read-an-audit-report-critically" class="hash-link" aria-label="Direct link to 12. How to read an audit report critically" title="Direct link to 12. How to read an audit report critically" translate="no">​</a></h2>
+<p>When you read a public audit report:</p>
+<ol>
+<li class=""><strong>Severity != impact</strong>: a &quot;low-severity&quot; finding can become
+high-impact after composition with other code.</li>
+<li class=""><strong>&quot;Fixed&quot; != &quot;tested&quot;</strong>: confirm the fix has a test that would
+fail on the unfixed code.</li>
+<li class=""><strong>Scope</strong>: an audit covers a specific commit and a specific set
+of files. Changes after the audit are not audited.</li>
+<li class=""><strong>Conclusions</strong>: don&#x27;t skip the &quot;limitations&quot; section. Auditors
+typically state what they did <em>not</em> look at.</li>
+</ol>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-reproducing-test-vector-generation">13. Reproducing test vector generation<a href="#13-reproducing-test-vector-generation" class="hash-link" aria-label="Direct link to 13. Reproducing test vector generation" title="Direct link to 13. Reproducing test vector generation" translate="no">​</a></h2>
+<p>Many vectors are generated by <code>python</code> or <code>rust</code> scripts in the
+<code>zips</code> repo. The generator scripts are committed alongside the
+vectors. To regenerate (e.g. when the spec changes), run the
+script; commit both the script change and the new vectors in the
+same commit.</p>
+<p>This discipline keeps the vectors traceable. If a vector is
+&quot;hand-edited&quot;, it loses provenance.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-cross-impl-regression-testing">14. Cross-impl regression testing<a href="#14-cross-impl-regression-testing" class="hash-link" aria-label="Direct link to 14. Cross-impl regression testing" title="Direct link to 14. Cross-impl regression testing" translate="no">​</a></h2>
+<p>When you change a crate that exports consensus-significant logic:</p>
+<ol>
+<li class="">Identify the corresponding test vectors.</li>
+<li class="">Run the test suite locally.</li>
+<li class="">Pull Zebra; verify their tests still pass with your changes
+in <code>librustzcash</code>.</li>
+<li class="">(Optional, for big changes) Run a partial mainnet sync.</li>
+</ol>
+<p>This is the bar for consensus-touching PRs.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="15-performance-benchmarks">15. Performance benchmarks<a href="#15-performance-benchmarks" class="hash-link" aria-label="Direct link to 15. Performance benchmarks" title="Direct link to 15. Performance benchmarks" translate="no">​</a></h2>
+<p>Benchmarks are not strictly part of audit/testing but matter for
+production:</p>
+<ul>
+<li class=""><code>criterion</code>-based benchmarks for proving and verification.</li>
+<li class="">Throughput tests for the scanner.</li>
+</ul>
+<p>When a perf regression appears, the audit-trail discipline
+applies: bisect, identify the offending commit, evaluate trade-off.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-should-know-after-this-chapter">What you should know after this chapter<a href="#what-you-should-know-after-this-chapter" class="hash-link" aria-label="Direct link to What you should know after this chapter" title="Direct link to What you should know after this chapter" translate="no">​</a></h2>
+<ul>
+<li class="">Where the public audit reports live.</li>
+<li class="">The patterns audits keep finding.</li>
+<li class="">The cross-implementation testing model and the role of test
+vectors.</li>
+<li class="">The <code>nu7</code> cfg flag and feature-flag discipline.</li>
+<li class="">That <code>librustzcash</code> is a library and <em>not</em> the consensus
+authority.</li>
+</ul>
+<p>Next: active research and the upcoming network upgrades.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/20-audits-and-cross-impl.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/zip-catalog"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">19 - ZIP catalog and reading order</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/active-research-and-nu7"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">21 - Active research and the road to NU7</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#goal" class="table-of-contents__link toc-highlight">Goal</a></li><li><a href="#1-the-audit-firms" class="table-of-contents__link toc-highlight">1. The audit firms</a></li><li><a href="#2-notable-engagements" class="table-of-contents__link toc-highlight">2. Notable engagements</a><ul><li><a href="#ncc-group-sapling-2018" class="table-of-contents__link toc-highlight">NCC Group, Sapling (2018)</a></li><li><a href="#trail-of-bits-orchard--halo-2" class="table-of-contents__link toc-highlight">Trail of Bits, Orchard / Halo 2</a></li><li><a href="#least-authority-zsa-2024" class="table-of-contents__link toc-highlight">Least Authority, ZSA (2024)</a></li><li><a href="#kudelski-pairing-curve-review-2018" class="table-of-contents__link toc-highlight">Kudelski, Pairing-Curve Review (2018)</a></li></ul></li><li><a href="#3-common-audit-findings-consolidated" class="table-of-contents__link toc-highlight">3. Common audit findings (consolidated)</a></li><li><a href="#4-the-cross-implementation-testing-model" class="table-of-contents__link toc-highlight">4. The cross-implementation testing model</a><ul><li><a href="#differential-testing" class="table-of-contents__link toc-highlight">Differential testing</a></li><li><a href="#shared-test-vectors" class="table-of-contents__link toc-highlight">Shared test vectors</a></li></ul></li><li><a href="#5-property-based-testing" class="table-of-contents__link toc-highlight">5. Property-based testing</a></li><li><a href="#6-test-vectors-specifically-for-cryptography" class="table-of-contents__link toc-highlight">6. Test vectors specifically for cryptography</a></li><li><a href="#7-fuzzing" class="table-of-contents__link toc-highlight">7. Fuzzing</a></li><li><a href="#8-the-nu7-cfg-flag" class="table-of-contents__link toc-highlight">8. The <code>nu7</code> cfg flag</a></li><li><a href="#9-production-readiness-checklist" class="table-of-contents__link toc-highlight">9. Production-readiness checklist</a></li><li><a href="#10-the-role-of-lightwalletd" class="table-of-contents__link toc-highlight">10. The role of <code>lightwalletd</code></a></li><li><a href="#11-vendored-audits-in-the-repo" class="table-of-contents__link toc-highlight">11. Vendored audits in the repo</a></li><li><a href="#12-how-to-read-an-audit-report-critically" class="table-of-contents__link toc-highlight">12. How to read an audit report critically</a></li><li><a href="#13-reproducing-test-vector-generation" class="table-of-contents__link toc-highlight">13. Reproducing test vector generation</a></li><li><a href="#14-cross-impl-regression-testing" class="table-of-contents__link toc-highlight">14. Cross-impl regression testing</a></li><li><a href="#15-performance-benchmarks" class="table-of-contents__link toc-highlight">15. Performance benchmarks</a></li><li><a href="#what-you-should-know-after-this-chapter" class="table-of-contents__link toc-highlight">What you should know after this chapter</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
+</body>
+</html>

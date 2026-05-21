@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-zip-catalog" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.10.1">
+<title data-rh="true">19 - ZIP catalog and reading order | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/zip-catalog"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="19 - ZIP catalog and reading order | librustzcash Onboarding"><meta data-rh="true" name="description" content="Goal"><meta data-rh="true" property="og:description" content="Goal"><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/zip-catalog"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/zip-catalog" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/zip-catalog" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"19 - ZIP catalog and reading order","item":"https://dannywillems.github.io/librustzcash/zip-catalog"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
+<script src="/librustzcash/assets/js/runtime~main.cf7378b2.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/main.116ecaf6.js" defer="defer"></script>
+</head>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/librustzcash/"><b class="navbar__title text--truncate">librustzcash Onboarding</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/librustzcash/">Course</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository (onboarding branch)"></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search searchBarContainer_NW3z" dir="ltr"><input placeholder="Search" aria-label="Search" class="navbar__search-input searchInput_YFbd" value=""><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/"><span title="librustzcash Onboarding" class="linkLabel_WmDU">librustzcash Onboarding</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/overview-and-roadmap"><span title="01 - Overview and roadmap" class="linkLabel_WmDU">01 - Overview and roadmap</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zcash-protocol-foundations"><span title="02 - Zcash protocol foundations" class="linkLabel_WmDU">02 - Zcash protocol foundations</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptography-primer"><span title="03 - Cryptography primer" class="linkLabel_WmDU">03 - Cryptography primer</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/sprout-and-sapling"><span title="04 - Sprout and Sapling" class="linkLabel_WmDU">04 - Sprout and Sapling</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/orchard-and-halo2"><span title="05 - Orchard and Halo 2" class="linkLabel_WmDU">05 - Orchard and Halo 2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/keys-addresses-zip32"><span title="06 - Keys, addresses, ZIP 32, unified addresses" class="linkLabel_WmDU">06 - Keys, addresses, ZIP 32, unified addresses</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/transactions-and-builder"><span title="07 - Transactions, sighash, builder, PCZT" class="linkLabel_WmDU">07 - Transactions, sighash, builder, PCZT</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/note-encryption"><span title="08 - Note encryption" class="linkLabel_WmDU">08 - Note encryption</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/equihash-and-consensus"><span title="09 - Equihash and consensus structures" class="linkLabel_WmDU">09 - Equihash and consensus structures</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/wallet-stack"><span title="10 - The wallet stack" class="linkLabel_WmDU">10 - The wallet stack</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/study-plan-and-exercises"><span title="11 - Study plan and exercises" class="linkLabel_WmDU">11 - Study plan and exercises</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/historical-bugs"><span title="12 - Historical bugs and security incidents" class="linkLabel_WmDU">12 - Historical bugs and security incidents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cofactors-subgroups-canonical"><span title="13 - Cofactors, subgroups, canonical encodings" class="linkLabel_WmDU">13 - Cofactors, subgroups, canonical encodings</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/side-channels-and-constant-time"><span title="14 - Side channels and constant-time" class="linkLabel_WmDU">14 - Side channels and constant-time</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/trusted-setup"><span title="15 - Trusted setup ceremonies" class="linkLabel_WmDU">15 - Trusted setup ceremonies</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pedersen-hash-deep-dive"><span title="16 - Pedersen hash deep dive" class="linkLabel_WmDU">16 - Pedersen hash deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/halo2-deep-dive"><span title="17 - Halo 2 deep dive" class="linkLabel_WmDU">17 - Halo 2 deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/anonymity-set-and-metadata"><span title="18 - Anonymity set and metadata" class="linkLabel_WmDU">18 - Anonymity set and metadata</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/librustzcash/zip-catalog"><span title="19 - ZIP catalog and reading order" class="linkLabel_WmDU">19 - ZIP catalog and reading order</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/audits-and-cross-impl"><span title="20 - Audits and cross-implementation testing" class="linkLabel_WmDU">20 - Audits and cross-implementation testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/active-research-and-nu7"><span title="21 - Active research and the road to NU7" class="linkLabel_WmDU">21 - Active research and the road to NU7</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptographer-code-review"><span title="22 - Cryptographer&#x27;s code-review checklist" class="linkLabel_WmDU">22 - Cryptographer&#x27;s code-review checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/key-catalog"><span title="23 - The complete key catalog" class="linkLabel_WmDU">23 - The complete key catalog</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/circuits-constraint-by-constraint"><span title="24 - Circuits, constraint by constraint" class="linkLabel_WmDU">24 - Circuits, constraint by constraint</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/librustzcash/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">19 - ZIP catalog and reading order</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>19 - ZIP catalog and reading order</h1></header>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="goal">Goal<a href="#goal" class="hash-link" aria-label="Direct link to Goal" title="Direct link to Goal" translate="no">​</a></h2>
+<p>The Zcash Improvement Proposals (ZIPs) are the canonical
+specification for everything beyond the core protocol PDF. They
+are <em>prescriptive</em>: the wallet and node must implement them
+exactly. This chapter is a curated index of ZIPs you should read,
+grouped by topic with a suggested reading order and the relevant
+files in this workspace.</p>
+<p>All ZIPs are at <a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="">https://zips.z.cash/</a>. References below use the
+short form ZIP-XXXX.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-the-starter-pack">1. The starter pack<a href="#1-the-starter-pack" class="hash-link" aria-label="Direct link to 1. The starter pack" title="Direct link to 1. The starter pack" translate="no">​</a></h2>
+<p>If you only read five ZIPs, read these:</p>
+<ol>
+<li class=""><strong>ZIP 32</strong> - HD key derivation (Sapling, Orchard, Unified).</li>
+<li class=""><strong>ZIP 244</strong> - Transaction sighash algorithm v5.</li>
+<li class=""><strong>ZIP 316</strong> - Unified Addresses and viewing keys.</li>
+<li class=""><strong>ZIP 317</strong> - Default conventional fees.</li>
+<li class=""><strong>ZIP 212</strong> - Note plaintext semantics fix (rcm derivation).</li>
+</ol>
+<p>These five touch almost every wallet code path.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-encoding-and-addresses">2. Encoding and addresses<a href="#2-encoding-and-addresses" class="hash-link" aria-label="Direct link to 2. Encoding and addresses" title="Direct link to 2. Encoding and addresses" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 32</td><td>Shielded HD Wallets</td><td>Sapling derivation; updated for Orchard</td></tr><tr><td>ZIP 173</td><td>Bech32 Format</td><td>Sapling address encoding</td></tr><tr><td>ZIP 316</td><td>Unified Addresses and Viewing Keys</td><td>UA/UFVK structure, F4Jumble</td></tr><tr><td>ZIP 320</td><td>Use of TEX Addresses in PCZT</td><td>Transparent receivers in UAs</td></tr><tr><td>ZIP 48</td><td>Transparent Account Keys</td><td>Used by <code>zcash_transparent::zip48</code></td></tr><tr><td>ZIP 173 / BIP 173</td><td>Bech32</td><td>Generic encoding</td></tr></tbody></table>
+<p>Code: <code>components/zcash_address/src/</code>,
+<code>components/f4jumble/src/lib.rs</code>, <code>zcash_transparent/src/zip48.rs</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-transaction-format">3. Transaction format<a href="#3-transaction-format" class="hash-link" aria-label="Direct link to 3. Transaction format" title="Direct link to 3. Transaction format" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 225</td><td>Transaction Version 5</td><td>Wire format post-NU5</td></tr><tr><td>ZIP 243</td><td>Transaction Signature Validation for Sapling</td><td>v4 sighash</td></tr><tr><td>ZIP 244</td><td>Transaction Identifiers and Signature Validation</td><td>v5 sighash and TxId</td></tr><tr><td>ZIP 230</td><td>Transaction v6</td><td>NU7 (in progress)</td></tr></tbody></table>
+<p>Code: <code>zcash_primitives/src/transaction/</code>, <code>sighash_v4.rs</code>,
+<code>sighash_v5.rs</code>, <code>sighash_v6.rs</code>, <code>txid.rs</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-shielded-protocols">4. Shielded protocols<a href="#4-shielded-protocols" class="hash-link" aria-label="Direct link to 4. Shielded protocols" title="Direct link to 4. Shielded protocols" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 212</td><td>Allow Recipient to Derive Sapling Ephemeral Secret</td><td>rcm derivation</td></tr><tr><td>ZIP 215</td><td>Explicitly Defining and Modifying Ed25519 Validity Criteria</td><td>Signature rules</td></tr><tr><td>ZIP 216</td><td>Require Canonical Jubjub Point Encodings</td><td>Subgroup/canonical</td></tr><tr><td>ZIP 221</td><td>FlyClient History Tree</td><td>History MMR</td></tr><tr><td>ZIP 224</td><td>Orchard Shielded Protocol</td><td>Orchard spec</td></tr><tr><td>ZIP 226</td><td>Transfer and Burn of Zcash Shielded Assets</td><td>ZSA proposal</td></tr><tr><td>ZIP 227</td><td>Issuance of Zcash Shielded Assets</td><td>ZSA issuance</td></tr><tr><td>ZIP 233</td><td>Network Sustainability Mechanism</td><td>Burn ZEC mechanism</td></tr></tbody></table>
+<p>Code: <code>zcash_history/</code>, <code>sapling-crypto</code> (external),
+<code>orchard</code> (external).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-pow-and-consensus">5. PoW and consensus<a href="#5-pow-and-consensus" class="hash-link" aria-label="Direct link to 5. PoW and consensus" title="Direct link to 5. PoW and consensus" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 200</td><td>Network Upgrade Mechanism</td><td>Branch ID, activation</td></tr><tr><td>ZIP 207</td><td>Founders&#x27; Reward Subsidy</td><td>Historical</td></tr><tr><td>ZIP 208</td><td>Shorter Block Target Spacing</td><td>Blossom</td></tr><tr><td>ZIP 1014</td><td>Establishing a Dev Fund</td><td>Funding stream</td></tr><tr><td>ZIP 251</td><td>Deployment of the NU5 Network Upgrade</td><td>NU5 specifics</td></tr><tr><td>ZIP 252</td><td>Deployment of the NU6 Network Upgrade</td><td>NU6 specifics</td></tr></tbody></table>
+<p>Code: <code>components/zcash_protocol/src/consensus.rs</code>,
+<code>components/equihash/src/</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-fees-payments-wallet-ux">6. Fees, payments, wallet UX<a href="#6-fees-payments-wallet-ux" class="hash-link" aria-label="Direct link to 6. Fees, payments, wallet UX" title="Direct link to 6. Fees, payments, wallet UX" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 317</td><td>Conventional Transaction Fee Mechanism</td><td>Default fee rule</td></tr><tr><td>ZIP 321</td><td>Payment Request URIs</td><td>URI format</td></tr></tbody></table>
+<p>Code: <code>zcash_primitives/src/transaction/fees.rs</code>,
+<code>components/zip321/</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-pczt">7. PCZT<a href="#7-pczt" class="hash-link" aria-label="Direct link to 7. PCZT" title="Direct link to 7. PCZT" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 304</td><td>Sign Message - Spending Authority Signatures</td><td>Spend-auth design</td></tr><tr><td>ZIP-Y for PCZT</td><td>(draft) Partially Created Zcash Transaction</td><td>The PCZT spec</td></tr></tbody></table>
+<p>Code: <code>pczt/</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-light-client">8. Light client<a href="#8-light-client" class="hash-link" aria-label="Direct link to 8. Light client" title="Direct link to 8. Light client" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ZIP</th><th>Title</th><th>Notes</th></tr></thead><tbody><tr><td>ZIP 307</td><td>Light Client Protocol</td><td>lightwalletd interface</td></tr><tr><td>ZIP 308</td><td>Sapling Compact Block Format</td><td>Compact block contents</td></tr></tbody></table>
+<p>Code: <code>zcash_client_backend/src/proto/</code>.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-reading-order-by-week">9. Reading order, by week<a href="#9-reading-order-by-week" class="hash-link" aria-label="Direct link to 9. Reading order, by week" title="Direct link to 9. Reading order, by week" translate="no">​</a></h2>
+<p>A practical reading order to pair with the study plan in chapter 11:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-1">Week 1<a href="#week-1" class="hash-link" aria-label="Direct link to Week 1" title="Direct link to Week 1" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 200 (network upgrades).</li>
+<li class="">ZIP 173 (bech32).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-3-paired-with-sapling-chapter">Week 3 (paired with Sapling chapter)<a href="#week-3-paired-with-sapling-chapter" class="hash-link" aria-label="Direct link to Week 3 (paired with Sapling chapter)" title="Direct link to Week 3 (paired with Sapling chapter)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 32 (HD wallets).</li>
+<li class="">ZIP 215 (signature validation).</li>
+<li class="">ZIP 216 (canonical encoding).</li>
+<li class="">ZIP 212 (rcm derivation).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-5-paired-with-orchard-chapter">Week 5 (paired with Orchard chapter)<a href="#week-5-paired-with-orchard-chapter" class="hash-link" aria-label="Direct link to Week 5 (paired with Orchard chapter)" title="Direct link to Week 5 (paired with Orchard chapter)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 224 (Orchard).</li>
+<li class="">ZIP 225 (transaction v5).</li>
+<li class="">ZIP 244 (sighash v5).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-7-paired-with-keysaddresses">Week 7 (paired with keys/addresses)<a href="#week-7-paired-with-keysaddresses" class="hash-link" aria-label="Direct link to Week 7 (paired with keys/addresses)" title="Direct link to Week 7 (paired with keys/addresses)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 316 (Unified Addresses).</li>
+<li class="">ZIP 48 (transparent account keys).</li>
+<li class="">ZIP 320 (TEX addresses).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-8-paired-with-transactions">Week 8 (paired with transactions)<a href="#week-8-paired-with-transactions" class="hash-link" aria-label="Direct link to Week 8 (paired with transactions)" title="Direct link to Week 8 (paired with transactions)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 243 (sighash v4).</li>
+<li class="">ZIP 244 (re-read).</li>
+<li class="">ZIP 317 (fees).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-9-paired-with-note-encryption">Week 9 (paired with note encryption)<a href="#week-9-paired-with-note-encryption" class="hash-link" aria-label="Direct link to Week 9 (paired with note encryption)" title="Direct link to Week 9 (paired with note encryption)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 212 (re-read).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-10-paired-with-wallet-stack">Week 10 (paired with wallet stack)<a href="#week-10-paired-with-wallet-stack" class="hash-link" aria-label="Direct link to Week 10 (paired with wallet stack)" title="Direct link to Week 10 (paired with wallet stack)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 307 (light client protocol).</li>
+<li class="">ZIP 308 (compact block).</li>
+<li class="">ZIP 321 (payment request).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="week-11-paired-with-consensus">Week 11 (paired with consensus)<a href="#week-11-paired-with-consensus" class="hash-link" aria-label="Direct link to Week 11 (paired with consensus)" title="Direct link to Week 11 (paired with consensus)" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 221 (history tree).</li>
+<li class="">ZIP 200 (re-read).</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="bonus">Bonus<a href="#bonus" class="hash-link" aria-label="Direct link to Bonus" title="Direct link to Bonus" translate="no">​</a></h3>
+<ul>
+<li class="">ZIP 226 / 227 / 233 (active research; see chapter 21).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-zips-and-audit-findings">10. ZIPs and audit findings<a href="#10-zips-and-audit-findings" class="hash-link" aria-label="Direct link to 10. ZIPs and audit findings" title="Direct link to 10. ZIPs and audit findings" translate="no">​</a></h2>
+<p>When an audit finding becomes a consensus rule change, it usually
+results in a new ZIP. Examples:</p>
+<ul>
+<li class="">ZIP 216 emerged from &quot;Jubjub encoding inconsistencies&quot; findings.</li>
+<li class="">ZIP 244 was driven by malleability concerns and &quot;TxId should be
+free of signature data&quot;.</li>
+<li class="">ZIP 215 codified Bitcoin-style canonical signature handling.</li>
+</ul>
+<p>Reading a ZIP backwards (motivation <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> change <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> test
+vectors <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> rationale section) is a fast way to learn what bug
+class motivated it.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-test-vectors-per-zip">11. Test vectors per ZIP<a href="#11-test-vectors-per-zip" class="hash-link" aria-label="Direct link to 11. Test vectors per ZIP" title="Direct link to 11. Test vectors per ZIP" translate="no">​</a></h2>
+<p>Most ZIPs ship with test vectors. Locations:</p>
+<ul>
+<li class="">In the ZIP text itself (for short vectors).</li>
+<li class="">In the spec&#x27;s appendix (<a href="https://zips.z.cash/protocol" target="_blank" rel="noopener noreferrer" class="">https://zips.z.cash/protocol</a>).</li>
+<li class="">In the relevant external repo&#x27;s <code>test_vectors/</code>.</li>
+</ul>
+<p>In this workspace, test vectors typically live in
+<code>&lt;crate&gt;/src/test_vectors.rs</code> or under
+<code>&lt;crate&gt;/src/transaction/tests/</code>.</p>
+<p>Adding a test vector to a ZIP is a contribution that maintainers
+welcome; it directly improves cross-implementation testing.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-zip-authors-and-contacts">12. ZIP authors and contacts<a href="#12-zip-authors-and-contacts" class="hash-link" aria-label="Direct link to 12. ZIP authors and contacts" title="Direct link to 12. ZIP authors and contacts" translate="no">​</a></h2>
+<p>The Zcash ZIP editors are listed at <a href="https://zips.z.cash/#editors" target="_blank" rel="noopener noreferrer" class="">https://zips.z.cash/#editors</a>.
+Major authors of historical and current ZIPs include Daira Hopwood,
+Sean Bowe, Kris Nuttycombe, Jack Grigg, Str4d (Jack Grigg again),
+Ying Tong, ying tong.</p>
+<p>When drafting a ZIP, follow ZIP 0 (the meta-ZIP) for structure.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-zips-that-may-surprise-you">13. ZIPs that may surprise you<a href="#13-zips-that-may-surprise-you" class="hash-link" aria-label="Direct link to 13. ZIPs that may surprise you" title="Direct link to 13. ZIPs that may surprise you" translate="no">​</a></h2>
+<p>A few ZIPs that are not obviously &quot;cryptography&quot; but matter:</p>
+<ul>
+<li class="">ZIP 252: deployment-mechanics, including testnet activation
+heights you might need for tests.</li>
+<li class="">ZIP 207: Founders&#x27; Reward (historical) shapes some of the
+coinbase rules in the code; understanding the legacy is useful.</li>
+<li class="">ZIP 1014: the dev fund: not a code change per se, but it
+parameterises some block-reward distribution that wallet apps
+might display.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-a-note-on-draft-zips">14. A note on draft ZIPs<a href="#14-a-note-on-draft-zips" class="hash-link" aria-label="Direct link to 14. A note on draft ZIPs" title="Direct link to 14. A note on draft ZIPs" translate="no">​</a></h2>
+<p>Draft ZIPs (status &quot;Draft&quot; or &quot;Proposed&quot;) may change. When a draft
+ZIP is implemented behind a feature flag (e.g. <code>zcash_unstable = &quot;nu7&quot;</code>), the implementation should track the latest draft and be
+ready to update before activation.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-should-know-after-this-chapter">What you should know after this chapter<a href="#what-you-should-know-after-this-chapter" class="hash-link" aria-label="Direct link to What you should know after this chapter" title="Direct link to What you should know after this chapter" translate="no">​</a></h2>
+<ul>
+<li class="">Where to find any ZIP.</li>
+<li class="">The five must-read ZIPs.</li>
+<li class="">The mapping from ZIP to code module.</li>
+<li class="">The discipline of reading ZIPs alongside the protocol spec.</li>
+</ul>
+<p>Next: external audits, cross-implementation testing.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/19-zip-catalog.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/anonymity-set-and-metadata"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">18 - Anonymity set and metadata</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/audits-and-cross-impl"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">20 - Audits and cross-implementation testing</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#goal" class="table-of-contents__link toc-highlight">Goal</a></li><li><a href="#1-the-starter-pack" class="table-of-contents__link toc-highlight">1. The starter pack</a></li><li><a href="#2-encoding-and-addresses" class="table-of-contents__link toc-highlight">2. Encoding and addresses</a></li><li><a href="#3-transaction-format" class="table-of-contents__link toc-highlight">3. Transaction format</a></li><li><a href="#4-shielded-protocols" class="table-of-contents__link toc-highlight">4. Shielded protocols</a></li><li><a href="#5-pow-and-consensus" class="table-of-contents__link toc-highlight">5. PoW and consensus</a></li><li><a href="#6-fees-payments-wallet-ux" class="table-of-contents__link toc-highlight">6. Fees, payments, wallet UX</a></li><li><a href="#7-pczt" class="table-of-contents__link toc-highlight">7. PCZT</a></li><li><a href="#8-light-client" class="table-of-contents__link toc-highlight">8. Light client</a></li><li><a href="#9-reading-order-by-week" class="table-of-contents__link toc-highlight">9. Reading order, by week</a><ul><li><a href="#week-1" class="table-of-contents__link toc-highlight">Week 1</a></li><li><a href="#week-3-paired-with-sapling-chapter" class="table-of-contents__link toc-highlight">Week 3 (paired with Sapling chapter)</a></li><li><a href="#week-5-paired-with-orchard-chapter" class="table-of-contents__link toc-highlight">Week 5 (paired with Orchard chapter)</a></li><li><a href="#week-7-paired-with-keysaddresses" class="table-of-contents__link toc-highlight">Week 7 (paired with keys/addresses)</a></li><li><a href="#week-8-paired-with-transactions" class="table-of-contents__link toc-highlight">Week 8 (paired with transactions)</a></li><li><a href="#week-9-paired-with-note-encryption" class="table-of-contents__link toc-highlight">Week 9 (paired with note encryption)</a></li><li><a href="#week-10-paired-with-wallet-stack" class="table-of-contents__link toc-highlight">Week 10 (paired with wallet stack)</a></li><li><a href="#week-11-paired-with-consensus" class="table-of-contents__link toc-highlight">Week 11 (paired with consensus)</a></li><li><a href="#bonus" class="table-of-contents__link toc-highlight">Bonus</a></li></ul></li><li><a href="#10-zips-and-audit-findings" class="table-of-contents__link toc-highlight">10. ZIPs and audit findings</a></li><li><a href="#11-test-vectors-per-zip" class="table-of-contents__link toc-highlight">11. Test vectors per ZIP</a></li><li><a href="#12-zip-authors-and-contacts" class="table-of-contents__link toc-highlight">12. ZIP authors and contacts</a></li><li><a href="#13-zips-that-may-surprise-you" class="table-of-contents__link toc-highlight">13. ZIPs that may surprise you</a></li><li><a href="#14-a-note-on-draft-zips" class="table-of-contents__link toc-highlight">14. A note on draft ZIPs</a></li><li><a href="#what-you-should-know-after-this-chapter" class="table-of-contents__link toc-highlight">What you should know after this chapter</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
+</body>
+</html>

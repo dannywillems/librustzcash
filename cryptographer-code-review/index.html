@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-cryptographer-code-review" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.10.1">
+<title data-rh="true">22 - Cryptographer&#x27;s code-review checklist | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/cryptographer-code-review"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="22 - Cryptographer&#x27;s code-review checklist | librustzcash Onboarding"><meta data-rh="true" name="description" content="Goal"><meta data-rh="true" property="og:description" content="Goal"><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/cryptographer-code-review"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/cryptographer-code-review" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/cryptographer-code-review" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"22 - Cryptographer's code-review checklist","item":"https://dannywillems.github.io/librustzcash/cryptographer-code-review"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
+<script src="/librustzcash/assets/js/runtime~main.cf7378b2.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/main.116ecaf6.js" defer="defer"></script>
+</head>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/librustzcash/"><b class="navbar__title text--truncate">librustzcash Onboarding</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/librustzcash/">Course</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository (onboarding branch)"></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search searchBarContainer_NW3z" dir="ltr"><input placeholder="Search" aria-label="Search" class="navbar__search-input searchInput_YFbd" value=""><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/"><span title="librustzcash Onboarding" class="linkLabel_WmDU">librustzcash Onboarding</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/overview-and-roadmap"><span title="01 - Overview and roadmap" class="linkLabel_WmDU">01 - Overview and roadmap</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zcash-protocol-foundations"><span title="02 - Zcash protocol foundations" class="linkLabel_WmDU">02 - Zcash protocol foundations</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptography-primer"><span title="03 - Cryptography primer" class="linkLabel_WmDU">03 - Cryptography primer</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/sprout-and-sapling"><span title="04 - Sprout and Sapling" class="linkLabel_WmDU">04 - Sprout and Sapling</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/orchard-and-halo2"><span title="05 - Orchard and Halo 2" class="linkLabel_WmDU">05 - Orchard and Halo 2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/keys-addresses-zip32"><span title="06 - Keys, addresses, ZIP 32, unified addresses" class="linkLabel_WmDU">06 - Keys, addresses, ZIP 32, unified addresses</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/transactions-and-builder"><span title="07 - Transactions, sighash, builder, PCZT" class="linkLabel_WmDU">07 - Transactions, sighash, builder, PCZT</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/note-encryption"><span title="08 - Note encryption" class="linkLabel_WmDU">08 - Note encryption</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/equihash-and-consensus"><span title="09 - Equihash and consensus structures" class="linkLabel_WmDU">09 - Equihash and consensus structures</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/wallet-stack"><span title="10 - The wallet stack" class="linkLabel_WmDU">10 - The wallet stack</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/study-plan-and-exercises"><span title="11 - Study plan and exercises" class="linkLabel_WmDU">11 - Study plan and exercises</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/historical-bugs"><span title="12 - Historical bugs and security incidents" class="linkLabel_WmDU">12 - Historical bugs and security incidents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cofactors-subgroups-canonical"><span title="13 - Cofactors, subgroups, canonical encodings" class="linkLabel_WmDU">13 - Cofactors, subgroups, canonical encodings</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/side-channels-and-constant-time"><span title="14 - Side channels and constant-time" class="linkLabel_WmDU">14 - Side channels and constant-time</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/trusted-setup"><span title="15 - Trusted setup ceremonies" class="linkLabel_WmDU">15 - Trusted setup ceremonies</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pedersen-hash-deep-dive"><span title="16 - Pedersen hash deep dive" class="linkLabel_WmDU">16 - Pedersen hash deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/halo2-deep-dive"><span title="17 - Halo 2 deep dive" class="linkLabel_WmDU">17 - Halo 2 deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/anonymity-set-and-metadata"><span title="18 - Anonymity set and metadata" class="linkLabel_WmDU">18 - Anonymity set and metadata</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zip-catalog"><span title="19 - ZIP catalog and reading order" class="linkLabel_WmDU">19 - ZIP catalog and reading order</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/audits-and-cross-impl"><span title="20 - Audits and cross-implementation testing" class="linkLabel_WmDU">20 - Audits and cross-implementation testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/active-research-and-nu7"><span title="21 - Active research and the road to NU7" class="linkLabel_WmDU">21 - Active research and the road to NU7</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/librustzcash/cryptographer-code-review"><span title="22 - Cryptographer&#x27;s code-review checklist" class="linkLabel_WmDU">22 - Cryptographer&#x27;s code-review checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/key-catalog"><span title="23 - The complete key catalog" class="linkLabel_WmDU">23 - The complete key catalog</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/circuits-constraint-by-constraint"><span title="24 - Circuits, constraint by constraint" class="linkLabel_WmDU">24 - Circuits, constraint by constraint</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/librustzcash/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">22 - Cryptographer&#x27;s code-review checklist</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>22 - Cryptographer&#x27;s code-review checklist</h1></header>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="goal">Goal<a href="#goal" class="hash-link" aria-label="Direct link to Goal" title="Direct link to Goal" translate="no">​</a></h2>
+<p>A consolidated checklist of what to look for when reviewing any
+crypto-touching PR in this workspace. Distilled from chapters 12-20:
+historical bugs, subgroup/canonical-encoding pitfalls, constant-
+time programming, trusted setups, audit findings, and cross-impl
+testing. Print this and keep it next to your monitor.</p>
+<p>The intent is <strong>operational</strong>: each item is something you can
+verify in a PR diff. Many items are framed as &quot;if you see X,
+check Y&quot;.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-group-elements-on-the-wire">1. Group elements on the wire<a href="#1-group-elements-on-the-wire" class="hash-link" aria-label="Direct link to 1. Group elements on the wire" title="Direct link to 1. Group elements on the wire" translate="no">​</a></h2>
+<p>For every byte-slice parse-into-curve-point in the diff:</p>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> <strong>Canonical encoding</strong> is enforced (<code>from_repr</code> / <code>from_bytes</code>
+returns <code>CtOption</code> and the failure case is propagated, not
+unwrapped).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <strong>Subgroup membership</strong> is enforced (<code>SubgroupPoint::try_from</code>
+for Jubjub, <code>is_torsion_free</code> for BLS12-381, automatic for
+Pallas/Vesta because cofactor 1).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> After parsing, the carried type is the subgroup type
+(<code>SubgroupPoint</code>, etc.), not the raw type.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Re-serialisation produces the original bytes.</li>
+</ul>
+<p>Files particularly worth grepping when reviewing: any new
+<code>from_bytes</code> or <code>read</code> function in a bundle / description type.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-field-elements-on-the-wire">2. Field elements on the wire<a href="#2-field-elements-on-the-wire" class="hash-link" aria-label="Direct link to 2. Field elements on the wire" title="Direct link to 2. Field elements on the wire" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>PrimeField::from_repr</code> is used (not <code>from_repr_unchecked</code>).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The check uses <code>into_option()</code> or <code>into_iter()</code> style that
+forces failure handling.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> If the result is used as a scalar mul argument, the field is
+the right one (Jubjub scalar field <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">F</mi><mi mathvariant="normal">ℓ</mi></msub></mrow><annotation encoding="application/x-tex">\mathbb{F}_\ell</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">ℓ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> vs Jubjub
+base field <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">F</mi><mi>r</mi></msub></mrow><annotation encoding="application/x-tex">\mathbb{F}_r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0278em">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> - they are distinct).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-domain-separation">3. Domain separation<a href="#3-domain-separation" class="hash-link" aria-label="Direct link to 3. Domain separation" title="Direct link to 3. Domain separation" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> Every new hash invocation has its own personalisation tag.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Personalisation is exactly 16 bytes (BLAKE2b) or 8 bytes
+(BLAKE2s), zero-padded if shorter.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No existing personalisation is reused for a new purpose.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Personalisation strings include a version byte where future
+versions are foreseeable.</li>
+</ul>
+<p>Grep:</p>
+<div class="language-sh codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-sh codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">grep</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">-r</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">&quot;personal\|Personal\|pers:&quot;</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">--include</span><span class="token operator" style="color:#393A34">=</span><span class="token string" style="color:#e3116c">&#x27;*.rs&#x27;</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">|</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">grep</span><span class="token plain"> </span><span class="token parameter variable" style="color:#36acaa">-v</span><span class="token plain"> </span><span class="token builtin class-name">test</span><br></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-constant-time">4. Constant-time<a href="#4-constant-time" class="hash-link" aria-label="Direct link to 4. Constant-time" title="Direct link to 4. Constant-time" translate="no">​</a></h2>
+<p>For any code that processes secret data:</p>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> No <code>match</code> or <code>if</code> branching on a secret.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No <code>pow_vartime</code> or <code>mul_vartime</code> on a secret exponent /
+scalar.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No <code>array[secret_index]</code> lookups.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>subtle::Choice</code> and <code>CtOption</code> used for secret-dependent
+options.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>ct_eq</code> instead of <code>==</code> for secret comparisons.</li>
+</ul>
+<p>If the PR adds a new error type whose discriminant depends on a
+secret-derived condition, that is a leak. Use a single error
+variant for all secret-failure paths.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-zeroization">5. Zeroization<a href="#5-zeroization" class="hash-link" aria-label="Direct link to 5. Zeroization" title="Direct link to 5. Zeroization" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> All <code>SpendingKey</code>, <code>ExtendedSpendingKey</code>, <code>Rseed</code>, <code>Rcm</code>,
+<code>Rcv</code>, <code>Esk</code>, <code>Nsk</code> types implement (or transitively contain)
+<code>Zeroize</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Drop implementations are correct (no copies left behind).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Long-lived secrets are stored in <code>Zeroizing&lt;...&gt;</code> wrappers.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-newtype-discipline">6. Newtype discipline<a href="#6-newtype-discipline" class="hash-link" aria-label="Direct link to 6. Newtype discipline" title="Direct link to 6. Newtype discipline" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> No bare <code>u64</code> for a value (use <code>Zatoshis</code>).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No bare <code>i64</code> for a signed value (use <code>ZatBalance</code>).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No bare <code>u32</code> for a block height (use <code>BlockHeight</code>).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No bare <code>[u8; 32]</code> for a hash that has a typed wrapper
+(<code>TxId</code>, <code>BlockHash</code>, etc.).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-authorization-typestate">7. Authorization typestate<a href="#7-authorization-typestate" class="hash-link" aria-label="Direct link to 7. Authorization typestate" title="Direct link to 7. Authorization typestate" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> New bundle methods preserve or correctly transition the
+<code>Authorization</code> parameter.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>MapAuth</code> implementations update every authorisation slot,
+not just the obvious one.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No &quot;downgrading&quot; from an authorised state to an unauthorised
+state (semantic bugs).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-test-vectors">8. Test vectors<a href="#8-test-vectors" class="hash-link" aria-label="Direct link to 8. Test vectors" title="Direct link to 8. Test vectors" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> New cryptographic primitives have test vectors.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Vectors include: zero input, max input, &quot;near-zero&quot; boundary
+inputs, &quot;near-modulus&quot; boundary inputs.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Vectors live in <code>&lt;crate&gt;/src/test_vectors.rs</code> or in the
+shared <code>zips/test-vectors/</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Round-trip tests (<code>encode</code> then <code>decode</code> returns equal).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-proptest">9. Proptest<a href="#9-proptest" class="hash-link" aria-label="Direct link to 9. Proptest" title="Direct link to 9. Proptest" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> An <code>arb_&lt;type&gt;</code> strategy exists if the type is serialisable.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The arb strategy covers the <em>full</em> domain (not just easy
+inputs).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The strategy is exposed via the <code>test-dependencies</code> feature.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-zip-and-spec-references">10. ZIP and spec references<a href="#10-zip-and-spec-references" class="hash-link" aria-label="Direct link to 10. ZIP and spec references" title="Direct link to 10. ZIP and spec references" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> The PR&#x27;s commit message references the relevant ZIP and
+protocol-spec section.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The implementation matches the spec line by line (when
+reviewing, open both).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> If the PR adapts a new ZIP draft, the version of the ZIP is
+pinned in the comment.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-consensus-rules">11. Consensus rules<a href="#11-consensus-rules" class="hash-link" aria-label="Direct link to 11. Consensus rules" title="Direct link to 11. Consensus rules" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> If the PR changes parsing, it does <em>not</em> tighten or loosen
+consensus checks (parsing is permissive; consensus lives in
+Zebra / <code>zcashd</code>).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> If the PR changes the wallet&#x27;s transaction construction, it
+must produce only consensus-valid transactions; verify against
+testnet if possible.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> BranchId-aware logic must handle all relevant branches.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-feature-flags">12. Feature flags<a href="#12-feature-flags" class="hash-link" aria-label="Direct link to 12. Feature flags" title="Direct link to 12. Feature flags" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> New code is appropriately gated by <code>transparent-inputs</code>,
+<code>orchard</code>, <code>sapling</code>, etc.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> In-flight work is behind <code>zcash_unstable = &quot;nu7&quot;</code> or
+similar.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No-default-features builds still pass.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-error-types">13. Error types<a href="#13-error-types" class="hash-link" aria-label="Direct link to 13. Error types" title="Direct link to 13. Error types" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> All new error enums are non-exhaustive.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Error variants do not contain secret data (avoid
+<code>Error::BadKey(SpendingKey)</code>).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>From</code> impls exist for natural error conversion across
+layers.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-documentation">14. Documentation<a href="#14-documentation" class="hash-link" aria-label="Direct link to 14. Documentation" title="Direct link to 14. Documentation" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> All public items have rustdoc.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Error cases are documented in the doc comment.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> ZIP / spec references are present as markdown links.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Cross-references use backtick links (<code>[</code>Foo<code>]</code>).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="15-serialisation-discipline">15. Serialisation discipline<a href="#15-serialisation-discipline" class="hash-link" aria-label="Direct link to 15. Serialisation discipline" title="Direct link to 15. Serialisation discipline" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> All serialised data has a version byte at the top level.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No accidental derived <code>serde</code> serialisation on
+consensus-relevant types.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The wire format matches the spec test vectors.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="16-trusted-setup-parameters">16. Trusted-setup parameters<a href="#16-trusted-setup-parameters" class="hash-link" aria-label="Direct link to 16. Trusted-setup parameters" title="Direct link to 16. Trusted-setup parameters" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> SHA-256 hashes are checked against the hardcoded constants
+in <code>zcash_proofs</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No code path can use unverified parameters.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>MockTxProver</code> is gated to tests.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="17-proof-construction">17. Proof construction<a href="#17-proof-construction" class="hash-link" aria-label="Direct link to 17. Proof construction" title="Direct link to 17. Proof construction" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> Witness values are validated before being passed to the
+prover (in-circuit checks are sufficient but range-checking
+early helps debug).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Public inputs match the circuit&#x27;s expected encoding (order,
+bit-length, endianness).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Verifying-key version matches the proving-key version.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="18-halo-2-circuit-changes">18. Halo 2 circuit changes<a href="#18-halo-2-circuit-changes" class="hash-link" aria-label="Direct link to 18. Halo 2 circuit changes" title="Direct link to 18. Halo 2 circuit changes" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> Each new advice cell is constrained by at least one gate.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Each new gate has a documented selector and the selector is
+correctly placed.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Incomplete-addition uses always have a distinctness
+assertion.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> New lookups have correctly-built tables.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Transcript absorbs every commitment before squeezing a
+challenge.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="19-privacy">19. Privacy<a href="#19-privacy" class="hash-link" aria-label="Direct link to 19. Privacy" title="Direct link to 19. Privacy" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> No new public field exposes information that should be
+private (sender, recipient, value, memo).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Dummy outputs/spends, where supported, are bit-by-bit
+indistinguishable from real ones.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Network endpoints support Tor where appropriate.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="20-concurrency">20. Concurrency<a href="#20-concurrency" class="hash-link" aria-label="Direct link to 20. Concurrency" title="Direct link to 20. Concurrency" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> Shared state (commitment trees, nullifier sets) is updated
+atomically.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> No race condition between proposal selection and transaction
+build.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Threading does not change scan output ordering observable to
+attackers.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="21-maintenance-branches">21. Maintenance branches<a href="#21-maintenance-branches" class="hash-link" aria-label="Direct link to 21. Maintenance branches" title="Direct link to 21. Maintenance branches" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> Bug fixes branch from the earliest relevant <code>maint/*</code> branch.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Feature work branches from <code>main</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Forward-merges from <code>maint/*</code> into <code>main</code> are clean.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="22-crate-boundaries">22. Crate boundaries<a href="#22-crate-boundaries" class="hash-link" aria-label="Direct link to 22. Crate boundaries" title="Direct link to 22. Crate boundaries" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> No upward dependency (a lower crate must not depend on a
+higher crate).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Cross-crate type identity is preserved (no shadow types).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Public APIs of low-level crates are <em>minimal</em>; expose only
+what is needed.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="23-performance">23. Performance<a href="#23-performance" class="hash-link" aria-label="Direct link to 23. Performance" title="Direct link to 23. Performance" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> No new <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em"></span><span class="mord mathnormal" style="margin-right:0.0278em">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em"><span style="top:-3.063em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> where the original was <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mord mathnormal" style="margin-right:0.0278em">O</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span> in scan or
+build paths.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Heavy operations (proving, scanning) remain off the UI
+thread (in async or background).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Benchmarks updated when public hot paths change.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="24-changelog">24. CHANGELOG<a href="#24-changelog" class="hash-link" aria-label="Direct link to 24. CHANGELOG" title="Direct link to 24. CHANGELOG" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> Public API changes are noted in the crate&#x27;s <code>CHANGELOG.md</code>.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The CHANGELOG change is in its own commit (per project
+rule).</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> The change is described with motivation, not just &quot;what&quot;.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="25-ci">25. CI<a href="#25-ci" class="hash-link" aria-label="Direct link to 25. CI" title="Direct link to 25. CI" translate="no">​</a></h2>
+<ul class="contains-task-list containsTaskList_mC6p">
+<li class="task-list-item"><input type="checkbox" disabled=""> All feature combinations pass.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>cargo clippy --all-features --all-targets -- -D warnings</code>
+passes.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> <code>cargo fmt --all -- --check</code> passes.</li>
+<li class="task-list-item"><input type="checkbox" disabled=""> Doc-link validation passes (nightly).</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="26-the-smell-test">26. The smell test<a href="#26-the-smell-test" class="hash-link" aria-label="Direct link to 26. The smell test" title="Direct link to 26. The smell test" translate="no">​</a></h2>
+<p>A few qualitative gut checks:</p>
+<ul>
+<li class="">Is anything new being &quot;added because we already wrote it&quot;?
+(Premature abstraction.)</li>
+<li class="">Are the comments explaining &quot;what&quot; instead of &quot;why&quot;? Remove
+them.</li>
+<li class="">Is the change one logical commit, or several muddled together?
+Split.</li>
+<li class="">Does the diff include unrelated reformatting? Revert the
+unrelated parts.</li>
+<li class="">Does the test suite exercise the new code, or just compile it?</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="27-when-to-escalate">27. When to escalate<a href="#27-when-to-escalate" class="hash-link" aria-label="Direct link to 27. When to escalate" title="Direct link to 27. When to escalate" translate="no">​</a></h2>
+<p>If you find:</p>
+<ul>
+<li class="">A potential consensus-breaking bug <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> disclose privately to
+the maintainers; do not file a public issue.</li>
+<li class="">A privacy regression that affects mainnet usage <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> same.</li>
+<li class="">A constant-time violation in a hot path <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span> private disclosure
+is also appropriate.</li>
+<li class="">A clearly-bad design choice that has not yet shipped <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">→</span></span></span></span>
+comment on the PR or open a discussion.</li>
+</ul>
+<p>The maintainers&#x27; security disclosure process is at
+<a href="https://electriccoin.co/security/" target="_blank" rel="noopener noreferrer" class="">https://electriccoin.co/security/</a> (or <code>SECURITY.md</code> in this
+repo).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="28-code-review-pace">28. Code-review pace<a href="#28-code-review-pace" class="hash-link" aria-label="Direct link to 28. Code-review pace" title="Direct link to 28. Code-review pace" translate="no">​</a></h2>
+<p>Crypto code is dense. A typical Zcash PR of <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∼</mo><mn>200</mn></mrow><annotation encoding="application/x-tex">\sim 200</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:0.6444em"></span><span class="mord">200</span></span></span></span> lines may
+take 1-3 hours to review properly. If you find yourself reviewing
+in 10 minutes, you are not reviewing.</p>
+<p>The maintainers&#x27; standard is high: the project&#x27;s <code>AGENTS.md</code>
+states &quot;Many people depend on these libraries and we prefer to
+&#x27;do it right&#x27; the first time, then &#x27;make it fast&#x27;&quot;. Match that.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="29-the-recovery-posture">29. The recovery posture<a href="#29-the-recovery-posture" class="hash-link" aria-label="Direct link to 29. The recovery posture" title="Direct link to 29. The recovery posture" translate="no">​</a></h2>
+<p>If you ship a bug:</p>
+<ol>
+<li class="">Disclose internally as soon as you suspect.</li>
+<li class="">Pull the affected release if possible.</li>
+<li class="">Coordinate fix + audit + re-test before re-release.</li>
+<li class="">Public disclosure happens after mitigations are deployed.</li>
+</ol>
+<p>The 2018 counterfeit bug is the canonical playbook: discovery,
+quiet fix, coordinated migration, public disclosure. Read the ECC
+post-mortem if you want to see how it should look.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-should-know-after-this-chapter">What you should know after this chapter<a href="#what-you-should-know-after-this-chapter" class="hash-link" aria-label="Direct link to What you should know after this chapter" title="Direct link to What you should know after this chapter" translate="no">​</a></h2>
+<ul>
+<li class="">You have a concrete, item-by-item checklist for reviewing crypto
+PRs.</li>
+<li class="">The checklist condenses every chapter that came before.</li>
+<li class="">You know when to escalate vs comment.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="closing-remarks">Closing remarks<a href="#closing-remarks" class="hash-link" aria-label="Direct link to Closing remarks" title="Direct link to Closing remarks" translate="no">​</a></h2>
+<p>This course was a tour of <code>librustzcash</code> as it exists in early
+2026, with the operational and cryptographic context that a
+principal engineer should internalise before merging serious code.</p>
+<p>The protocol will evolve; the libraries will be refactored; new
+proof systems will appear. The underlying discipline - careful
+type-driven cryptography, conservative migration, deep test
+coverage, public audits - is what makes this project worth being
+part of. Honour it.</p>
+<p>Welcome to Zcash.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/22-cryptographer-code-review.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/active-research-and-nu7"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">21 - Active research and the road to NU7</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/key-catalog"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">23 - The complete key catalog</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#goal" class="table-of-contents__link toc-highlight">Goal</a></li><li><a href="#1-group-elements-on-the-wire" class="table-of-contents__link toc-highlight">1. Group elements on the wire</a></li><li><a href="#2-field-elements-on-the-wire" class="table-of-contents__link toc-highlight">2. Field elements on the wire</a></li><li><a href="#3-domain-separation" class="table-of-contents__link toc-highlight">3. Domain separation</a></li><li><a href="#4-constant-time" class="table-of-contents__link toc-highlight">4. Constant-time</a></li><li><a href="#5-zeroization" class="table-of-contents__link toc-highlight">5. Zeroization</a></li><li><a href="#6-newtype-discipline" class="table-of-contents__link toc-highlight">6. Newtype discipline</a></li><li><a href="#7-authorization-typestate" class="table-of-contents__link toc-highlight">7. Authorization typestate</a></li><li><a href="#8-test-vectors" class="table-of-contents__link toc-highlight">8. Test vectors</a></li><li><a href="#9-proptest" class="table-of-contents__link toc-highlight">9. Proptest</a></li><li><a href="#10-zip-and-spec-references" class="table-of-contents__link toc-highlight">10. ZIP and spec references</a></li><li><a href="#11-consensus-rules" class="table-of-contents__link toc-highlight">11. Consensus rules</a></li><li><a href="#12-feature-flags" class="table-of-contents__link toc-highlight">12. Feature flags</a></li><li><a href="#13-error-types" class="table-of-contents__link toc-highlight">13. Error types</a></li><li><a href="#14-documentation" class="table-of-contents__link toc-highlight">14. Documentation</a></li><li><a href="#15-serialisation-discipline" class="table-of-contents__link toc-highlight">15. Serialisation discipline</a></li><li><a href="#16-trusted-setup-parameters" class="table-of-contents__link toc-highlight">16. Trusted-setup parameters</a></li><li><a href="#17-proof-construction" class="table-of-contents__link toc-highlight">17. Proof construction</a></li><li><a href="#18-halo-2-circuit-changes" class="table-of-contents__link toc-highlight">18. Halo 2 circuit changes</a></li><li><a href="#19-privacy" class="table-of-contents__link toc-highlight">19. Privacy</a></li><li><a href="#20-concurrency" class="table-of-contents__link toc-highlight">20. Concurrency</a></li><li><a href="#21-maintenance-branches" class="table-of-contents__link toc-highlight">21. Maintenance branches</a></li><li><a href="#22-crate-boundaries" class="table-of-contents__link toc-highlight">22. Crate boundaries</a></li><li><a href="#23-performance" class="table-of-contents__link toc-highlight">23. Performance</a></li><li><a href="#24-changelog" class="table-of-contents__link toc-highlight">24. CHANGELOG</a></li><li><a href="#25-ci" class="table-of-contents__link toc-highlight">25. CI</a></li><li><a href="#26-the-smell-test" class="table-of-contents__link toc-highlight">26. The smell test</a></li><li><a href="#27-when-to-escalate" class="table-of-contents__link toc-highlight">27. When to escalate</a></li><li><a href="#28-code-review-pace" class="table-of-contents__link toc-highlight">28. Code-review pace</a></li><li><a href="#29-the-recovery-posture" class="table-of-contents__link toc-highlight">29. The recovery posture</a></li><li><a href="#what-you-should-know-after-this-chapter" class="table-of-contents__link toc-highlight">What you should know after this chapter</a></li><li><a href="#closing-remarks" class="table-of-contents__link toc-highlight">Closing remarks</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
+</body>
+</html>
