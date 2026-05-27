@@ -42,17 +42,26 @@ defaults:
 jobs:
   build-and-deploy:
     name: Build and deploy site to onboarding branch root
+    # ubuntu-latest is a moving alias to the newest supported Ubuntu
+    # runner image; GitHub bumps it as new LTS versions roll out.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        # actions/checkout v6.0.2 (latest as of 2026-05). SHA-pinned
+        # per supply-chain best practice; the trailing comment is the
+        # human-readable tag for upgrades.
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        # actions/setup-node v6.4.0 (latest as of 2026-05). SHA-pinned.
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: 20
+          # Node 24 is the current active LTS (until 2028-04-30). Node
+          # 20 left Active LTS on 2026-04-30. Docusaurus 3.10 requires
+          # Node >=20 so this is a strict upgrade.
+          node-version: 24
 
       - name: Install dependencies
         working-directory: onboarding
