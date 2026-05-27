@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
-<title data-rh="true">The wallet stack | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/wallet-stack"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="The wallet stack | librustzcash Onboarding"><meta data-rh="true" name="description" content="client_backend, scanning, fees, SQLite storage."><meta data-rh="true" property="og:description" content="client_backend, scanning, fees, SQLite storage."><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/wallet-stack"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/wallet-stack" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/wallet-stack" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"The wallet stack","item":"https://dannywillems.github.io/librustzcash/wallet-stack"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css" integrity="sha384-nH0MfJ44wi1dd7w6jinlyBgljjS8EJAh2JBoRad8a3VDw2K69vfaaqm4WnR+gXtA" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
-<script src="/librustzcash/assets/js/runtime~main.f8d24d3d.js" defer="defer"></script>
+<title data-rh="true">The wallet stack | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/wallet-stack"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="The wallet stack | librustzcash Onboarding"><meta data-rh="true" name="description" content="client_backend, scanning, fees, SQLite storage, PCZT pipeline."><meta data-rh="true" property="og:description" content="client_backend, scanning, fees, SQLite storage, PCZT pipeline."><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/wallet-stack"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/wallet-stack" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/wallet-stack" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"The wallet stack","item":"https://dannywillems.github.io/librustzcash/wallet-stack"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css" integrity="sha384-nH0MfJ44wi1dd7w6jinlyBgljjS8EJAh2JBoRad8a3VDw2K69vfaaqm4WnR+gXtA" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
+<script src="/librustzcash/assets/js/runtime~main.633eecb9.js" defer="defer"></script>
 <script src="/librustzcash/assets/js/main.62667d2f.js" defer="defer"></script>
 </head>
 <body>
@@ -12,88 +12,120 @@
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}(),document.documentElement.setAttribute("data-announcement-bar-initially-dismissed",function(){try{return"true"===localStorage.getItem("docusaurus.announcement.dismiss")}catch(t){}return!1}())</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><div class="theme-announcement-bar announcementBar_mb4j" style="background-color:#fef3c7;color:#78350f" role="banner"><div class="content_knG7 announcementBarContent_xLdY">This site is automatically generated using Claude Code. Errors may have been introduced. The code is the law, always refer to the source in the librustzcash workspace.</div></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/librustzcash/"><b class="navbar__title text--truncate">librustzcash Onboarding</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/librustzcash/">Course</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository (onboarding branch)"></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search searchBarContainer_NW3z" dir="ltr"><input placeholder="Search" aria-label="Search" class="navbar__search-input searchInput_YFbd" value=""><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG menuWithAnnouncementBar_GW3s"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/"><span title="librustzcash Onboarding" class="linkLabel_WmDU">librustzcash Onboarding</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/overview-and-roadmap"><span title="Overview and roadmap" class="linkLabel_WmDU">Overview and roadmap</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/01b-build-test-contribute"><span title="Build, test, contribute" class="linkLabel_WmDU">Build, test, contribute</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zcash-protocol-foundations"><span title="Zcash protocol foundations" class="linkLabel_WmDU">Zcash protocol foundations</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptography-primer"><span title="Cryptography primer" class="linkLabel_WmDU">Cryptography primer</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/sprout-and-sapling"><span title="Sprout and Sapling" class="linkLabel_WmDU">Sprout and Sapling</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/orchard-and-halo2"><span title="Orchard and Halo 2" class="linkLabel_WmDU">Orchard and Halo 2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/keys-addresses-zip32"><span title="Keys, addresses, ZIP 32, unified addresses" class="linkLabel_WmDU">Keys, addresses, ZIP 32, unified addresses</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/transactions-and-builder"><span title="Transactions, sighash, builder, PCZT" class="linkLabel_WmDU">Transactions, sighash, builder, PCZT</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/note-encryption"><span title="Note encryption" class="linkLabel_WmDU">Note encryption</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/equihash-and-consensus"><span title="Equihash and consensus rules" class="linkLabel_WmDU">Equihash and consensus rules</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/librustzcash/wallet-stack"><span title="The wallet stack" class="linkLabel_WmDU">The wallet stack</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/study-plan-and-exercises"><span title="Study plan and exercises" class="linkLabel_WmDU">Study plan and exercises</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/historical-bugs"><span title="Historical bugs and security incidents" class="linkLabel_WmDU">Historical bugs and security incidents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cofactors-subgroups-canonical"><span title="Cofactors, subgroups, canonical encodings" class="linkLabel_WmDU">Cofactors, subgroups, canonical encodings</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/side-channels-and-constant-time"><span title="Side channels and constant-time" class="linkLabel_WmDU">Side channels and constant-time</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/trusted-setup"><span title="Trusted setup ceremonies" class="linkLabel_WmDU">Trusted setup ceremonies</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pedersen-hash-deep-dive"><span title="Pedersen hash deep dive" class="linkLabel_WmDU">Pedersen hash deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/halo2-deep-dive"><span title="Halo 2 deep dive" class="linkLabel_WmDU">Halo 2 deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/anonymity-set-and-metadata"><span title="Anonymity set and metadata" class="linkLabel_WmDU">Anonymity set and metadata</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zip-catalog"><span title="ZIP catalog and reading order" class="linkLabel_WmDU">ZIP catalog and reading order</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/audits-and-cross-impl"><span title="Audits and cross-implementation testing" class="linkLabel_WmDU">Audits and cross-implementation testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/active-research-and-nu7"><span title="Active research and the road to NU7" class="linkLabel_WmDU">Active research and the road to NU7</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptographer-code-review"><span title="Cryptographer&#x27;s code-review checklist" class="linkLabel_WmDU">Cryptographer&#x27;s code-review checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/key-catalog"><span title="The complete key catalog" class="linkLabel_WmDU">The complete key catalog</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/circuits-constraint-by-constraint"><span title="Circuits, constraint by constraint" class="linkLabel_WmDU">Circuits, constraint by constraint</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pr-checklist"><span title="PR checklist" class="linkLabel_WmDU">PR checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/dev-cheatsheet"><span title="Developer cheat sheet" class="linkLabel_WmDU">Developer cheat sheet</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/glossary"><span title="Glossary" class="linkLabel_WmDU">Glossary</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/librustzcash/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">The wallet stack</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>10 - The wallet stack</h1></header>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="goal">Goal<a href="#goal" class="hash-link" aria-label="Direct link to Goal" title="Direct link to Goal" translate="no">​</a></h2>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-why-this-chapter-exists">1. Why this chapter exists<a href="#1-why-this-chapter-exists" class="hash-link" aria-label="Direct link to 1. Why this chapter exists" title="Direct link to 1. Why this chapter exists" translate="no">​</a></h2>
 <p>The wallet stack is what most external consumers of <code>librustzcash</code>
-actually interact with. It is a set of traits and helpers that:</p>
-<ul>
-<li class="">Define a storage-agnostic wallet model.</li>
-<li class="">Implement chain scanning (decryption + commitment-tree updates).</li>
-<li class="">Construct transaction proposals and high-level transactions.</li>
-<li class="">Talk to <code>lightwalletd</code> over gRPC.</li>
-</ul>
+actually interact with: a set of traits and helpers that define a
+storage-agnostic wallet model, implement chain scanning (trial
+decryption plus commitment-tree updates), construct transaction
+proposals, and talk to <code>lightwalletd</code> over gRPC. A contributor who
+cannot point to the trait that owns each capability will struggle
+to add a new database backend or change a fee policy without
+breaking downstream wallets. By the end of this chapter you will be
+able to identify the <code>WalletRead</code>/<code>WalletWrite</code>/
+<code>WalletCommitmentTrees</code> triangle in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/data_api.rs</code></a>,
+the scan pipeline in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/scanning.rs</code></a>,
+the proposal/builder split in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api/wallet.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/data_api/wallet.rs</code></a>,
+and the reference SQLite layout in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_sqlite" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_sqlite/</code></a>.</p>
 <p>The mathematics is largely confined to glue around the per-pool
-cryptography we have already covered; the substance here is <em>systems</em>
-and <em>protocol composition</em>. Still, you will need to know what each
-piece does, because most of your work as a principal will touch
-either this code or its callers.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-layered-traits">1. Layered traits<a href="#1-layered-traits" class="hash-link" aria-label="Direct link to 1. Layered traits" title="Direct link to 1. Layered traits" translate="no">​</a></h2>
-<p><code>zcash_client_backend::data_api</code> defines a hierarchy of traits, in
-roughly the order you discover them:</p>
+cryptography we have already covered; the substance here is systems
+and protocol composition.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-definitions">2. Definitions<a href="#2-definitions" class="hash-link" aria-label="Direct link to 2. Definitions" title="Direct link to 2. Definitions" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="21-the-trait-triangle">2.1 The trait triangle<a href="#21-the-trait-triangle" class="hash-link" aria-label="Direct link to 2.1 The trait triangle" title="Direct link to 2.1 The trait triangle" translate="no">​</a></h3>
+<p><strong>Definition (WalletRead).</strong> A read-only query interface
+parameterised by associated types <code>Error</code>, <code>AccountId</code>, <code>Account</code>,
+<code>NoteRef</code>, etc. Implementors expose every state a wallet needs to
+read without committing to a storage backend.</p>
+<p><strong>Definition (WalletWrite).</strong> A super-trait of <code>WalletRead</code> that
+adds insertion and update methods. Concrete backends implement both
+together (<code>WalletRead</code> separately, then <code>WalletWrite: WalletRead</code>).</p>
+<p><strong>Definition (WalletCommitmentTrees).</strong> The companion trait that
+owns Sapling and Orchard commitment-tree state via the <code>shardtree</code>
+crate. Separated from <code>WalletWrite</code> because tree updates have
+distinct concurrency requirements.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="22-two-phase-transaction-construction">2.2 Two-phase transaction construction<a href="#22-two-phase-transaction-construction" class="hash-link" aria-label="Direct link to 2.2 Two-phase transaction construction" title="Direct link to 2.2 Two-phase transaction construction" translate="no">​</a></h3>
+<p><strong>Definition (Proposal).</strong> Given a <code>zip321::TransactionRequest</code> and
+a fee strategy, the proposal is a deterministic
+<code>Proposal&lt;FeeRule, NoteRef&gt;</code> listing inputs (which notes to spend),
+outputs (recipients and amounts), the fee, and the change
+output(s). No randomness, no proofs.</p>
+<p><strong>Definition (Build).</strong> The proposal is fed into the builder of
+chapter 07 to produce the actual transaction including proofs and
+signatures.</p>
+<p><strong>Invariant (proposal review).</strong> The proposal phase makes the
+user&#x27;s intent reviewable: the UI can show &quot;you are about to spend
+these notes, this is the fee&quot; and ask for confirmation before any
+expensive proving begins.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="23-chain-scanning">2.3 Chain scanning<a href="#23-chain-scanning" class="hash-link" aria-label="Direct link to 2.3 Chain scanning" title="Direct link to 2.3 Chain scanning" translate="no">​</a></h3>
+<p><strong>Definition (scan).</strong> For each block from a starting height, the
+scanner finds every shielded output and nullifier that affects the
+wallet&#x27;s tracked accounts. The block arrives as a <code>CompactBlock</code>
+(per-output commitment, ephemeral key, and 52-byte ciphertext
+prefix) from <code>lightwalletd</code>. The scanner:</p>
+<ol>
+<li class="">Trial-decrypts every output against every tracked
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="sans-serif">i</mi><mi mathvariant="sans-serif">v</mi><mi mathvariant="sans-serif">k</mi></mrow><annotation encoding="application/x-tex">\mathsf{ivk}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em"></span><span class="mord"><span class="mord mathsf">ivk</span></span></span></span></span> (chapter 08).</li>
+<li class="">For each transparent output, checks tracked UFVK-derived
+transparent receivers.</li>
+<li class="">For each shielded spend, extracts the nullifier and checks it
+against the wallet&#x27;s unspent-note nullifier set.</li>
+<li class="">Updates the commitment-tree state (positions, frontier).</li>
+<li class="">Updates the wallet DB.</li>
+</ol>
+<p><strong>Definition (checkpoint discipline).</strong> Every <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal" style="margin-right:0.0715em">K</span></span></span></span> blocks
+(configurable), the commitment-tree state is snapshotted so that
+rollbacks (chain reorgs) only have to revert from a checkpoint
+rather than from genesis.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="24-pczt-pipeline">2.4 PCZT pipeline<a href="#24-pczt-pipeline" class="hash-link" aria-label="Direct link to 2.4 PCZT pipeline" title="Direct link to 2.4 PCZT pipeline" translate="no">​</a></h3>
+<p><strong>Definition (PCZT flow).</strong> When the wallet uses an external prover
+or signer, the bundle round-trips through PCZT serialised form,
+with each role mutating only the slots it owns (chapter 07).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-the-code">3. The code<a href="#3-the-code" class="hash-link" aria-label="Direct link to 3. The code" title="Direct link to 3. The code" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="31-the-trait-layering">3.1 The trait layering<a href="#31-the-trait-layering" class="hash-link" aria-label="Direct link to 3.1 The trait layering" title="Direct link to 3.1 The trait layering" translate="no">​</a></h3>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">WalletRead       (read-only queries)</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">  ^</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">  |  super-trait</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">  |</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">WalletWrite      (insertions and updates)</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">  ^</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">  |</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">WalletCommitmentTrees  (commitment-tree state)</span><br></div></code></pre></div></div>
-<p>Each trait is parameterised by associated types:</p>
-<ul>
-<li class=""><code>Self::Error</code>: storage-specific error.</li>
-<li class=""><code>Self::AccountId</code>: opaque account identifier.</li>
-<li class=""><code>Self::Account</code>: the per-account record.</li>
-<li class=""><code>Self::NoteRef</code>: opaque per-note identifier.</li>
-<li class="">...</li>
-</ul>
-<p>This generic-over-storage design lets the same wallet logic run with
-SQLite, in-memory, encrypted, or any other backing store.</p>
+<p><code>WalletRead</code> is the largest API surface. Its associated types
+encode the storage abstraction:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">zcash_client_backend/src/data_api.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api.rs#L1534-L1563" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
 <p>Concrete implementations:</p>
 <ul>
-<li class=""><code>zcash_client_sqlite::WalletDb</code>: SQLite, the reference.</li>
-<li class=""><code>zcash_client_memory::MemoryWalletDb</code>: in-memory, for tests.</li>
+<li class=""><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_sqlite/src/lib.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_sqlite::WalletDb</code></a>:
+SQLite, the reference.</li>
+<li class=""><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_memory/src/lib.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_memory::MemoryWalletDb</code></a>:
+in-memory, for tests.</li>
 <li class="">Downstream: wallet apps implement their own where needed.</li>
 </ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-chain-scanning">2. Chain scanning<a href="#2-chain-scanning" class="hash-link" aria-label="Direct link to 2. Chain scanning" title="Direct link to 2. Chain scanning" translate="no">​</a></h2>
-<p>The scan pipeline is in <code>zcash_client_backend::scanning</code>. The job:
-for each block from a starting height, find every shielded output and
-nullifier that affects the wallet&#x27;s tracked accounts.</p>
-<p>The algorithm:</p>
+<p><code>InputSource</code> (defined just above <code>WalletRead</code> in the same file) is
+the read interface used during note selection; the trait split lets
+proposals depend on <code>InputSource</code> without dragging in the full
+write surface.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="32-chain-scanning-entry-point">3.2 Chain scanning entry point<a href="#32-chain-scanning-entry-point" class="hash-link" aria-label="Direct link to 3.2 Chain scanning entry point" title="Direct link to 3.2 Chain scanning entry point" translate="no">​</a></h3>
+<p>The public function is <code>scan_block</code>:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">zcash_client_backend/src/scanning.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs#L609-L630" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<p>It takes a <code>CompactBlock</code>, the set of <code>ScanningKeys</code>, and the
+nullifier index, and returns a <code>ScannedBlock</code> with the matched
+notes and spent nullifiers. Trial decryption runs in batches
+internally via <code>scan_block_with_runners</code>.</p>
+<p>The commitment-tree implementation is <code>shardtree</code>, an external
+crate that stores a sharded checkpointed incremental Merkle tree on
+disk efficiently.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="33-proposals-and-transactions">3.3 Proposals and transactions<a href="#33-proposals-and-transactions" class="hash-link" aria-label="Direct link to 3.3 Proposals and transactions" title="Direct link to 3.3 Proposals and transactions" translate="no">​</a></h3>
+<p>A wallet building a transaction goes through:</p>
 <ol>
-<li class="">Pull a block (or a <code>CompactBlock</code> from lightwalletd) which contains
-per-output commitments, ephemeral keys, and a 52-byte compact
-ciphertext prefix.</li>
-<li class="">For each output, <strong>trial-decrypt</strong> with every <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="sans-serif">i</mi><mi mathvariant="sans-serif">v</mi><mi mathvariant="sans-serif">k</mi></mrow><annotation encoding="application/x-tex">\mathsf{ivk}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em"></span><span class="mord"><span class="mord mathsf">ivk</span></span></span></span></span> the
-wallet tracks (chapter 08). On success: record the note.</li>
-<li class="">For each transparent output: check against tracked UFVK-derived
-transparent receivers.</li>
-<li class="">For each shielded spend: extract the nullifier and check it
-against the wallet&#x27;s set of unspent-note nullifiers.</li>
-<li class="">Update the commitment-tree state (positions, frontier).</li>
-<li class="">Update the wallet DB.</li>
+<li class=""><code>propose_transfer</code> (or <code>propose_shielding</code> for coinbase or
+transparent funds) builds a <code>Proposal</code> from a
+<code>TransactionRequest</code>. This phase is deterministic.</li>
+<li class=""><code>create_proposed_transactions</code> consumes the <code>Proposal</code>, runs
+the per-pool builders, the prover, the signer, and returns the
+final <code>Transaction</code>.</li>
 </ol>
-<p>Scanning runs in batches. Implementation detail: trial decryption is
-parallelised across outputs and accounts. The scanner uses a
-<strong>checkpoint</strong> discipline: every <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal" style="margin-right:0.0715em">K</span></span></span></span> blocks (configurable), the
-commitment-tree state is snapshotted so that rollbacks (in case of a
-chain reorg) only have to revert from a checkpoint.</p>
-<p>The commitment-tree implementation is <code>shardtree</code>, an external crate
-that stores a sharded checkpointed incremental Merkle tree on disk
-efficiently.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-proposals-and-transactions">3. Proposals and transactions<a href="#3-proposals-and-transactions" class="hash-link" aria-label="Direct link to 3. Proposals and transactions" title="Direct link to 3. Proposals and transactions" translate="no">​</a></h2>
-<p>A wallet building a transaction goes through a two-phase pipeline:</p>
-<ol>
-<li class=""><strong>Proposal</strong>: given a <code>TransactionRequest</code> (chapter 06: ZIP 321
-payment request) and a fee strategy, the wallet computes a
-<code>Proposal&lt;Fee, NoteRef&gt;</code> that lists the inputs (which notes to
-spend), the outputs (recipients and amounts), the fee, and the
-change output(s). This is <strong>purely deterministic</strong> given the
-wallet state: no randomness, no proofs.</li>
-<li class=""><strong>Build</strong>: the proposal is fed into <code>Builder</code> (chapter 07) to
-produce the actual transaction, including proofs and signatures.</li>
-</ol>
-<p>Why split? The proposal phase makes the user&#x27;s intent reviewable: the
-UI can show &quot;you are about to spend these notes, this is the fee&quot; and
-ask for confirmation, before any expensive proving begins.</p>
-<p>Read in code:</p>
-<ul>
-<li class=""><code>zcash_client_backend/src/proposal.rs</code>: the <code>Proposal</code> type.</li>
-<li class=""><code>zcash_client_backend/src/data_api/wallet.rs</code>:
-<code>propose_transfer</code>, <code>propose_shielding</code>, <code>create_proposed_transactions</code>.</li>
-</ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-fee-strategies">4. Fee strategies<a href="#4-fee-strategies" class="hash-link" aria-label="Direct link to 4. Fee strategies" title="Direct link to 4. Fee strategies" translate="no">​</a></h2>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">zcash_client_backend/src/data_api/wallet.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api/wallet.rs#L628-L657" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<p>The proposal phase calls into note selection (<code>InputSelector</code>) and
+change strategy (<code>ChangeStrategy</code>); the build phase calls the
+crypto.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="34-fee-strategies">3.4 Fee strategies<a href="#34-fee-strategies" class="hash-link" aria-label="Direct link to 3.4 Fee strategies" title="Direct link to 3.4 Fee strategies" translate="no">​</a></h3>
 <p>ZIP 317 is the default (chapter 07). The wallet exposes a <code>FeeRule</code>
 trait that proposers consume. Concrete strategies:</p>
 <ul>
@@ -101,20 +133,20 @@ trait that proposers consume. Concrete strategies:</p>
 <li class="">A &quot;fixed&quot; rule used historically (pre-NU5).</li>
 <li class="">Custom rules can be plugged in.</li>
 </ul>
-<p>Change-output selection is handled by a separate trait
-(<code>ChangeStrategy</code>); the default policy is to keep change in the same
-pool as the destination when possible (to avoid cross-pool flows that
-make analysis easier).</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-zip-321-payment-requests">5. ZIP 321 payment requests<a href="#5-zip-321-payment-requests" class="hash-link" aria-label="Direct link to 5. ZIP 321 payment requests" title="Direct link to 5. ZIP 321 payment requests" translate="no">​</a></h2>
+<p>Change-output selection is handled by <code>ChangeStrategy</code>; the default
+policy keeps change in the same pool as the destination when
+possible, to avoid cross-pool flows that simplify analysis.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="35-zip-321-payment-requests">3.5 ZIP 321 payment requests<a href="#35-zip-321-payment-requests" class="hash-link" aria-label="Direct link to 3.5 ZIP 321 payment requests" title="Direct link to 3.5 ZIP 321 payment requests" translate="no">​</a></h3>
 <p>ZIP 321 is a URI format:</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">zcash:address?amount=N.MMMMMMMM&amp;memo=...&amp;label=...</span><br></div></code></pre></div></div>
-<p>Multi-output requests are also supported. Parsing and building lives
-in <code>components/zip321</code>.</p>
-<p>The wallet can take a <code>TransactionRequest</code> (one or more outputs from a
-ZIP 321 URI) and feed it through the proposal pipeline.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-the-light-wallet-protocol">6. The light-wallet protocol<a href="#6-the-light-wallet-protocol" class="hash-link" aria-label="Direct link to 6. The light-wallet protocol" title="Direct link to 6. The light-wallet protocol" translate="no">​</a></h2>
-<p><code>zcash_client_backend::proto::service</code> (generated protobufs) defines
-the gRPC interface to <code>lightwalletd</code>:</p>
+<p>Multi-output requests are also supported. Parsing and building
+live in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zip321" target="_blank" rel="noopener noreferrer" class=""><code>components/zip321/</code></a>.</p>
+<p>The wallet takes a <code>TransactionRequest</code> (one or more outputs from a
+ZIP 321 URI) and feeds it through the proposal pipeline.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="36-the-light-wallet-protocol">3.6 The light-wallet protocol<a href="#36-the-light-wallet-protocol" class="hash-link" aria-label="Direct link to 3.6 The light-wallet protocol" title="Direct link to 3.6 The light-wallet protocol" translate="no">​</a></h3>
+<p><code>zcash_client_backend::proto::service</code> (generated protobufs)
+defines the gRPC interface to <code>lightwalletd</code>:</p>
 <ul>
 <li class=""><code>GetLatestBlock</code>, <code>GetBlock</code>, <code>GetBlockRange</code>: chain access.</li>
 <li class=""><code>GetCompactBlock</code>, <code>GetCompactBlockRange</code>: stripped-down blocks
@@ -126,71 +158,140 @@ shielding).</li>
 </ul>
 <p>The wallet drives this via <code>zcash_client_backend::lightwalletd_tonic</code>
 behind a feature flag.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-storage-layout-sqlite">7. Storage layout (SQLite)<a href="#7-storage-layout-sqlite" class="hash-link" aria-label="Direct link to 7. Storage layout (SQLite)" title="Direct link to 7. Storage layout (SQLite)" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="37-storage-layout-sqlite">3.7 Storage layout (SQLite)<a href="#37-storage-layout-sqlite" class="hash-link" aria-label="Direct link to 3.7 Storage layout (SQLite)" title="Direct link to 3.7 Storage layout (SQLite)" translate="no">​</a></h3>
 <p>The SQLite backend uses a small set of tables (paraphrased):</p>
 <ul>
 <li class=""><code>accounts</code>: one row per account, UFVK metadata.</li>
 <li class=""><code>addresses</code>: one row per derived address.</li>
 <li class=""><code>transactions</code>: one row per known transaction.</li>
-<li class=""><code>sapling_received_notes</code>, <code>orchard_received_notes</code>: received notes.</li>
+<li class=""><code>sapling_received_notes</code>, <code>orchard_received_notes</code>: received
+notes.</li>
 <li class=""><code>sent_notes</code>: outgoing payments (from the sender&#x27;s POV).</li>
 <li class=""><code>sapling_witnesses</code>, <code>orchard_witnesses</code>: per-note Merkle paths
 (efficient witness updates).</li>
 <li class=""><code>blocks</code>, <code>block_metadata</code>: chain state.</li>
-<li class=""><code>nullifier_map</code>: maps spent-nullifier -&gt; note-id for fast spent
-detection.</li>
+<li class=""><code>nullifier_map</code>: maps spent-nullifier -&gt; note-id for fast
+spent-detection.</li>
 </ul>
-<p>The schema is migrated via SQL files in <code>zcash_client_sqlite/src/wallet/init/migrations/</code>.
-Each migration is a UUID-named module; the system records which UUIDs
-have run so upgrades are idempotent.</p>
+<p>The schema is migrated via SQL files in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_sqlite/src/wallet/init/migrations" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_sqlite/src/wallet/init/migrations/</code></a>.
+Each migration is a UUID-named module; the system records which
+UUIDs have run, so upgrades are idempotent.</p>
 <p>When you read <code>zcash_client_sqlite</code>, start from <code>lib.rs::WalletDb</code>,
 follow trait implementations into <code>wallet.rs</code>, then the migration
 modules.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-the-pczt-flow-inside-the-wallet">8. The <code>pczt</code> flow inside the wallet<a href="#8-the-pczt-flow-inside-the-wallet" class="hash-link" aria-label="Direct link to 8-the-pczt-flow-inside-the-wallet" title="Direct link to 8-the-pczt-flow-inside-the-wallet" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="38-pczt-flow-inside-the-wallet">3.8 PCZT flow inside the wallet<a href="#38-pczt-flow-inside-the-wallet" class="hash-link" aria-label="Direct link to 3.8 PCZT flow inside the wallet" title="Direct link to 3.8 PCZT flow inside the wallet" translate="no">​</a></h3>
 <p>When the wallet uses an external prover or signer:</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">WalletWrite -&gt; Builder -&gt; PCZT (constructor stage)</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">                          -&gt; [over the wire] -&gt; PCZT (prover stage)</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">                          -&gt; [over the wire] -&gt; PCZT (signer stage)</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">                          -&gt; Tx Extractor -&gt; Transaction</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">                          -&gt; WalletWrite::store_decrypted_tx(...)</span><br></div></code></pre></div></div>
 <p>The <code>pczt</code> crate is the wire format. The wallet records the PCZT
 itself in storage (so that it can resume from a partial state) and
 the final transaction once extracted.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-the-tor-feature">9. The &quot;tor&quot; feature<a href="#9-the-tor-feature" class="hash-link" aria-label="Direct link to 9. The &quot;tor&quot; feature" title="Direct link to 9. The &quot;tor&quot; feature" translate="no">​</a></h2>
-<p><code>zcash_client_backend::tor</code> provides a tor-tunnelled HTTP client for
-fetching parameters and connecting to lightwalletd. This is a privacy
-feature, not a cryptographic one, but it lives here because the
-client backend orchestrates network calls.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-the-serialization-module">10. The serialization module<a href="#10-the-serialization-module" class="hash-link" aria-label="Direct link to 10. The serialization module" title="Direct link to 10. The serialization module" translate="no">​</a></h2>
-<p><code>zcash_client_backend::serialization</code>: a vendored copy of the wire
-format for <code>Proposal</code>s and other wallet data types, with version
-gates. This is the data the wallet emits to its UI or to peer
-wallets; do not confuse it with the consensus wire format.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-things-to-know-as-a-principal">11. Things to know as a principal<a href="#11-things-to-know-as-a-principal" class="hash-link" aria-label="Direct link to 11. Things to know as a principal" title="Direct link to 11. Things to know as a principal" translate="no">​</a></h2>
-<ul>
-<li class="">The wallet model is <strong>append-only</strong> at the chain level: blocks are
-scanned forward; rollbacks are handled by reverting to a
-checkpoint and re-scanning.</li>
-<li class="">The commitment tree is the largest hot data structure. Inefficient
-witness updates have been a recurring bug source. Read <code>shardtree</code>
-before you touch this.</li>
-<li class="">Light clients often have access to the <strong>CompactBlock</strong> wire
-format but not full transactions, so the wallet must do trial
-decryption from minimal data and fetch the full tx only when a
-note is found.</li>
-<li class="">The fee strategy is <em>almost</em> the only place in the codebase where
-network-economic policy is encoded. Changing it changes behaviour
-for every downstream consumer.</li>
-</ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-the-zcash-umbrella-crate">12. The <code>zcash</code> umbrella crate<a href="#12-the-zcash-umbrella-crate" class="hash-link" aria-label="Direct link to 12-the-zcash-umbrella-crate" title="Direct link to 12-the-zcash-umbrella-crate" translate="no">​</a></h2>
-<p>There is a top-level <code>zcash/</code> crate in the workspace that just
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="39-the-tor-feature">3.9 The <code>tor</code> feature<a href="#39-the-tor-feature" class="hash-link" aria-label="Direct link to 39-the-tor-feature" title="Direct link to 39-the-tor-feature" translate="no">​</a></h3>
+<p><code>zcash_client_backend::tor</code> provides a Tor-tunnelled HTTP client
+for fetching parameters and connecting to lightwalletd. This is a
+privacy feature, not a cryptographic one, but it lives here
+because the client backend orchestrates network calls.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="310-the-serialization-module">3.10 The serialization module<a href="#310-the-serialization-module" class="hash-link" aria-label="Direct link to 3.10 The serialization module" title="Direct link to 3.10 The serialization module" translate="no">​</a></h3>
+<p><code>zcash_client_backend::serialization</code> is a vendored copy of the
+wire format for <code>Proposal</code>s and other wallet data types, with
+version gates. This is the data the wallet emits to its UI or to
+peer wallets; do not confuse it with the consensus wire format.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="311-the-zcash-umbrella-crate">3.11 The <code>zcash</code> umbrella crate<a href="#311-the-zcash-umbrella-crate" class="hash-link" aria-label="Direct link to 311-the-zcash-umbrella-crate" title="Direct link to 311-the-zcash-umbrella-crate" translate="no">​</a></h3>
+<p>There is a top-level <code>zcash/</code> crate in the workspace that
 re-exports common types from the lower crates with friendly names.
 It is intentionally thin; you almost never need to touch it.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-should-know-after-this-chapter">What you should know after this chapter<a href="#what-you-should-know-after-this-chapter" class="hash-link" aria-label="Direct link to What you should know after this chapter" title="Direct link to What you should know after this chapter" translate="no">​</a></h2>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-failure-modes">4. Failure modes<a href="#4-failure-modes" class="hash-link" aria-label="Direct link to 4. Failure modes" title="Direct link to 4. Failure modes" translate="no">​</a></h2>
 <ul>
-<li class="">The trait layering of <code>WalletRead/WalletWrite/WalletCommitmentTrees</code>.</li>
-<li class="">The scan pipeline and checkpoint discipline.</li>
-<li class="">The split between Proposal (no crypto) and Build (crypto).</li>
-<li class="">The light-wallet gRPC surface.</li>
-<li class="">The SQLite schema at a glance.</li>
+<li class=""><strong>Trait surface bloat.</strong> <code>WalletRead</code> has grown over time; adding
+new query methods without thinking about the
+<code>zcash_client_memory</code> and <code>zcash_client_sqlite</code> implementations
+produces an asymmetric API. New methods should always be added
+with default implementations or with concrete backings in both
+backends.</li>
+<li class=""><strong>Checkpoint loss after reorg.</strong> The scanner relies on
+checkpoints to bound rollback cost. A bug that fails to record a
+checkpoint at the configured interval makes a reorg silently
+expensive (full re-scan from genesis in the worst case).</li>
+<li class=""><strong>Witness-update efficiency.</strong> The commitment tree is the largest
+hot data structure. Inefficient witness updates have been a
+recurring bug source. Read <code>shardtree</code> before you touch this.
+Adding a new query that retrieves witnesses must use the sharded
+layout, not the legacy whole-tree path.</li>
+<li class=""><strong>Proposal phase determinism violations.</strong> Adding randomness to
+proposal generation breaks UI confirmation flows: the user sees
+one proposal, the build phase produces a different transaction.
+All randomness belongs in the build phase.</li>
+<li class=""><strong>Fee strategy as policy hook.</strong> The fee strategy is almost the
+only place in the codebase where network-economic policy is
+encoded. Changing it changes behaviour for every downstream
+consumer; any modification should be accompanied by a clear note
+in the PR description and CHANGELOG entry.</li>
+<li class=""><strong>Migration UUID collision.</strong> SQLite migrations are keyed by
+UUID. Two PRs that each add a migration with overlapping
+dependencies must be coordinated; missing this produces a
+database that records contradictory migration states.</li>
+<li class=""><strong>Transaction-request injection.</strong> A malicious ZIP 321 URI with
+unusual amount strings or memo bytes must round-trip safely
+through the parser. Fuzz coverage of <code>zip321::parse</code> is
+essential before changing the grammar.</li>
 </ul>
-<p>You have now finished the substantive part of the course. Last
-chapter: study plan and exercises.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/10-wallet-stack.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/equihash-and-consensus"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Equihash and consensus rules</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/study-plan-and-exercises"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Study plan and exercises</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#goal" class="table-of-contents__link toc-highlight">Goal</a></li><li><a href="#1-layered-traits" class="table-of-contents__link toc-highlight">1. Layered traits</a></li><li><a href="#2-chain-scanning" class="table-of-contents__link toc-highlight">2. Chain scanning</a></li><li><a href="#3-proposals-and-transactions" class="table-of-contents__link toc-highlight">3. Proposals and transactions</a></li><li><a href="#4-fee-strategies" class="table-of-contents__link toc-highlight">4. Fee strategies</a></li><li><a href="#5-zip-321-payment-requests" class="table-of-contents__link toc-highlight">5. ZIP 321 payment requests</a></li><li><a href="#6-the-light-wallet-protocol" class="table-of-contents__link toc-highlight">6. The light-wallet protocol</a></li><li><a href="#7-storage-layout-sqlite" class="table-of-contents__link toc-highlight">7. Storage layout (SQLite)</a></li><li><a href="#8-the-pczt-flow-inside-the-wallet" class="table-of-contents__link toc-highlight">8. The <code>pczt</code> flow inside the wallet</a></li><li><a href="#9-the-tor-feature" class="table-of-contents__link toc-highlight">9. The &quot;tor&quot; feature</a></li><li><a href="#10-the-serialization-module" class="table-of-contents__link toc-highlight">10. The serialization module</a></li><li><a href="#11-things-to-know-as-a-principal" class="table-of-contents__link toc-highlight">11. Things to know as a principal</a></li><li><a href="#12-the-zcash-umbrella-crate" class="table-of-contents__link toc-highlight">12. The <code>zcash</code> umbrella crate</a></li><li><a href="#what-you-should-know-after-this-chapter" class="table-of-contents__link toc-highlight">What you should know after this chapter</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-spec-pointers">5. Spec pointers<a href="#5-spec-pointers" class="hash-link" aria-label="Direct link to 5. Spec pointers" title="Direct link to 5. Spec pointers" translate="no">​</a></h2>
+<ul>
+<li class=""><a href="https://zips.z.cash/zip-0032" target="_blank" rel="noopener noreferrer" class="">ZIP 32 - Shielded HD wallets</a>:
+the account derivation cited throughout <code>WalletRead::Account</code>.</li>
+<li class=""><a href="https://zips.z.cash/zip-0316" target="_blank" rel="noopener noreferrer" class="">ZIP 316 - Unified Addresses and Viewing Keys</a>:
+the UFVK/UIVK container types stored in the <code>accounts</code> table.</li>
+<li class=""><a href="https://zips.z.cash/zip-0317" target="_blank" rel="noopener noreferrer" class="">ZIP 317 - Proportional Transfer Fee Mechanism</a>:
+the default <code>FeeRule</code> used by proposers.</li>
+<li class=""><a href="https://zips.z.cash/zip-0321" target="_blank" rel="noopener noreferrer" class="">ZIP 321 - Payment Request URIs</a>:
+the URI grammar parsed by <code>components/zip321</code>.</li>
+<li class=""><a href="https://zips.z.cash/zip-0307" target="_blank" rel="noopener noreferrer" class="">ZIP 307 - Light Client Protocol for Payment Detection</a>:
+the compact-decryption optimisation that motivates
+<code>CompactBlock</code>.</li>
+<li class=""><a href="https://github.com/zcash/lightwalletd/blob/master/walletrpc/service.proto" target="_blank" rel="noopener noreferrer" class="">lightwalletd protobuf service</a>:
+the upstream <code>.proto</code> definitions for the gRPC surface listed in
+Section 3.6.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-exercises">6. Exercises<a href="#6-exercises" class="hash-link" aria-label="Direct link to 6. Exercises" title="Direct link to 6. Exercises" translate="no">​</a></h2>
+<ol>
+<li class=""><strong>Map a wallet query.</strong> For the query &quot;what is the total
+spendable balance of account <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal">A</span></span></span></span>?&quot;, trace the call chain from
+the public <code>WalletRead</code> method, through the <code>zcash_client_sqlite</code>
+implementation, down to the SQL query that runs. Cite each file
+and line.</li>
+<li class=""><strong>Identify the checkpoint policy.</strong> Locate where the scanner
+decides to record a checkpoint. State the configurable parameter
+and its default value. Cite the file and line.</li>
+<li class=""><strong>Modify and test (code change).</strong> Add a new <code>FeeRule</code>
+implementation under <code>zcash_primitives/src/transaction/fees</code>
+that returns a flat 12,500 zatoshi fee for any transaction and
+add a unit test demonstrating that proposals built with this
+rule produce the expected fee. Then re-run the existing fee
+tests with the default ZIP 317 rule to confirm they still pass.</li>
+<li class=""><strong>Read a migration.</strong> Pick one migration UUID under
+<code>zcash_client_sqlite/src/wallet/init/migrations</code> and write a
+one-paragraph summary of what it does, what state it produces,
+and what state it requires as a precondition.</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="answers-in-the-code">Answers in the code<a href="#answers-in-the-code" class="hash-link" aria-label="Direct link to Answers in the code" title="Direct link to Answers in the code" translate="no">​</a></h3>
+<ul>
+<li class=""><code>WalletRead</code> trait:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api.rs#L1534-L1563" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/data_api.rs#L1534-L1563</code></a>.</li>
+<li class=""><code>scan_block</code>:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs#L609-L630" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/scanning.rs#L609-L630</code></a>.</li>
+<li class=""><code>propose_transfer</code>:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api/wallet.rs#L628-L657" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/data_api/wallet.rs#L628-L657</code></a>.</li>
+<li class="">SQLite migration registry:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_sqlite/src/wallet/init/migrations" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_sqlite/src/wallet/init/migrations</code></a>.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-further-reading">7. Further reading<a href="#7-further-reading" class="hash-link" aria-label="Direct link to 7. Further reading" title="Direct link to 7. Further reading" translate="no">​</a></h2>
+<ul>
+<li class=""><a class="" href="/librustzcash/study-plan-and-exercises">chapter 11</a>: the study plan
+that converges on a contribution to this layer.</li>
+<li class=""><a href="https://github.com/zcash/incrementalmerkletree" target="_blank" rel="noopener noreferrer" class="">shardtree</a>:
+the external crate that backs the commitment-tree state.</li>
+<li class=""><a href="https://github.com/Electric-Coin-Company/zcash-light-client-ffi" target="_blank" rel="noopener noreferrer" class="">zcash-light-client-ffi</a>:
+the Swift/Kotlin downstream FFI that consumes this stack.</li>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/10-wallet-stack.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/equihash-and-consensus"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Equihash and consensus rules</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/study-plan-and-exercises"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Study plan and exercises</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-why-this-chapter-exists" class="table-of-contents__link toc-highlight">1. Why this chapter exists</a></li><li><a href="#2-definitions" class="table-of-contents__link toc-highlight">2. Definitions</a><ul><li><a href="#21-the-trait-triangle" class="table-of-contents__link toc-highlight">2.1 The trait triangle</a></li><li><a href="#22-two-phase-transaction-construction" class="table-of-contents__link toc-highlight">2.2 Two-phase transaction construction</a></li><li><a href="#23-chain-scanning" class="table-of-contents__link toc-highlight">2.3 Chain scanning</a></li><li><a href="#24-pczt-pipeline" class="table-of-contents__link toc-highlight">2.4 PCZT pipeline</a></li></ul></li><li><a href="#3-the-code" class="table-of-contents__link toc-highlight">3. The code</a><ul><li><a href="#31-the-trait-layering" class="table-of-contents__link toc-highlight">3.1 The trait layering</a></li><li><a href="#32-chain-scanning-entry-point" class="table-of-contents__link toc-highlight">3.2 Chain scanning entry point</a></li><li><a href="#33-proposals-and-transactions" class="table-of-contents__link toc-highlight">3.3 Proposals and transactions</a></li><li><a href="#34-fee-strategies" class="table-of-contents__link toc-highlight">3.4 Fee strategies</a></li><li><a href="#35-zip-321-payment-requests" class="table-of-contents__link toc-highlight">3.5 ZIP 321 payment requests</a></li><li><a href="#36-the-light-wallet-protocol" class="table-of-contents__link toc-highlight">3.6 The light-wallet protocol</a></li><li><a href="#37-storage-layout-sqlite" class="table-of-contents__link toc-highlight">3.7 Storage layout (SQLite)</a></li><li><a href="#38-pczt-flow-inside-the-wallet" class="table-of-contents__link toc-highlight">3.8 PCZT flow inside the wallet</a></li><li><a href="#39-the-tor-feature" class="table-of-contents__link toc-highlight">3.9 The <code>tor</code> feature</a></li><li><a href="#310-the-serialization-module" class="table-of-contents__link toc-highlight">3.10 The serialization module</a></li><li><a href="#311-the-zcash-umbrella-crate" class="table-of-contents__link toc-highlight">3.11 The <code>zcash</code> umbrella crate</a></li></ul></li><li><a href="#4-failure-modes" class="table-of-contents__link toc-highlight">4. Failure modes</a></li><li><a href="#5-spec-pointers" class="table-of-contents__link toc-highlight">5. Spec pointers</a></li><li><a href="#6-exercises" class="table-of-contents__link toc-highlight">6. Exercises</a><ul><li><a href="#answers-in-the-code" class="table-of-contents__link toc-highlight">Answers in the code</a></li></ul></li><li><a href="#7-further-reading" class="table-of-contents__link toc-highlight">7. Further reading</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
 </body>
 </html>

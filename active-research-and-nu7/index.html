@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
 <title data-rh="true">Active research and the road to NU7 | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/active-research-and-nu7"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Active research and the road to NU7 | librustzcash Onboarding"><meta data-rh="true" name="description" content="v6 tx, ZSAs, ZIP 233 burn, recursion, PQ."><meta data-rh="true" property="og:description" content="v6 tx, ZSAs, ZIP 233 burn, recursion, PQ."><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/active-research-and-nu7"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/active-research-and-nu7" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/active-research-and-nu7" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Active research and the road to NU7","item":"https://dannywillems.github.io/librustzcash/active-research-and-nu7"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css" integrity="sha384-nH0MfJ44wi1dd7w6jinlyBgljjS8EJAh2JBoRad8a3VDw2K69vfaaqm4WnR+gXtA" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
-<script src="/librustzcash/assets/js/runtime~main.f8d24d3d.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/runtime~main.633eecb9.js" defer="defer"></script>
 <script src="/librustzcash/assets/js/main.62667d2f.js" defer="defer"></script>
 </head>
 <body>
@@ -12,237 +12,322 @@
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}(),document.documentElement.setAttribute("data-announcement-bar-initially-dismissed",function(){try{return"true"===localStorage.getItem("docusaurus.announcement.dismiss")}catch(t){}return!1}())</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><div class="theme-announcement-bar announcementBar_mb4j" style="background-color:#fef3c7;color:#78350f" role="banner"><div class="content_knG7 announcementBarContent_xLdY">This site is automatically generated using Claude Code. Errors may have been introduced. The code is the law, always refer to the source in the librustzcash workspace.</div></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/librustzcash/"><b class="navbar__title text--truncate">librustzcash Onboarding</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/librustzcash/">Course</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository (onboarding branch)"></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search searchBarContainer_NW3z" dir="ltr"><input placeholder="Search" aria-label="Search" class="navbar__search-input searchInput_YFbd" value=""><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG menuWithAnnouncementBar_GW3s"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/"><span title="librustzcash Onboarding" class="linkLabel_WmDU">librustzcash Onboarding</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/overview-and-roadmap"><span title="Overview and roadmap" class="linkLabel_WmDU">Overview and roadmap</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/01b-build-test-contribute"><span title="Build, test, contribute" class="linkLabel_WmDU">Build, test, contribute</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zcash-protocol-foundations"><span title="Zcash protocol foundations" class="linkLabel_WmDU">Zcash protocol foundations</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptography-primer"><span title="Cryptography primer" class="linkLabel_WmDU">Cryptography primer</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/sprout-and-sapling"><span title="Sprout and Sapling" class="linkLabel_WmDU">Sprout and Sapling</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/orchard-and-halo2"><span title="Orchard and Halo 2" class="linkLabel_WmDU">Orchard and Halo 2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/keys-addresses-zip32"><span title="Keys, addresses, ZIP 32, unified addresses" class="linkLabel_WmDU">Keys, addresses, ZIP 32, unified addresses</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/transactions-and-builder"><span title="Transactions, sighash, builder, PCZT" class="linkLabel_WmDU">Transactions, sighash, builder, PCZT</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/note-encryption"><span title="Note encryption" class="linkLabel_WmDU">Note encryption</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/equihash-and-consensus"><span title="Equihash and consensus rules" class="linkLabel_WmDU">Equihash and consensus rules</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/wallet-stack"><span title="The wallet stack" class="linkLabel_WmDU">The wallet stack</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/study-plan-and-exercises"><span title="Study plan and exercises" class="linkLabel_WmDU">Study plan and exercises</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/historical-bugs"><span title="Historical bugs and security incidents" class="linkLabel_WmDU">Historical bugs and security incidents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cofactors-subgroups-canonical"><span title="Cofactors, subgroups, canonical encodings" class="linkLabel_WmDU">Cofactors, subgroups, canonical encodings</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/side-channels-and-constant-time"><span title="Side channels and constant-time" class="linkLabel_WmDU">Side channels and constant-time</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/trusted-setup"><span title="Trusted setup ceremonies" class="linkLabel_WmDU">Trusted setup ceremonies</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pedersen-hash-deep-dive"><span title="Pedersen hash deep dive" class="linkLabel_WmDU">Pedersen hash deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/halo2-deep-dive"><span title="Halo 2 deep dive" class="linkLabel_WmDU">Halo 2 deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/anonymity-set-and-metadata"><span title="Anonymity set and metadata" class="linkLabel_WmDU">Anonymity set and metadata</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zip-catalog"><span title="ZIP catalog and reading order" class="linkLabel_WmDU">ZIP catalog and reading order</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/audits-and-cross-impl"><span title="Audits and cross-implementation testing" class="linkLabel_WmDU">Audits and cross-implementation testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/librustzcash/active-research-and-nu7"><span title="Active research and the road to NU7" class="linkLabel_WmDU">Active research and the road to NU7</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptographer-code-review"><span title="Cryptographer&#x27;s code-review checklist" class="linkLabel_WmDU">Cryptographer&#x27;s code-review checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/key-catalog"><span title="The complete key catalog" class="linkLabel_WmDU">The complete key catalog</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/circuits-constraint-by-constraint"><span title="Circuits, constraint by constraint" class="linkLabel_WmDU">Circuits, constraint by constraint</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pr-checklist"><span title="PR checklist" class="linkLabel_WmDU">PR checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/dev-cheatsheet"><span title="Developer cheat sheet" class="linkLabel_WmDU">Developer cheat sheet</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/glossary"><span title="Glossary" class="linkLabel_WmDU">Glossary</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/librustzcash/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Active research and the road to NU7</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>21 - Active research and the road to NU7</h1></header>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="goal">Goal<a href="#goal" class="hash-link" aria-label="Direct link to Goal" title="Direct link to Goal" translate="no">​</a></h2>
-<p>A snapshot of the active research and engineering directions
-relevant to a Zcash cryptography engineer in 2026. This chapter
-documents the in-flight proposals, the network upgrade NU7, the ZSA
-(Zcash Shielded Assets) work, the burn mechanism, and the
-longer-horizon recursive-proof research.</p>
-<p>This is the &quot;where is the puck going&quot; chapter. By design it dates
-faster than the rest of the course; treat it as a starting point for
-following the discussion, not a long-term reference.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-nu7---the-next-network-upgrade">1. NU7 - the next network upgrade<a href="#1-nu7---the-next-network-upgrade" class="hash-link" aria-label="Direct link to 1. NU7 - the next network upgrade" title="Direct link to 1. NU7 - the next network upgrade" translate="no">​</a></h2>
-<p>NU7 is the working name of the next major network upgrade. It
-introduces several changes simultaneously; the workspace gates them
-behind <code>RUSTFLAGS=&#x27;--cfg zcash_unstable=&quot;nu7&quot;&#x27;</code>. Key components:</p>
-<ul>
-<li class=""><strong>Transaction version 6</strong>: new wire format with hooks for ZSAs,
-burn, and other extensions.</li>
-<li class=""><strong>ZIP 230</strong> transaction format updates: structural shifts to
-accommodate per-asset value flows.</li>
-<li class=""><strong>ZIP 233</strong> burn mechanism: a small fraction of each fee is
-burned, reducing supply, in a verifier-friendly way.</li>
-<li class=""><strong>ZSAs</strong>: the ability to issue, transfer, and burn non-ZEC
-assets shielded inside Orchard-like Actions.</li>
-</ul>
-<p>In code: scan for <code>#[cfg(zcash_unstable = &quot;nu7&quot;)]</code> and <code>cfg_attr</code>
-markers; the v6 transaction parser, sighash, and bundle types are
-implemented behind these.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-zcash-shielded-assets-zsas">2. Zcash Shielded Assets (ZSAs)<a href="#2-zcash-shielded-assets-zsas" class="hash-link" aria-label="Direct link to 2. Zcash Shielded Assets (ZSAs)" title="Direct link to 2. Zcash Shielded Assets (ZSAs)" translate="no">​</a></h2>
-<p>The mathematical model: extend Orchard&#x27;s value commitments and
-nullifier construction to support multiple asset identifiers.</p>
-<p>A pre-ZSA Sapling/Orchard value commitment commits to a value <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>∈</mo><mo stretchy="false">[</mo><mn>0</mn><mo separator="true">,</mo><msup><mn>2</mn><mn>64</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">v
-\in [0, 2^{64})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5782em;vertical-align:-0.0391em"></span><span class="mord mathnormal" style="margin-right:0.0359em">v</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em"></span><span class="mopen">[</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em"><span style="top:-3.063em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">64</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span> in <strong>ZEC</strong>. The proposed ZSA value commitment is</p>
-<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mrow><mi mathvariant="sans-serif">c</mi><mi mathvariant="sans-serif">v</mi></mrow><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mo stretchy="false">[</mo><mi>v</mi><mo stretchy="false">]</mo><mtext> </mtext><msub><mi>V</mi><mtext>asset</mtext></msub><mtext>  </mtext><mo>+</mo><mtext>  </mtext><mo stretchy="false">[</mo><mrow><mi mathvariant="sans-serif">r</mi><mi mathvariant="sans-serif">c</mi><mi mathvariant="sans-serif">v</mi></mrow><mo stretchy="false">]</mo><mtext> </mtext><mi>R</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">\mathsf{cv} \;=\; [v] \, V_{\text{asset}} \;+\; [\mathsf{rcv}] \, R,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4444em"></span><span class="mord"><span class="mord mathsf" style="margin-right:0.0139em">cv</span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.0359em">v</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">asset</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mopen">[</span><span class="mord"><span class="mord mathsf" style="margin-right:0.0139em">rcv</span></span><span class="mclose">]</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord mathnormal" style="margin-right:0.0077em">R</span><span class="mpunct">,</span></span></span></span></span>
-<p>with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mtext>asset</mtext></msub></mrow><annotation encoding="application/x-tex">V_{\text{asset}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">asset</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> a <strong>per-asset generator</strong> derived from an
-asset identifier <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="sans-serif">A</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">e</mi><mi mathvariant="sans-serif">t</mi><mi mathvariant="sans-serif">I</mi><mi mathvariant="sans-serif">d</mi></mrow><annotation encoding="application/x-tex">\mathsf{AssetId}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em"></span><span class="mord"><span class="mord mathsf">AssetId</span></span></span></span></span> via a hash-to-curve on Pallas.
-The bundle&#x27;s value balance is now a sum over assets, with each
-asset&#x27;s commitments summing to a per-asset balance.</p>
-<p>The Action circuit grows: it now checks that the asset generator is
-correctly derived, and the binding signature verification key
-becomes a per-asset point sum.</p>
-<p>References:</p>
-<ul>
-<li class="">ZIP 226 - Transfer and Burn of Zcash Shielded Assets.</li>
-<li class="">ZIP 227 - Issuance of Zcash Shielded Assets.</li>
-</ul>
-<p>The reference implementation is in the <code>orchard</code> repo&#x27;s
-<code>orchard-zsa</code> modules and Issuance circuits.</p>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="issuance">Issuance<a href="#issuance" class="hash-link" aria-label="Direct link to Issuance" title="Direct link to Issuance" translate="no">​</a></h3>
-<p>A ZSA issuance is a special bundle that mints new units of an
-asset. The issuer:</p>
-<ol>
-<li class="">Generates an IssuanceKey.</li>
-<li class="">Constructs an &quot;issuance Action&quot; that creates new notes of the
-asset.</li>
-<li class="">Signs with the IssuanceKey under a re-randomised RedPallas-style
-scheme.</li>
-</ol>
-<p>The circuit proves the issuer is authorised (knowledge of the
-IssuanceKey) and that the newly-created notes are well-formed.</p>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="burn">Burn<a href="#burn" class="hash-link" aria-label="Direct link to Burn" title="Direct link to Burn" translate="no">​</a></h3>
-<p>A burn is the inverse: an Action with no outputs (or with explicit
-&quot;burn&quot; outputs) destroys value. The asset&#x27;s total supply
-decreases.</p>
-<p>ZIP 233 (Network Sustainability Mechanism) is a <em>different</em> burn
-mechanism, specific to ZEC: a fraction of each transaction&#x27;s fee
-is burned. The two are not the same.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-zip-233---network-sustainability-mechanism">3. ZIP 233 - Network Sustainability Mechanism<a href="#3-zip-233---network-sustainability-mechanism" class="hash-link" aria-label="Direct link to 3. ZIP 233 - Network Sustainability Mechanism" title="Direct link to 3. ZIP 233 - Network Sustainability Mechanism" translate="no">​</a></h2>
-<p>The motivation: shift from a pure inflation-based block-reward
-model to a hybrid model with explicit burning that reduces supply
-over time.</p>
-<p>The mechanism: each transaction&#x27;s fee is partially burned (the
-exact fraction is governed by a public parameter). The burn is
-visible on-chain as a &quot;burn output&quot; with a specific marker.</p>
-<p>For wallet code: fees increase by the burn fraction, and the
-transaction value-balance equation gets a new term:</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-why-this-chapter-exists">1. Why this chapter exists<a href="#1-why-this-chapter-exists" class="hash-link" aria-label="Direct link to 1. Why this chapter exists" title="Direct link to 1. Why this chapter exists" translate="no">​</a></h2>
+<p>A contributor joining the project today will spend significant
+time on in-flight work that is not yet activated. The NU7 network
+upgrade introduces the v6 transaction format, the Zcash Shielded
+Assets (ZSA) extension, and the ZIP 233 burn mechanism. All of
+these are gated in this workspace behind
+<code>RUSTFLAGS=&#x27;--cfg zcash_unstable=&quot;nu7&quot;&#x27;</code> in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/mod.rs</code></a>
+and similar locations. This chapter names the moving pieces, links
+each to the code that exists today, and flags the longer-horizon
+research items that may surface in future upgrades. The chapter
+dates faster than the rest of the course; treat it as a snapshot
+and follow the linked discussion forums for current state.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-definitions">2. Definitions<a href="#2-definitions" class="hash-link" aria-label="Direct link to 2. Definitions" title="Direct link to 2. Definitions" translate="no">​</a></h2>
+<p><strong>Definition (Network upgrade, NU).</strong> A coordinated mainnet
+activation height at which a set of consensus rule changes becomes
+binding. NU5 activated transaction v5, ZIP 244 sighash, and the
+Orchard pool. NU6 adjusted dev fund parameters. NU7 is the working
+name of the next upgrade; activation height is not yet set.</p>
+<p><strong>Definition (Transaction v6).</strong> The transaction wire format
+introduced under NU7. It extends v5 with hooks for ZSA value flows,
+the ZIP 233 burn output, and other in-flight extensions. The format
+is described in draft ZIP 230.</p>
+<p><strong>Definition (Zcash Shielded Asset, ZSA).</strong> A unit of a non-ZEC
+asset held inside an Orchard-like shielded pool. Each asset has an
+identifier <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="sans-serif">A</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">e</mi><mi mathvariant="sans-serif">t</mi><mi mathvariant="sans-serif">I</mi><mi mathvariant="sans-serif">d</mi></mrow><annotation encoding="application/x-tex">\mathsf{AssetId}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em"></span><span class="mord"><span class="mord mathsf">AssetId</span></span></span></span></span> and a derived value-commitment
+generator <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mtext>asset</mtext></msub></mrow><annotation encoding="application/x-tex">V_{\text{asset}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">asset</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span>. The ZSA bundle&#x27;s value balance is
+per-asset.</p>
+<p><strong>Definition (Per-asset value commitment).</strong> The ZSA value
+commitment is</p>
+<span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mrow><mi mathvariant="sans-serif">c</mi><mi mathvariant="sans-serif">v</mi></mrow><mtext>ZSA</mtext></msub><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mo stretchy="false">[</mo><mi>v</mi><mo stretchy="false">]</mo><mtext> </mtext><msub><mi>V</mi><mtext>asset</mtext></msub><mtext>  </mtext><mo>+</mo><mtext>  </mtext><mo stretchy="false">[</mo><mrow><mi mathvariant="sans-serif">r</mi><mi mathvariant="sans-serif">c</mi><mi mathvariant="sans-serif">v</mi></mrow><mo stretchy="false">]</mo><mtext> </mtext><mi>R</mi><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">\mathsf{cv}_{\text{ZSA}} \;=\; [v]\,V_{\text{asset}} \;+\; [\mathsf{rcv}]\,R,</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5944em;vertical-align:-0.15em"></span><span class="mord"><span class="mord"><span class="mord mathsf" style="margin-right:0.0139em">cv</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em"><span style="top:-2.55em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">ZSA</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.0359em">v</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">asset</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mopen">[</span><span class="mord"><span class="mord mathsf" style="margin-right:0.0139em">rcv</span></span><span class="mclose">]</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord mathnormal" style="margin-right:0.0077em">R</span><span class="mpunct">,</span></span></span></span></span>
+<p>with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mtext>asset</mtext></msub><mo>=</mo><mrow><mi mathvariant="sans-serif">H</mi><mi mathvariant="sans-serif">a</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">h</mi><mi mathvariant="sans-serif">T</mi><mi mathvariant="sans-serif">o</mi><mi mathvariant="sans-serif">C</mi><mi mathvariant="sans-serif">u</mi><mi mathvariant="sans-serif">r</mi><mi mathvariant="sans-serif">v</mi><mi mathvariant="sans-serif">e</mi></mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="sans-serif">A</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">s</mi><mi mathvariant="sans-serif">e</mi><mi mathvariant="sans-serif">t</mi><mi mathvariant="sans-serif">I</mi><mi mathvariant="sans-serif">d</mi></mrow><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V_{\text{asset}} = \mathsf{HashToCurve}(\mathsf{AssetId})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">asset</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em"></span><span class="mord"><span class="mord mathsf">HashToCurve</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathsf">AssetId</span></span><span class="mclose">)</span></span></span></span>
+into Pallas. The bundle&#x27;s balance equation aggregates these
+commitments per asset.</p>
+<p><strong>Definition (ZIP 233 burn).</strong> A consensus rule, defined in draft
+ZIP 233, that a fraction of each transaction&#x27;s fee is burned
+rather than paid to the miner. The transaction value-balance
+equation becomes</p>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo>∑</mo><msub><mi>v</mi><mtext>in</mtext></msub><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mo>∑</mo><msub><mi>v</mi><mtext>out</mtext></msub><mtext>  </mtext><mo>+</mo><mtext>  </mtext><mtext>fee</mtext><mtext>  </mtext><mo>+</mo><mtext>  </mtext><mtext>burn</mtext><mo separator="true">,</mo></mrow><annotation encoding="application/x-tex">\sum v_{\text{in}} \;=\; \sum v_{\text{out}} \;+\; \text{fee} \;+\; \text{burn},</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.6em;vertical-align:-0.55em"></span><span class="mop op-symbol large-op" style="position:relative;top:0em">∑</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3175em"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">in</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:1.6em;vertical-align:-0.55em"></span><span class="mop op-symbol large-op" style="position:relative;top:0em">∑</span><span class="mspace" style="margin-right:0.1667em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0359em">v</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">out</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span></span><span class="base"><span class="strut" style="height:0.7778em;vertical-align:-0.0833em"></span><span class="mord text"><span class="mord">fee</span></span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mspace" style="margin-right:0.2222em"></span></span><span class="base"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em"></span><span class="mord text"><span class="mord">burn</span></span><span class="mpunct">,</span></span></span></span></span>
-<p>where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>burn</mtext></mrow><annotation encoding="application/x-tex">\text{burn}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em"></span><span class="mord text"><span class="mord">burn</span></span></span></span></span> is a public scalar. The transaction must
-include enough value to cover both fee and burn.</p>
-<p>Status: under draft / proposed; will likely activate with NU7 or
-later.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-recursive-proofs-for-chain-history">4. Recursive proofs for chain history<a href="#4-recursive-proofs-for-chain-history" class="hash-link" aria-label="Direct link to 4. Recursive proofs for chain history" title="Direct link to 4. Recursive proofs for chain history" translate="no">​</a></h2>
-<p>Halo 2 is recursion-ready (chapter 17). A long-term project is to
-use recursion for chain history: at each block, the prover
-produces a proof that &quot;all prior blocks were valid&quot;, and the chain
-maintains a constant-size accumulator.</p>
-<p>Benefits:</p>
+<p>with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>burn</mtext></mrow><annotation encoding="application/x-tex">\text{burn}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em"></span><span class="mord text"><span class="mord">burn</span></span></span></span></span> a public scalar derived from the fee via a
+governance parameter.</p>
+<p><strong>Definition (Recursive proof).</strong> A SNARK whose statement
+includes the verification of one or more SNARKs. Halo 2 supports
+recursion natively because verification consists of a constant
+number of pairings and field operations, expressible as a circuit.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-the-code">3. The code<a href="#3-the-code" class="hash-link" aria-label="Direct link to 3. The code" title="Direct link to 3. The code" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="31-nu7-gating">3.1 NU7 gating<a href="#31-nu7-gating" class="hash-link" aria-label="Direct link to 3.1 NU7 gating" title="Direct link to 3.1 NU7 gating" translate="no">​</a></h3>
+<p>The transaction enum and its parsers are gated by the
+<code>zcash_unstable</code> cfg. The gating sites in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/mod.rs</code></a>:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">zcash_primitives/src/transaction/mod.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs#L80-L155" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<p>The v6 sighash lives in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash_v6.rs" target="_blank" rel="noopener noreferrer" class=""><code>sighash_v6.rs</code></a>.
+The activation height for NU7 in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs" target="_blank" rel="noopener noreferrer" class=""><code>consensus.rs</code></a>
+is currently <code>None</code>, meaning unfixed:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">components/zcash_protocol/src/consensus.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L485-L500" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<p>A contributor extending NU7 code must keep both the stable build
+(no flag) and the <code>nu7</code> build green; CI exercises both.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="32-zsas-per-asset-value-commitments">3.2 ZSAs: per-asset value commitments<a href="#32-zsas-per-asset-value-commitments" class="hash-link" aria-label="Direct link to 3.2 ZSAs: per-asset value commitments" title="Direct link to 3.2 ZSAs: per-asset value commitments" translate="no">​</a></h3>
+<p>The Action circuit grows under ZSA: it now checks that the per-asset
+generator <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mtext>asset</mtext></msub></mrow><annotation encoding="application/x-tex">V_{\text{asset}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.2222em">V</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em"><span style="top:-2.55em;margin-left:-0.2222em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">asset</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> is correctly derived from the asset
+identifier and that the binding signature verification key is the
+per-asset sum.</p>
+<p>Reference implementations live in the external
+<a href="https://github.com/zcash/orchard" target="_blank" rel="noopener noreferrer" class=""><code>orchard</code></a> repository&#x27;s
+<code>orchard-zsa</code> modules (under active development); the
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/pczt/src/orchard.rs" target="_blank" rel="noopener noreferrer" class=""><code>pczt/src/orchard.rs</code></a>
+component of this workspace will be extended to carry per-asset
+fields when ZSA lands.</p>
+<p>Issuance and burn are the two new bundle types:</p>
 <ul>
-<li class="">New nodes can sync from a constant-size proof rather than
-re-validating the entire chain.</li>
-<li class="">Block headers carry one proof; legacy data is recoverable but
-not required for validation.</li>
+<li class=""><strong>Issuance</strong>: a special bundle that mints new units of an asset.
+The issuer signs with an IssuanceKey under a RedPallas-style
+scheme; the circuit proves authorisation and well-formedness.</li>
+<li class=""><strong>Burn</strong>: an Action that destroys value of a specific asset.
+The asset&#x27;s total supply decreases on confirmation.</li>
 </ul>
-<p>Challenges:</p>
-<ul>
-<li class="">Constraint count: each block adds tens of thousands of
-constraints to the recursive verifier.</li>
-<li class="">Prover time: must keep up with the block interval.</li>
-<li class="">Open questions on data-availability and reorg handling.</li>
-</ul>
-<p>This is research-level work; not in production.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-tachyon-codename">5. Tachyon (codename)<a href="#5-tachyon-codename" class="hash-link" aria-label="Direct link to 5. Tachyon (codename)" title="Direct link to 5. Tachyon (codename)" translate="no">​</a></h2>
-<p>Tachyon is the codename for an in-development Halo 2 successor
-optimised for proving performance. It uses faster polynomial
-commitments and an upgraded arithmetisation. Public details vary
-over time; if you see it referenced, it is a forward-looking
-proving system that may or may not be the eventual successor.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-plonky3-and-folding-schemes">6. Plonky3 and folding schemes<a href="#6-plonky3-and-folding-schemes" class="hash-link" aria-label="Direct link to 6. Plonky3 and folding schemes" title="Direct link to 6. Plonky3 and folding schemes" translate="no">​</a></h2>
+<p>The two are defined by draft ZIPs 227 (issuance) and 226 (transfer
+and burn).</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="33-zip-233-network-sustainability-mechanism">3.3 ZIP 233: network sustainability mechanism<a href="#33-zip-233-network-sustainability-mechanism" class="hash-link" aria-label="Direct link to 3.3 ZIP 233: network sustainability mechanism" title="Direct link to 3.3 ZIP 233: network sustainability mechanism" translate="no">​</a></h3>
+<p>ZIP 233 changes the block reward model from pure inflation to a
+hybrid with explicit burning. The transaction must include enough
+value to cover both fee and burn; wallets need to compute the burn
+fraction from the protocol parameter and include it in the
+balance equation.</p>
+<p>The fee module
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/fees.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/fees.rs</code></a>
+is trait-based, so a <code>ZIP233FeeRule</code> can plug into the existing
+proposal pipeline without rewriting builder code.</p>
+<p>ZIP 233 is, at the time of writing, in draft/proposed status and
+likely to activate with NU7 or later.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="34-recursive-proofs-for-chain-history">3.4 Recursive proofs for chain history<a href="#34-recursive-proofs-for-chain-history" class="hash-link" aria-label="Direct link to 3.4 Recursive proofs for chain history" title="Direct link to 3.4 Recursive proofs for chain history" translate="no">​</a></h3>
+<p>Halo 2 is recursion-ready. A long-term project is to use recursion
+for chain history: at each block, the prover produces a proof that
+all prior blocks were valid; the chain maintains a constant-size
+accumulator.</p>
+<p>Benefits: new nodes sync from a constant-size proof rather than
+revalidating the chain. Challenges: per-block recursive verifier
+overhead is tens of thousands of constraints; prover time must
+keep up with the block interval; data-availability and reorg
+handling are open questions.</p>
+<p>This is research-level, not in production. The
+<a href="https://github.com/zcash/halo2" target="_blank" rel="noopener noreferrer" class=""><code>halo2_proofs</code></a> crate provides the
+proof system primitives that would underlie any such implementation.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="35-forward-looking-proving-systems">3.5 Forward-looking proving systems<a href="#35-forward-looking-proving-systems" class="hash-link" aria-label="Direct link to 3.5 Forward-looking proving systems" title="Direct link to 3.5 Forward-looking proving systems" translate="no">​</a></h3>
 <p>Industry-wide, the proving-system frontier has moved to PLONKish
 designs with custom arithmetisation (Plonky2, Plonky3) and to
-folding schemes (Nova, SuperNova, ProtoStar, HyperNova) that allow
-incremental aggregation of proofs.</p>
-<p>Some of these may eventually appear in Zcash. Watch the ECC and
-Zcash Foundation engineering blogs.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-post-quantum">7. Post-quantum<a href="#7-post-quantum" class="hash-link" aria-label="Direct link to 7. Post-quantum" title="Direct link to 7. Post-quantum" translate="no">​</a></h2>
-<p>All current Zcash cryptography relies on discrete log assumptions
-that quantum computers can solve. A post-quantum migration is a
-long-horizon project. Candidate primitives:</p>
+folding schemes (Nova, SuperNova, ProtoStar, HyperNova). Tachyon
+is a codename for an in-development Halo 2 successor optimised
+for proving performance. None of these are committed for
+production Zcash today; the modular structure (separate proof
+systems per shielded pool) is designed to accommodate a future
+replacement.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="36-post-quantum">3.6 Post-quantum<a href="#36-post-quantum" class="hash-link" aria-label="Direct link to 3.6 Post-quantum" title="Direct link to 3.6 Post-quantum" translate="no">​</a></h3>
+<p>All current Zcash cryptography relies on discrete-log assumptions
+that quantum computers can solve in polynomial time (Shor). A
+post-quantum migration is a long-horizon project. Candidate
+primitives:</p>
 <ul>
 <li class="">Hash-based signatures (XMSS, SPHINCS+) for spend authorisation.</li>
 <li class="">Lattice-based commitments (Ajtai-style) for value commitments.</li>
 <li class="">STARK-based or lattice-based SNARKs for the proving system.</li>
 </ul>
-<p>The proof-system migration is the hard part. Hash-based
-signatures are well-understood and could replace RedJubjub/RedPallas;
-the proof-system replacement is open.</p>
-<p><code>librustzcash</code> is not actively implementing PQ today, but the
-modular structure (separate proof systems per shielded pool) is
-designed to accommodate a future PQ pool.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-wallet-evolution-pczt-and-hardware-wallet-support">8. Wallet evolution: PCZT and hardware-wallet support<a href="#8-wallet-evolution-pczt-and-hardware-wallet-support" class="hash-link" aria-label="Direct link to 8. Wallet evolution: PCZT and hardware-wallet support" title="Direct link to 8. Wallet evolution: PCZT and hardware-wallet support" translate="no">​</a></h2>
-<p>Active engineering:</p>
+<p>The proof-system migration is the hard part. This workspace does
+not actively implement PQ today, but the per-pool modularity
+supports a future PQ pool.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="37-wallet-evolution-pczt-and-hardware-wallets">3.7 Wallet evolution: PCZT and hardware wallets<a href="#37-wallet-evolution-pczt-and-hardware-wallets" class="hash-link" aria-label="Direct link to 3.7 Wallet evolution: PCZT and hardware wallets" title="Direct link to 3.7 Wallet evolution: PCZT and hardware wallets" translate="no">​</a></h3>
+<p>Active wallet-layer engineering:</p>
 <ul>
 <li class=""><strong>PCZT maturity</strong>: more roles, better error handling, hardware-
-wallet integrations.</li>
-<li class=""><strong>Hardware wallets</strong>: Ledger and similar are working on Orchard
-support. The PCZT design makes this practical: the device signs
-without proving.</li>
+wallet integrations. The PCZT module lives at
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/pczt/src/lib.rs" target="_blank" rel="noopener noreferrer" class=""><code>pczt/src/lib.rs</code></a>
+with role definitions under
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/pczt/src/roles" target="_blank" rel="noopener noreferrer" class=""><code>pczt/src/roles</code></a>.</li>
+<li class=""><strong>Hardware-wallet support</strong>: Ledger and similar devices are
+working on Orchard support. The PCZT design enables the device
+to sign without proving.</li>
 <li class=""><strong>Account-discovery improvements</strong>: faster scanning, better
-birthday handling.</li>
-<li class=""><strong>Tor and i2p</strong>: more privacy-preserving network defaults.</li>
+birthday handling. Touches
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/scanning.rs</code></a>.</li>
+<li class=""><strong>Network privacy defaults</strong>: Tor support via
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/tor.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_client_backend/src/tor.rs</code></a>.</li>
 </ul>
-<p>You will see PRs touching <code>pczt/</code>, <code>zcash_client_backend/</code>,
-<code>zcash_keys/</code> in this area.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-anonymity-set-consolidation">9. Anonymity-set consolidation<a href="#9-anonymity-set-consolidation" class="hash-link" aria-label="Direct link to 9. Anonymity-set consolidation" title="Direct link to 9. Anonymity-set consolidation" translate="no">​</a></h2>
-<p>There is an ongoing protocol discussion about whether to retire
-Sapling for new outputs (forcing future activity into Orchard).
-The argument for: a single, larger pool has stronger privacy than
-two smaller pools. Argument against: existing Sapling users still
-need to move funds; abrupt deprecation harms them.</p>
-<p>Likely path: a multi-NU deprecation, with at-least-cost migrations
-and clear UX guidance.</p>
-<p>ZIP-X drafts are in flight. Track ZIPs in the 4xx range for this.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-fee-policy-evolution">10. Fee policy evolution<a href="#10-fee-policy-evolution" class="hash-link" aria-label="Direct link to 10. Fee policy evolution" title="Direct link to 10. Fee policy evolution" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="38-anonymity-set-consolidation">3.8 Anonymity-set consolidation<a href="#38-anonymity-set-consolidation" class="hash-link" aria-label="Direct link to 3.8 Anonymity-set consolidation" title="Direct link to 3.8 Anonymity-set consolidation" translate="no">​</a></h3>
+<p>A protocol discussion in progress: whether to retire Sapling for
+new outputs and force future activity into Orchard. Argument for:
+a single larger pool has stronger privacy than two smaller pools.
+Argument against: existing Sapling users still need to move funds.
+The likely path is a multi-NU deprecation with at-least-cost
+migrations and clear UX guidance. ZIP drafts in the 4xx range
+discuss this.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="39-fee-policy-evolution">3.9 Fee policy evolution<a href="#39-fee-policy-evolution" class="hash-link" aria-label="Direct link to 3.9 Fee policy evolution" title="Direct link to 3.9 Fee policy evolution" translate="no">​</a></h3>
 <p>ZIP 317 has been the default since NU5 but has known limitations.
 Active discussion:</p>
 <ul>
 <li class="">Variable-cost fees for shielded inputs (today, all shielded
-outputs cost the same, regardless of size of the anonymity-set
-contribution).</li>
-<li class="">Mempool-priority signaling.</li>
-<li class="">Burn-vs-fee policy (interacts with ZIP 233).</li>
+outputs cost the same regardless of anonymity-set contribution).</li>
+<li class="">Mempool-priority signalling.</li>
+<li class="">Burn-vs-fee policy interaction with ZIP 233.</li>
 </ul>
-<p>The fee module (<code>zcash_primitives/src/transaction/fees.rs</code>) is
-modular by trait; new strategies can be plugged in.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-concrete-code-areas-to-watch">11. Concrete code areas to watch<a href="#11-concrete-code-areas-to-watch" class="hash-link" aria-label="Direct link to 11. Concrete code areas to watch" title="Direct link to 11. Concrete code areas to watch" translate="no">​</a></h2>
-<ul>
-<li class=""><code>zcash_primitives/src/transaction/components/orchard.rs</code> (and the
-<code>orchard</code> crate) for v6 transaction format.</li>
-<li class=""><code>pczt/</code> for new role definitions.</li>
-<li class=""><code>zcash_client_backend/src/data_api/wallet.rs</code> for proposal /
-build flow updates.</li>
-<li class=""><code>zcash_proofs/</code> (less active; mostly stable).</li>
-<li class=""><code>components/zcash_protocol/src/consensus.rs</code> for NU activation
-heights.</li>
-</ul>
-<p>The team-led roadmap is published in the Zcash Foundation and ECC
-&quot;engineering plan&quot; documents; watch the org&#x27;s blog.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-the-network-upgrade-pipeline">12. The &quot;Network Upgrade Pipeline&quot;<a href="#12-the-network-upgrade-pipeline" class="hash-link" aria-label="Direct link to 12. The &quot;Network Upgrade Pipeline&quot;" title="Direct link to 12. The &quot;Network Upgrade Pipeline&quot;" translate="no">​</a></h2>
+<p>The fee module trait makes new strategies pluggable:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">zcash_primitives/src/transaction/fees.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/fees.rs#L1-L60" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="310-concrete-code-areas-to-watch">3.10 Concrete code areas to watch<a href="#310-concrete-code-areas-to-watch" class="hash-link" aria-label="Direct link to 3.10 Concrete code areas to watch" title="Direct link to 3.10 Concrete code areas to watch" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Path</th><th>Why it is active</th></tr></thead><tbody><tr><td><code>zcash_primitives/src/transaction/components/orchard.rs</code></td><td>v6 transaction format integration</td></tr><tr><td><code>pczt/src/</code></td><td>new role definitions and hardware-wallet workflows</td></tr><tr><td><code>zcash_client_backend/src/data_api/wallet.rs</code></td><td>proposal and build flow updates</td></tr><tr><td><code>components/zcash_protocol/src/consensus.rs</code></td><td>NU activation heights</td></tr><tr><td><code>zcash_primitives/src/transaction/sighash_v6.rs</code></td><td>v6 sighash</td></tr></tbody></table>
+<p>The published roadmap from the Zcash Foundation and ECC tracks
+priorities at higher resolution than this chapter can.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="311-the-network-upgrade-lifecycle">3.11 The network-upgrade lifecycle<a href="#311-the-network-upgrade-lifecycle" class="hash-link" aria-label="Direct link to 3.11 The network-upgrade lifecycle" title="Direct link to 3.11 The network-upgrade lifecycle" translate="no">​</a></h3>
 <p>A typical NU lifecycle:</p>
 <ol>
-<li class="">Proposals collected and triaged.</li>
-<li class="">ZIP authors draft formal specs.</li>
-<li class="">Reference implementation behind cfg flags.</li>
+<li class="">Proposals collected and triaged via the community forum and
+Zcash Foundation calls.</li>
+<li class="">ZIP authors draft formal specs in the <code>zcash/zips</code> repo.</li>
+<li class="">Reference implementation behind cfg flags in <code>zcashd</code>, Zebra,
+and this workspace.</li>
 <li class="">Testnet activation (months ahead of mainnet).</li>
-<li class="">External audits.</li>
-<li class="">Public review.</li>
-<li class="">Mainnet activation.</li>
+<li class="">External audits cover the new code paths.</li>
+<li class="">Public review period.</li>
+<li class="">Mainnet activation at a coordinated height.</li>
 </ol>
-<p>Activation is <em>coordinated</em>: nodes that haven&#x27;t upgraded by the
+<p>Activation is coordinated: nodes that have not upgraded by the
 activation height become incompatible and fork off. Wallets must
 also be updated to recognise the new format.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-standardisation-outside-zcash">13. Standardisation outside Zcash<a href="#13-standardisation-outside-zcash" class="hash-link" aria-label="Direct link to 13. Standardisation outside Zcash" title="Direct link to 13. Standardisation outside Zcash" translate="no">​</a></h2>
-<p>Some cryptography Zcash pioneered (BLS12-381, Halo 2, Sinsemilla)
-is now widely used:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="312-standardisation-outside-zcash">3.12 Standardisation outside Zcash<a href="#312-standardisation-outside-zcash" class="hash-link" aria-label="Direct link to 3.12 Standardisation outside Zcash" title="Direct link to 3.12 Standardisation outside Zcash" translate="no">​</a></h3>
+<p>Cryptography Zcash pioneered is now widely used:</p>
 <ul>
 <li class="">BLS12-381 is the standard pairing curve for Ethereum 2 / Beacon
-Chain, Filecoin, Tezos.</li>
-<li class="">Halo 2 was forked and extended by Privacy &amp; Scaling Explorations
-for Ethereum-specific proofs.</li>
-<li class="">Poseidon (a generic Halo 2-friendly hash) is now standard in many
-SNARK systems.</li>
+Chain, Filecoin, and Tezos.</li>
+<li class="">Halo 2 has been forked and extended by Privacy &amp; Scaling
+Explorations for Ethereum-specific proofs.</li>
+<li class="">Poseidon is now common in many SNARK systems.</li>
 </ul>
-<p>This means a lot of attention is paid to the underlying crates;
-bug fixes and improvements often come from external contributors.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-what-this-means-for-a-new-joiner">14. What this means for a new joiner<a href="#14-what-this-means-for-a-new-joiner" class="hash-link" aria-label="Direct link to 14. What this means for a new joiner" title="Direct link to 14. What this means for a new joiner" translate="no">​</a></h2>
-<p>In the next 12 months you will likely be involved in:</p>
+<p>External attention means bug fixes and performance improvements
+sometimes come from outside the project; track upstream releases
+of <code>halo2</code>, <code>bls12_381</code>, <code>pasta_curves</code>, and related crates.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-failure-modes">4. Failure modes<a href="#4-failure-modes" class="hash-link" aria-label="Direct link to 4. Failure modes" title="Direct link to 4. Failure modes" translate="no">​</a></h2>
 <ul>
-<li class="">v6 transaction format consolidation.</li>
-<li class="">ZSA integration into wallet flows.</li>
-<li class="">ZIP 233 burn integration.</li>
-<li class="">PCZT role refinements.</li>
-<li class="">Wallet performance and UX.</li>
+<li class=""><strong>Unstable code merged into stable.</strong> A <code>#[cfg(zcash_unstable = &quot;nu7&quot;)]</code> gate accidentally removed, or a function moved out of
+the gate, can leak v6 logic into the stable build. CI builds
+both configurations; review must confirm the cfg coverage.</li>
+<li class=""><strong>ZIP draft drift.</strong> Implementing against a draft ZIP without
+pinning the version in a commit message means the spec can
+change under you. Always cite the ZIP revision in the PR.</li>
+<li class=""><strong>ZSA asset-identifier collision.</strong> Two assets whose
+identifiers hash to the same Pallas point would share a value
+commitment generator and break the per-asset balance equation.
+The hash-to-curve must be domain-separated and tested with
+adversarial vectors.</li>
+<li class=""><strong>Burn rate misconfiguration.</strong> A ZIP 233 burn rate parameter
+set to the wrong value at activation would either pay miners
+too much or destroy more value than the network sustainability
+target intended. The activation parameter must be reviewed and
+vector-tested.</li>
+<li class=""><strong>Hardware-wallet signing without binding to sighash.</strong> A
+PCZT signing role that signs without the canonical sighash
+binding is a transaction-malleability bug. The PCZT role
+documentation must spell the sighash requirements explicitly.</li>
+<li class=""><strong>Anonymity-set fragmentation during migration.</strong> A poorly
+staged Sapling-to-Orchard migration shrinks both pools below
+their previous individual sizes during the transition. Wallet
+UX should batch and randomise timing.</li>
 </ul>
-<p>You will also be exposed to forward-looking work (Tachyon,
-recursion, PQ). Stay aware of it without committing to it; the
-production code is the priority.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="15-resources-to-track">15. Resources to track<a href="#15-resources-to-track" class="hash-link" aria-label="Direct link to 15. Resources to track" title="Direct link to 15. Resources to track" translate="no">​</a></h2>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-spec-pointers">5. Spec pointers<a href="#5-spec-pointers" class="hash-link" aria-label="Direct link to 5. Spec pointers" title="Direct link to 5. Spec pointers" translate="no">​</a></h2>
 <ul>
-<li class="">Zcash Foundation engineering blog: <a href="https://www.zfnd.org/blog/" target="_blank" rel="noopener noreferrer" class="">https://www.zfnd.org/blog/</a></li>
-<li class="">ECC blog: <a href="https://electriccoin.co/blog/" target="_blank" rel="noopener noreferrer" class="">https://electriccoin.co/blog/</a></li>
-<li class="">Zcash Github org: <a href="https://github.com/zcash" target="_blank" rel="noopener noreferrer" class="">https://github.com/zcash</a></li>
-<li class="">ZF discord and ECC discord.</li>
-<li class="">Zcash community forum: <a href="https://forum.zcashcommunity.com/" target="_blank" rel="noopener noreferrer" class="">https://forum.zcashcommunity.com/</a></li>
+<li class=""><a href="https://zips.z.cash/zip-0230" target="_blank" rel="noopener noreferrer" class="">ZIP 230</a>: Transaction v6 wire
+format draft. The structural reference for v6 work.</li>
+<li class=""><a href="https://zips.z.cash/zip-0226" target="_blank" rel="noopener noreferrer" class="">ZIP 226</a>: Transfer and burn of
+Zcash Shielded Assets. The ZSA transfer rules.</li>
+<li class=""><a href="https://zips.z.cash/zip-0227" target="_blank" rel="noopener noreferrer" class="">ZIP 227</a>: Issuance of Zcash
+Shielded Assets.</li>
+<li class=""><a href="https://zips.z.cash/zip-0233" target="_blank" rel="noopener noreferrer" class="">ZIP 233</a>: Network Sustainability
+Mechanism. The burn rule.</li>
+<li class=""><a href="https://eprint.iacr.org/2019/1021" target="_blank" rel="noopener noreferrer" class="">Halo paper</a>: the original
+recursion-without-trusted-setup result; underpins any future
+recursive chain-history work.</li>
+<li class=""><a href="https://eprint.iacr.org/2021/370" target="_blank" rel="noopener noreferrer" class="">Nova / SuperNova</a>: the
+folding-scheme line of work that informs future proving systems.</li>
+<li class=""><a href="https://www.zfnd.org/blog/" target="_blank" rel="noopener noreferrer" class="">Zcash Foundation engineering blog</a>:
+periodic engineering posts; the most reliable source for
+current status.</li>
+<li class=""><a href="https://electriccoin.co/blog/" target="_blank" rel="noopener noreferrer" class="">ECC engineering blog</a>: parallel
+source.</li>
 </ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-should-know-after-this-chapter">What you should know after this chapter<a href="#what-you-should-know-after-this-chapter" class="hash-link" aria-label="Direct link to What you should know after this chapter" title="Direct link to What you should know after this chapter" translate="no">​</a></h2>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-exercises">6. Exercises<a href="#6-exercises" class="hash-link" aria-label="Direct link to 6. Exercises" title="Direct link to 6. Exercises" translate="no">​</a></h2>
+<ol>
+<li class=""><strong>Locate an NU7 hook.</strong> Use <code>git grep zcash_unstable</code> to find
+five distinct files in this workspace that gate code behind
+the NU7 cfg. For each, write a one-line explanation of what
+the gated code does.</li>
+<li class=""><strong>Trace a v6 sighash.</strong> Open
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash_v6.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/sighash_v6.rs</code></a>
+and identify which fields it includes that v5 (in
+<code>sighash_v5.rs</code>) did not. Cite the line ranges in both files.</li>
+<li class=""><strong>Build NU7 locally.</strong> Run <code>cargo build</code> with and without
+<code>RUSTFLAGS=&#x27;--cfg zcash_unstable=&quot;nu7&quot;&#x27;</code>. State whether both
+succeed and, if applicable, name one test that runs only in
+the NU7 configuration.</li>
+<li class=""><strong>Sketch a ZIP 233 fee rule.</strong> Read the latest revision of
+draft ZIP 233. Sketch (in prose, not code) how you would
+extend the trait in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/fees.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/fees.rs</code></a>
+to add a <code>burn_amount(...)</code> method. State whether the change
+would be backwards-compatible.</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="answers-in-the-code">Answers in the code<a href="#answers-in-the-code" class="hash-link" aria-label="Direct link to Answers in the code" title="Direct link to Answers in the code" translate="no">​</a></h3>
 <ul>
-<li class="">NU7 is the next major activation; v6 tx, ZSA, ZIP 233.</li>
-<li class="">ZSA generalises value commitments to per-asset bases.</li>
-<li class="">Recursion and PQ are research, not production.</li>
-<li class="">Wallet evolution centres on PCZT, hardware-wallet support,
-privacy network layers.</li>
+<li class="">NU7 transaction gating:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs#L80-L155" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/mod.rs#L80-L155</code></a>.</li>
+<li class="">NU7 activation height (currently None):
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L485-L500" target="_blank" rel="noopener noreferrer" class=""><code>components/zcash_protocol/src/consensus.rs#L485-L500</code></a>.</li>
+<li class="">v6 sighash:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash_v6.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/sighash_v6.rs</code></a>.</li>
+<li class="">Fee trait:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/fees.rs" target="_blank" rel="noopener noreferrer" class=""><code>zcash_primitives/src/transaction/fees.rs</code></a>.</li>
+<li class="">PCZT roles:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/pczt/src/roles" target="_blank" rel="noopener noreferrer" class=""><code>pczt/src/roles</code></a>.</li>
 </ul>
-<p>Last chapter: the cryptographer&#x27;s code-review checklist, distilling
-the operational lessons from this course.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/21-active-research-and-nu7.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/audits-and-cross-impl"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Audits and cross-implementation testing</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/cryptographer-code-review"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Cryptographer&#x27;s code-review checklist</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#goal" class="table-of-contents__link toc-highlight">Goal</a></li><li><a href="#1-nu7---the-next-network-upgrade" class="table-of-contents__link toc-highlight">1. NU7 - the next network upgrade</a></li><li><a href="#2-zcash-shielded-assets-zsas" class="table-of-contents__link toc-highlight">2. Zcash Shielded Assets (ZSAs)</a><ul><li><a href="#issuance" class="table-of-contents__link toc-highlight">Issuance</a></li><li><a href="#burn" class="table-of-contents__link toc-highlight">Burn</a></li></ul></li><li><a href="#3-zip-233---network-sustainability-mechanism" class="table-of-contents__link toc-highlight">3. ZIP 233 - Network Sustainability Mechanism</a></li><li><a href="#4-recursive-proofs-for-chain-history" class="table-of-contents__link toc-highlight">4. Recursive proofs for chain history</a></li><li><a href="#5-tachyon-codename" class="table-of-contents__link toc-highlight">5. Tachyon (codename)</a></li><li><a href="#6-plonky3-and-folding-schemes" class="table-of-contents__link toc-highlight">6. Plonky3 and folding schemes</a></li><li><a href="#7-post-quantum" class="table-of-contents__link toc-highlight">7. Post-quantum</a></li><li><a href="#8-wallet-evolution-pczt-and-hardware-wallet-support" class="table-of-contents__link toc-highlight">8. Wallet evolution: PCZT and hardware-wallet support</a></li><li><a href="#9-anonymity-set-consolidation" class="table-of-contents__link toc-highlight">9. Anonymity-set consolidation</a></li><li><a href="#10-fee-policy-evolution" class="table-of-contents__link toc-highlight">10. Fee policy evolution</a></li><li><a href="#11-concrete-code-areas-to-watch" class="table-of-contents__link toc-highlight">11. Concrete code areas to watch</a></li><li><a href="#12-the-network-upgrade-pipeline" class="table-of-contents__link toc-highlight">12. The &quot;Network Upgrade Pipeline&quot;</a></li><li><a href="#13-standardisation-outside-zcash" class="table-of-contents__link toc-highlight">13. Standardisation outside Zcash</a></li><li><a href="#14-what-this-means-for-a-new-joiner" class="table-of-contents__link toc-highlight">14. What this means for a new joiner</a></li><li><a href="#15-resources-to-track" class="table-of-contents__link toc-highlight">15. Resources to track</a></li><li><a href="#what-you-should-know-after-this-chapter" class="table-of-contents__link toc-highlight">What you should know after this chapter</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-further-reading">7. Further reading<a href="#7-further-reading" class="hash-link" aria-label="Direct link to 7. Further reading" title="Direct link to 7. Further reading" translate="no">​</a></h2>
+<ul>
+<li class=""><a class="" href="/librustzcash/halo2-deep-dive">chapter 17</a>: the Halo 2 internals
+that underpin recursion and the future proving-system work.</li>
+<li class=""><a class="" href="/librustzcash/audits-and-cross-impl">chapter 20</a>: the cross-impl
+process that gates NU7 mainnet activation.</li>
+<li class=""><a class="" href="/librustzcash/cryptographer-code-review">chapter 22</a>: the review
+checklist used on NU7 PRs.</li>
+<li class=""><a href="https://forum.zcashcommunity.com/" target="_blank" rel="noopener noreferrer" class="">Zcash community forum, NU7 category</a>:
+in-progress design threads.</li>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/21-active-research-and-nu7.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/audits-and-cross-impl"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Audits and cross-implementation testing</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/cryptographer-code-review"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Cryptographer&#x27;s code-review checklist</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-why-this-chapter-exists" class="table-of-contents__link toc-highlight">1. Why this chapter exists</a></li><li><a href="#2-definitions" class="table-of-contents__link toc-highlight">2. Definitions</a></li><li><a href="#3-the-code" class="table-of-contents__link toc-highlight">3. The code</a><ul><li><a href="#31-nu7-gating" class="table-of-contents__link toc-highlight">3.1 NU7 gating</a></li><li><a href="#32-zsas-per-asset-value-commitments" class="table-of-contents__link toc-highlight">3.2 ZSAs: per-asset value commitments</a></li><li><a href="#33-zip-233-network-sustainability-mechanism" class="table-of-contents__link toc-highlight">3.3 ZIP 233: network sustainability mechanism</a></li><li><a href="#34-recursive-proofs-for-chain-history" class="table-of-contents__link toc-highlight">3.4 Recursive proofs for chain history</a></li><li><a href="#35-forward-looking-proving-systems" class="table-of-contents__link toc-highlight">3.5 Forward-looking proving systems</a></li><li><a href="#36-post-quantum" class="table-of-contents__link toc-highlight">3.6 Post-quantum</a></li><li><a href="#37-wallet-evolution-pczt-and-hardware-wallets" class="table-of-contents__link toc-highlight">3.7 Wallet evolution: PCZT and hardware wallets</a></li><li><a href="#38-anonymity-set-consolidation" class="table-of-contents__link toc-highlight">3.8 Anonymity-set consolidation</a></li><li><a href="#39-fee-policy-evolution" class="table-of-contents__link toc-highlight">3.9 Fee policy evolution</a></li><li><a href="#310-concrete-code-areas-to-watch" class="table-of-contents__link toc-highlight">3.10 Concrete code areas to watch</a></li><li><a href="#311-the-network-upgrade-lifecycle" class="table-of-contents__link toc-highlight">3.11 The network-upgrade lifecycle</a></li><li><a href="#312-standardisation-outside-zcash" class="table-of-contents__link toc-highlight">3.12 Standardisation outside Zcash</a></li></ul></li><li><a href="#4-failure-modes" class="table-of-contents__link toc-highlight">4. Failure modes</a></li><li><a href="#5-spec-pointers" class="table-of-contents__link toc-highlight">5. Spec pointers</a></li><li><a href="#6-exercises" class="table-of-contents__link toc-highlight">6. Exercises</a><ul><li><a href="#answers-in-the-code" class="table-of-contents__link toc-highlight">Answers in the code</a></li></ul></li><li><a href="#7-further-reading" class="table-of-contents__link toc-highlight">7. Further reading</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
 </body>
 </html>
