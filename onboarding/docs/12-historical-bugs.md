@@ -1,3 +1,9 @@
+---
+sidebar_position: 12
+title: Historical bugs and security incidents
+description: "2018 counterfeit bug, ZIP 212, audit findings catalog."
+---
+
 # 12 - Historical bugs and security incidents
 
 ## Goal

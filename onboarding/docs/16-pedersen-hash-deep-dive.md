@@ -1,3 +1,9 @@
+---
+sidebar_position: 16
+title: Pedersen hash deep dive
+description: "Windowed encoding, generators, constraint counts."
+---
+
 # 16 - Pedersen hash deep dive
 
 ## Goal

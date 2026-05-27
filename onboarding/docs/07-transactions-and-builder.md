@@ -1,3 +1,9 @@
+---
+sidebar_position: 7
+title: Transactions, sighash, builder, PCZT
+description: "v4/v5/v6 layout, sighash trees, PCZT roles."
+---
+
 # 07 - Transactions, sighash, builder, PCZT
 
 ## Goal

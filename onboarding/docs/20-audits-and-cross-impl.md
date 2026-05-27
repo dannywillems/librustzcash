@@ -1,3 +1,9 @@
+---
+sidebar_position: 20
+title: Audits and cross-implementation testing
+description: "Public audit reports, test vectors, Zebra/zcashd parity."
+---
+
 # 20 - Audits and cross-implementation testing
 
 ## Goal

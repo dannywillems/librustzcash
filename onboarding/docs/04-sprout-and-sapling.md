@@ -1,3 +1,9 @@
+---
+sidebar_position: 4
+title: Sprout and Sapling
+description: "JoinSplit math, Sapling Spend/Output, Jubjub, BLS12-381, Groth16."
+---
+
 # 04 - Sprout and Sapling
 
 ## Goal

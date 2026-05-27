@@ -1,3 +1,9 @@
+---
+sidebar_position: 11
+title: Study plan and exercises
+description: "Week-by-week schedule with self-tests."
+---
+
 # 11 - Study plan and exercises
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 21
+title: Active research and the road to NU7
+description: "v6 tx, ZSAs, ZIP 233 burn, recursion, PQ."
+---
+
 # 21 - Active research and the road to NU7
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 2
+title: Zcash protocol foundations
+description: "Consensus, value pools, network upgrades, transaction shape."
+---
+
 # 02 - Zcash protocol foundations
 
 ## Goal

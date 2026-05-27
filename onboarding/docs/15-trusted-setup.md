@@ -1,3 +1,9 @@
+---
+sidebar_position: 15
+title: Trusted setup ceremonies
+description: "Powers of Tau, Sapling MPC, toxic waste, Halo 2 alternative."
+---
+
 # 15 - Trusted setup ceremonies
 
 ## Goal

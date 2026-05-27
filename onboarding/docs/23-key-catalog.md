@@ -1,3 +1,9 @@
+---
+sidebar_position: 23
+title: The complete key catalog
+description: "Every key symbol defined, derived, typed, and located in code."
+---
+
 # 23 - The complete key catalog
 
 ## Goal

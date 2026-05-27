@@ -1,3 +1,9 @@
+---
+sidebar_position: 9
+title: Equihash and consensus rules
+description: "Generalised birthday, history tree, PoW math."
+---
+
 # 09 - Equihash and consensus structures
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 18
+title: Anonymity set and metadata
+description: "Privacy beyond cryptography: behaviour, network, dummies."
+---
+
 # 18 - Anonymity set and metadata
 
 ## Goal

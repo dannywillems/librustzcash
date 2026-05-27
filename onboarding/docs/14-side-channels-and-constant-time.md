@@ -1,3 +1,9 @@
+---
+sidebar_position: 14
+title: Side channels and constant-time
+description: "subtle, zeroize, vartime APIs to avoid."
+---
+
 # 14 - Side channels and constant-time
 
 ## Goal

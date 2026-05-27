@@ -1,3 +1,9 @@
+---
+sidebar_position: 10
+title: The wallet stack
+description: "client_backend, scanning, fees, SQLite storage."
+---
+
 # 10 - The wallet stack
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 19
+title: ZIP catalog and reading order
+description: "Curated index of the ZIPs you must know."
+---
+
 # 19 - ZIP catalog and reading order
 
 ## Goal

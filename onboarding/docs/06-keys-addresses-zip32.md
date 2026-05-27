@@ -1,3 +1,9 @@
+---
+sidebar_position: 6
+title: Keys, addresses, ZIP 32, unified addresses
+description: "HD derivation, viewing keys, F4Jumble."
+---
+
 # 06 - Keys, addresses, ZIP 32, unified addresses
 
 ## Goal

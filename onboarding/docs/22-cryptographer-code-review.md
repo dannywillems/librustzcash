@@ -1,3 +1,9 @@
+---
+sidebar_position: 22
+title: Cryptographer's code-review checklist
+description: "The operational checklist for every crypto PR."
+---
+
 # 22 - Cryptographer's code-review checklist
 
 ## Goal

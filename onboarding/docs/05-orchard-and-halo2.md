@@ -1,3 +1,9 @@
+---
+sidebar_position: 5
+title: Orchard and Halo 2
+description: "Pallas/Vesta, Action circuit, Halo 2 + IPA."
+---
+
 # 05 - Orchard and Halo 2
 
 ## Goal

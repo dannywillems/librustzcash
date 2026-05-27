@@ -1,3 +1,9 @@
+---
+sidebar_position: 24
+title: Circuits, constraint by constraint
+description: "Sapling Spend, Sapling Output, Orchard Action constraint-by-constraint."
+---
+
 # 24 - Circuits, constraint by constraint
 
 ## Goal

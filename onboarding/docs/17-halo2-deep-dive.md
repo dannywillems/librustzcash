@@ -1,3 +1,9 @@
+---
+sidebar_position: 17
+title: Halo 2 deep dive
+description: "PLONKish, custom gates, lookups, IPA, transcript."
+---
+
 # 17 - Halo 2 deep dive
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 1
+title: Overview and roadmap
+description: "Crate graph and layering of the librustzcash workspace."
+---
+
 # 01 - Overview and roadmap
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 13
+title: Cofactors, subgroups, canonical encodings
+description: "Jubjub cofactor 8, ZIP 216, subgroup checks."
+---
+
 # 13 - Cofactors, subgroups, canonical encodings
 
 ## Goal

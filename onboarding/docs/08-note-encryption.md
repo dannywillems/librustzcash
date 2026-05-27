@@ -1,3 +1,9 @@
+---
+sidebar_position: 8
+title: Note encryption
+description: "In-band secret distribution, OutCiphertext, KDF."
+---
+
 # 08 - Note encryption
 
 ## Goal

@@ -1,3 +1,9 @@
+---
+sidebar_position: 3
+title: Cryptography primer
+description: "Groups, pairings, Pedersen, BLAKE2, RedDSA, ZK primer."
+---
+
 # 03 - Cryptography primer
 
 ## Goal
