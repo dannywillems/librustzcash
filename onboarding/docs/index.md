@@ -64,7 +64,7 @@ material (key catalog, circuit walk-through).
 | 02 | [Zcash protocol foundations](./02-zcash-protocol-foundations.md) | Consensus, value pools, network upgrades, transaction shape |
 | 03 | [Cryptography primer](./03-cryptography-primer.md) | Groups, pairings, Pedersen, BLAKE2, RedDSA, ZK primer |
 | 04 | [Sprout and Sapling](./04-sprout-and-sapling.md) | JoinSplit math, Sapling Spend/Output, Jubjub, BLS12-381, Groth16 |
-| 05 | [Orchard and Halo 2](./05-orchard-and-halo2.md) | Pallas/Vesta, Action circuit, Halo 2 + IPA |
+| 05 | [Orchard and Halo 2](./05-orchard-and-halo2.md) | Pointer chapter. The technical material lives in the dedicated [orchard](https://dannywillems.github.io/orchard/) and [halo2](https://dannywillems.github.io/halo2/) courses. |
 | 06 | [Keys, addresses, ZIP 32, unified addresses](./06-keys-addresses-zip32.md) | HD derivation, viewing keys, F4Jumble |
 | 07 | [Transactions, sighash, builder, PCZT](./07-transactions-and-builder.md) | v4/v5/v6 layout, sighash trees, PCZT roles |
 | 08 | [Note encryption](./08-note-encryption.md) | In-band secret distribution, OutCiphertext, KDF |
@@ -81,7 +81,7 @@ material (key catalog, circuit walk-through).
 | 14 | [Side channels and constant-time](./14-side-channels-and-constant-time.md) | `subtle`, `zeroize`, vartime APIs to avoid |
 | 15 | [Trusted setup ceremonies](./15-trusted-setup.md) | Powers of Tau, Sapling MPC, toxic waste, Halo 2 alternative |
 | 16 | [Pedersen hash deep dive](./16-pedersen-hash-deep-dive.md) | Windowed encoding, generators, constraint counts |
-| 17 | [Halo 2 deep dive](./17-halo2-deep-dive.md) | PLONKish, custom gates, lookups, IPA, transcript |
+| 17 | [Halo 2 deep dive](./17-halo2-deep-dive.md) | Pointer chapter. The technical material lives in the dedicated [halo2](https://dannywillems.github.io/halo2/) course. |
 | 18 | [Anonymity set and metadata](./18-anonymity-set-and-metadata.md) | Privacy beyond cryptography: behaviour, network, dummies |
 | 19 | [ZIP catalog and reading order](./19-zip-catalog.md) | Curated index of the ZIPs you must know |
 | 20 | [Audits and cross-implementation testing](./20-audits-and-cross-impl.md) | Public audit reports, test vectors, Zebra / zcashd parity |

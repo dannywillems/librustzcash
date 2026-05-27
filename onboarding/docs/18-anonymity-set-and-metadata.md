@@ -6,316 +6,303 @@ description: "Privacy beyond cryptography: behaviour, network, dummies."
 
 # 18 - Anonymity set and metadata
 
-## Goal
+## 1. Why this chapter exists
 
-The cryptography in Zcash provides strong unlinkability of *shielded*
-spend/output pairs. But cryptography alone does not give privacy:
-the **anonymity set** (the set of plausible alternative spenders /
+The cryptography in Zcash provides strong unlinkability of shielded
+spend/output pairs, but cryptography alone does not give privacy. The
+**anonymity set** (the set of plausible alternative spenders or
 recipients) and the **metadata** observable on-chain and off-chain
-both shape what an adversary can infer.
+both shape what an adversary can infer. A contributor who modifies
+[`zcash_client_backend::scanning`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs),
+the proposal pipeline in
+[`zcash_client_backend::data_api::wallet`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api/wallet.rs),
+or the Tor integration in
+[`zcash_client_backend::tor`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/tor.rs)
+needs the analytical lens this chapter provides. It is the operational
+counterpart to chapters 04, 05, and 08.
 
-This chapter walks through the analytical lens you should apply
-when reasoning about a privacy-touching change. It is the operational
-counterpart to chapters 04, 05, 08.
+## 2. Definitions
 
-## 1. What "privacy" means in Zcash
-
-There are at least three orthogonal goals:
-
-1. **Transaction graph unlinkability**: cannot link an output to
-   the input that funded it.
-2. **Value privacy**: cannot tell the value being moved.
-3. **Sender/recipient privacy**: cannot tell who sent or received.
-
-Shielded Zcash provides all three *within the shielded pool*, in
-principle. The strength depends on the anonymity set.
-
-## 2. The anonymity set
-
-For a shielded spend, the anonymity set is the set of unspent
-shielded notes at the moment of spending: any of them *could* have
-been the one spent. Larger sets mean stronger privacy.
-
-For Sapling: ~all notes in the Sapling tree that have not been
-spent. The tree is global; the proof shows membership without
-revealing which leaf.
-
-For Orchard: same but in the Orchard tree.
-
-The cardinality of these sets, at any moment, can be approximated
-from on-chain data:
+**Definition (Anonymity set).** For a shielded spend at height $h$
+in a pool $P$, the anonymity set is the set of unspent notes in $P$
+at height $h$ that could plausibly have been the one spent. Formally,
 
 $$
-|\text{anonymity set}_{\text{Sap}}|
-\;=\;
-\sum_{\text{blocks}} (\text{outputs created}) \;-\; \sum_{\text{blocks}} (\text{spends})
-\;-\; (\text{dust})
+A_P(h) \;=\; \{ \mathsf{cm} \in T_P(h) :
+   \mathsf{cm} \text{ has not been nullified, } v > 0\},
 $$
 
-(With the implicit assumption that all unspent notes are uniformly
-plausible candidates.)
+where $T_P(h)$ is the commitment tree of pool $P$ at height $h$.
 
-As of late 2024, the Sapling anonymity set is on the order of a few
-million notes; Orchard's is growing but smaller. ZIP 320 and the
-Orchard adoption push, plus the late 2024 deprecation of Sapling
-for new outputs (under discussion), aim to consolidate the
-anonymity set in Orchard.
+A first-order estimate of $|A_P(h)|$ is
 
-## 3. The "Sprout linkability" lesson
+$$
+|A_P(h)| \;\approx\; \sum_{i \le h} \text{outputs}_P(i)
+              \;-\; \sum_{i \le h} \text{spends}_P(i)
+              \;-\; \text{dust}(h),
+$$
 
-In 2017, Quesnelle showed that a sizeable fraction of Sprout usage
-was *trivially linkable*: many users moved funds in transparent
-$\to$ Sprout $\to$ transparent patterns where the value and timing
-on both transparent sides could be matched.
+with the implicit assumption that all unspent notes are uniformly
+plausible candidates. The assumption is rarely exact; behavioural
+heuristics shrink the effective set.
 
-Lesson: the anonymity set is reduced to *transactions with
-similar shape and timing*. If you are the only person to spend
-$1.234 \text{ ZEC}$ shielded that hour, you stand out.
+**Definition (Privacy goals).** Three orthogonal properties:
 
-Wallet UX must avoid distinctive patterns:
+1. **Transaction graph unlinkability**: an observer cannot link an
+   output to the input that funded it.
+2. **Value privacy**: an observer cannot tell the value being moved.
+3. **Sender/recipient privacy**: an observer cannot identify the
+   sender or recipient.
 
-- Round-number amounts that match transparent inputs.
-- Same-block in/out flows.
-- User-identifiable memos.
-- Address reuse (sending many shielded txs to the same transparent
-  address).
+Shielded Zcash provides all three within a shielded pool, conditional
+on a non-trivial anonymity set.
 
-The wallet layer in this codebase does not enforce these directly;
-that is the wallet UI's responsibility. But the proposal and fee
-APIs expose enough surface to make some of these explicit.
+**Definition (Metadata leak).** Any side-channel observable outside
+the cryptographic envelope: amounts that match transparent flows on
+either side, distinctive timing, address reuse, network endpoints
+contacted by the wallet, memos written to logs, scanning duration.
+Metadata can reduce the effective anonymity set arbitrarily, down to
+one in worst cases.
 
-## 4. The Kappos et al. analysis
+**Definition (Dummy spend/output).** A zero-value
+SpendDescription or OutputDescription with fresh randomness and a
+valid proof, indistinguishable from a real one to outside observers.
+Used to pad input/output counts so that the bundle's shape does not
+leak.
 
-USENIX 2018. Kappos, Yousaf, Maller, Meiklejohn.
+**Definition (Diversifier).** An $88$-bit input to
+$\mathsf{DiversifyHash}$ that produces a distinct diversified
+transmission key $\mathsf{pk}_d$ from the same incoming viewing key
+$\mathsf{ivk}$. A wallet can hand out fresh diversifiers without
+disclosing the shared $\mathsf{ivk}$. See chapter 23 for the
+keying-material details.
 
-Methodology:
+## 3. The code
 
-- Cluster Sprout deposits and withdrawals by amount, timing, and
-  user heuristics.
-- Use mining-pool addresses (publicly known) as a "ground truth" to
-  estimate how many shielded txs were merely passing through pool
-  payouts.
-- Estimated that $\sim 70\%$ of Sprout txs at the time could be
-  linked with high confidence.
+### 3.1 Scanning and trial decryption
 
-The fix is not cryptographic; it is operational. Users must
-understand that their behaviour determines their privacy.
+Scanning is where most secret-dependent timing risks live. Every
+compact output is trial-decrypted against every active incoming
+viewing key, and the result must be constant-time so that a network
+observer or a side-channel attacker cannot tell which key succeeded.
 
-## 5. Side-channel deanonymisation (Tramèr et al.)
+The scanner's entry point is `scan_block` in
+[`zcash_client_backend/src/scanning.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs):
 
-USENIX 2020.
+```rust reference title="zcash_client_backend/src/scanning.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs#L609-L622
+```
 
-Demonstrated that an attacker who can probe a wallet's network
-traffic or measure its CPU usage can determine which trial
-decryption succeeded (and thus which key was used). Mitigations:
+Per-output trial decryption must not branch on the success of an
+individual key match (see chapter 14). The constant-time discipline
+is the reason a wallet's "decryption time per block" is roughly
+linear in the key count regardless of how many notes belong to the
+user.
 
-- Constant-time trial decryption (chapter 14).
-- Padded outbound network traffic.
-- Tor or other anonymity network for `lightwalletd` connections.
+### 3.2 Network privacy: Tor
 
-In `zcash_client_backend::tor`, the wallet can tunnel traffic
-through Tor circuits. Whether it does so is a deployment choice;
-the library exposes the capability.
+The wallet can tunnel light-client traffic through Tor circuits via
+`arti_client`. The integration lives in
+[`zcash_client_backend/src/tor.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/tor.rs):
 
-## 6. The diversifier and address reuse
+```rust reference title="zcash_client_backend/src/tor.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/tor.rs#L1-L60
+```
 
-A Sapling/Orchard $\mathsf{ivk}$ can produce $\sim 2^{88}$
+The library exposes the capability; whether the embedding application
+uses it is a deployment decision. The HTTP and gRPC clients have
+Tor-aware variants under `tor/http.rs` and `tor/grpc.rs`.
+
+### 3.3 The diversifier and address rotation
+
+A Sapling or Orchard $\mathsf{ivk}$ can produce roughly $2^{88}$
 diversified addresses. Best practice: a new diversifier per
-counterparty (or even per transaction). The wallet implements this
-as the `addresses` table in the SQLite backend, with a
-"next_diversifier_index" counter.
+counterparty, or even per payment request. The wallet stores
+diversifier indices per account in the SQLite backend; the
+`UnifiedAddressRequest` API in
+[`zcash_keys/src/keys.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_keys/src/keys.rs)
+selects which receivers a fresh address contains.
 
 Address reuse leaks across multiple transactions: the same
 $(d, \mathsf{pk}_d)$ being credited multiple times tells the
-counterparty (who supplied $d$) about your transaction activity to
-the address.
+counterparty who supplied $d$ about the holder's transaction
+activity to that address. The cost of fresh diversifiers is one
+FF1 evaluation per address; the privacy gain is significant.
 
-For a privacy-conscious wallet, ALWAYS use a fresh diversifier per
-payment-request. The cost is tiny (an FF1 evaluation).
+### 3.4 Memo handling
 
-## 7. The memo leak
+The Sapling and Orchard memo is up to 512 bytes of recipient-only
+plaintext, encrypted as part of the note ciphertext. The container
+type is `MemoBytes` in
+[`components/zcash_protocol/src/memo.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/memo.rs):
 
-The memo is up to 512 bytes of arbitrary recipient-only data. It
-is encrypted to the recipient. But:
+```rust reference title="components/zcash_protocol/src/memo.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/memo.rs#L54-L94
+```
 
-- Its length is fixed (512 bytes ciphertext) regardless of content,
-  so length does not leak.
-- Its content is opaque from a third-party view.
-- The recipient sees it in plaintext.
-- The sender sees it (via $\mathsf{ovk}$ recovery).
+The fixed 512-byte ciphertext length means content length does not
+leak from the wire. What leaks at the application boundary:
 
-Recipient-side leaks:
-
+- The recipient holds the plaintext and can leak it via logging or
+  indexing.
 - A merchant logging memos as customer references creates a
   cross-link between identities and shielded inflows.
-- A user importing all received memos into a search-indexable
-  database trivially deanonymises themselves.
+- The sender can also see the memo on outgoing recovery via
+  $\mathsf{ovk}$.
 
-Wallet UX must surface these risks, but the library cannot enforce
-them.
+The library cannot enforce recipient-side discretion; wallet UX must.
 
-## 8. Timing and IBD privacy
+### 3.5 Proposal pipeline and dummies
 
-A new wallet doing initial block download (IBD) must scan every
-shielded output since the wallet's birthday. This is a
-non-trivial computational task and visible on the network: the
-wallet downloads $\sim 100$ blocks of compact data, decrypts $\sim
-10{,}000$ outputs, and records the matches.
+`zcash_client_backend::data_api::wallet` exposes the proposal
+construction APIs that decide which notes to spend, how many dummies
+to add, and which pool to prefer. The dummy-insertion logic, when
+present, lives behind the proposal step before transactions are
+built. The fee module
+[`zcash_primitives/src/transaction/fees.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/fees.rs)
+governs the per-component pricing, which influences whether dummies
+are cheap enough to add by default.
 
-Privacy concerns:
+A bundle with $k$ real spends and $k'$ dummies presents an
+attacker with at least $\binom{k + k'}{k}$ candidate "real spend"
+subsets, all of which produce identical wire footprints.
 
-- The wallet's "birthday" leaks the wallet's existence.
-- The wallet's network endpoints (lightwalletd, Tor) see the IBD
-  pattern.
-- A malicious lightwalletd can attempt to slow-feed blocks to
-  fingerprint clients.
+### 3.6 Cross-pool migrations
 
-Mitigations in `zcash_client_backend`:
+A transaction with inputs in Sapling and outputs in Orchard (or vice
+versa) is visible as such on-chain: the bundle structure reveals
+which pools are present. The
+[`zcash_primitives/src/transaction/components.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/components.rs)
+component types make this explicit, and the builder in
+[`zcash_primitives/src/transaction/builder.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/builder.rs)
+emits separate Sapling and Orchard bundles. A migration transaction
+is therefore distinguishable from a pure-Orchard one. Batching and
+random timing are the operational mitigations; neither is enforced
+in code.
 
-- Birthday is configurable; users can set it to a reasonable point
-  in the past.
-- Multiple lightwalletd backends can be configured.
-- Tor is supported.
-
-## 9. The ZIP 320 "transparent payments through unified addresses"
+### 3.7 ZIP 320 and TEX addresses
 
 A user with only a Unified Address (UA) cannot trivially receive a
-transparent payment without exposing a transparent receiver. ZIP
-320 proposes a mechanism where the wallet operator pre-generates
-transparent addresses that map back to a shielded balance, allowing
-transparent senders to pay a UA-only user. The privacy property:
-the transparent address rotates so it cannot be used to track the
-user across payments.
+transparent payment without exposing a transparent receiver. ZIP 320
+defines TEX (Transparent-Source-Only) addresses that signal to the
+sender that the destination converts incoming transparent value into
+shielded value immediately. The address type lives in
+[`components/zcash_address/`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_address/src)
+and the wallet transparent address rotation in
+[`zcash_transparent/src/keys.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_transparent/src/keys.rs).
 
-The proposal touches the wallet (transparent address rotation,
-shielding policy) and the fee module (transparent inputs become
-shielded outputs). It also has implications for the anonymity set:
-each "shield-on-receive" transaction adds to the Orchard set.
+### 3.8 The shielded-value-balance leak
 
-Status: under active development; you will see ZIP 320 references
-in issues and PRs.
+Each transaction reveals its per-pool $v_{\text{balance}}$
+publicly. Over many blocks an analyst can compute the net shielded
+inflow and outflow at the chain level. This is a macro leak: it
+does not deanonymise individual users, but it shapes the
+privacy quality of the chain as a whole.
 
-## 10. Anonymity-set sizing in practice
+## 4. Failure modes
 
-The wallet's `data_api` can be extended with metrics:
+- **Sprout linkability (Quesnelle 2017).** A sizeable fraction of
+  early Sprout usage was trivially linkable because users moved
+  funds in transparent -> Sprout -> transparent patterns where the
+  value and timing on both transparent sides matched. Lesson: the
+  effective anonymity set is the set of transactions with similar
+  shape and timing.
+- **Sprout deanonymisation via mining pools (Kappos et al., USENIX
+  2018).** Using publicly known mining-pool addresses as ground
+  truth, the authors estimated that roughly 70% of Sprout
+  transactions at the time could be linked with high confidence.
+  The fix is operational, not cryptographic.
+- **Side-channel deanonymisation (Tramer et al., USENIX 2020).** An
+  attacker who can probe a wallet's network traffic or measure its
+  CPU usage can determine which trial decryption succeeded. The
+  scanner in
+  [`zcash_client_backend/src/scanning.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs)
+  must execute identical work per output regardless of which key
+  matches. See chapter 14.
+- **Address reuse.** Repeated payments to the same $(d, \mathsf{pk}_d)$
+  let the supplier of $d$ correlate the recipient's transaction
+  history. The wallet must rotate diversifiers per payment request.
+- **Birthday leak during IBD.** A new wallet doing initial block
+  download must scan every shielded output since its birthday. The
+  birthday timestamp leaks the wallet's existence. The user-
+  configurable birthday in the data API is the only mitigation.
+- **Dummy mismatch.** A bundle with dummies that have non-default
+  field shapes (different randomness distributions, different
+  encrypted-note structure) is trivially distinguishable from a
+  bundle of real spends. The builder must produce dummies that are
+  bit-by-bit indistinguishable.
+- **Memo leakage at the recipient.** A merchant or service that
+  logs memos verbatim creates a cross-link between counterparty
+  identities and shielded inflows. The library cannot prevent this.
+- **Network-layer correlation.** A non-Tor wallet connecting to a
+  single lightwalletd reveals the wallet's IP address and timing
+  pattern. Multiple endpoints plus Tor are the available defences.
 
-- Per-pool unspent-output count.
-- "Effective anonymity set" estimates, perhaps excluding obviously
-  un-spendable outputs.
-- Per-output "noteworthy" flags (round amount, distinctive memo,
-  etc.) to warn users.
+## 5. Spec pointers
 
-Implementing such metrics is one of the on-roadmap items; ZIP-Y
-drafts exist.
+- [Zcash Protocol Specification, section 8 (Differences from the
+  Zerocash paper)](https://zips.z.cash/protocol/protocol.pdf):
+  documents the privacy properties relative to the original
+  Zerocash construction.
+- [ZIP 316](https://zips.z.cash/zip-0316): Unified Addresses,
+  diversifier semantics, and the internal/external sub-tree split
+  that change addresses use.
+- [ZIP 320](https://zips.z.cash/zip-0320): TEX addresses and
+  transparent payment flows into UAs.
+- [Quesnelle, "On the linkability of Zcash transactions"](https://arxiv.org/abs/1712.01210):
+  the 2017 paper on Sprout-era linkability. Read for the
+  methodology, not the numbers; usage patterns have changed.
+- [Kappos, Yousaf, Maller, Meiklejohn, "An empirical analysis of
+  anonymity in Zcash"](https://www.usenix.org/conference/usenixsecurity18/presentation/kappos):
+  USENIX Security 2018. The clustering-by-mining-pool methodology.
+- [Tramer, Boneh, Paterson, "Remote side-channel attacks on
+  anonymous transactions"](https://www.usenix.org/conference/usenixsecurity20/presentation/tramer):
+  USENIX Security 2020. The trial-decryption timing leak and its
+  remediation.
 
-## 11. Cross-pool linkability
+## 6. Exercises
 
-Sapling and Orchard pools are operationally separate but
-transactions can move value between them. A transaction with
-inputs in Sapling and outputs in Orchard (or vice versa) is
-visible as such on-chain (the bundle structure reveals which pools
-are present).
+1. **Estimate an anonymity set.** Using on-chain data (e.g.
+   `zcashd`'s `getblockchaininfo` and `getrawtransaction`, or a
+   block explorer), compute the cumulative count of unspent
+   Sapling notes and unspent Orchard notes at the current tip.
+   State the assumption you made about "dust" and how it affects
+   the estimate. Cite the data source.
+2. **Trace a scan path.** Open
+   [`zcash_client_backend/src/scanning.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs)
+   and identify the function that performs trial decryption per
+   output. Locate the line where a successful match is recorded
+   and confirm that no `if` or `match` branches on whether the
+   match succeeded before that point.
+3. **Modify and test.** In a checkout, add a unit test under
+   `zcash_client_backend` that constructs two compact outputs, one
+   addressed to a known $\mathsf{ivk}$ and one to a random one,
+   and asserts that `scan_block` runs in indistinguishable wall
+   time for both. (The assertion can be heuristic, e.g. the ratio
+   of medians over $n$ runs is within 5%.) State whether your
+   test reproduces a known leak or confirms its absence.
+4. **Audit a memo path.** Locate every site in the workspace where
+   a memo plaintext is logged, printed, or written to disk. Argue
+   whether each such site is privacy-safe given the threat model
+   in Section 4.
 
-Therefore:
+### Answers in the code
 
-- A "Sapling-to-Orchard migration" transaction is distinguishable
-  from a pure-Orchard transaction.
-- Adversaries can cluster users by their migration patterns.
+- `scan_block` entry point:
+  [`zcash_client_backend/src/scanning.rs#L609-L622`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/scanning.rs#L609-L622).
+- Tor client setup:
+  [`zcash_client_backend/src/tor.rs#L1-L60`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/tor.rs#L1-L60).
+- Memo container:
+  [`components/zcash_protocol/src/memo.rs#L54-L94`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/memo.rs#L54-L94).
 
-Wallet best practice: batch migrations (so multiple users' funds
-mingle in the migration set) and randomise timing.
+## 7. Further reading
 
-## 12. The "shielded value gain" leak
-
-Each transaction reveals its $v_{\text{balance}}$ per shielded pool
-publicly. Over time, an analyst can see the *net* shielded inflow
-vs outflow at the chain level. Some forms of analysis:
-
-- Total shielded value over time.
-- Rate of shielded $\to$ transparent migrations.
-- Mining pool behaviour (most mining payouts are transparent, which
-  shields the pool's payout patterns from shielded-side analysis).
-
-This is a *macro* leak: it does not deanonymise individual users.
-But it does affect the privacy-quality of the chain as a whole.
-
-## 13. The "dummy" defence
-
-Sapling and Orchard support dummy spends/outputs (zero-value, with
-fresh randomness and valid proofs). They are indistinguishable from
-real ones to outside observers and pad the visible input/output
-counts.
-
-The cost is the proving time for the dummy. The benefit is that an
-adversary cannot use input/output count as a signal.
-
-`zcash_client_backend::data_api::wallet`'s proposal pipeline can
-add dummies to reach a configurable minimum count. ZIP-X drafts
-discuss making this mandatory above some threshold.
-
-## 14. Memo padding and standardisation
-
-A common privacy improvement: pad memos to a fixed sub-length
-ladder (e.g. 0, 32, 96, 224, 512 bytes) instead of using a single
-560-byte ciphertext for all memos. But the existing format already
-uses a single 512-byte plaintext field, so length does not leak.
-What does leak (a tiny bit): whether the memo is "empty" (all
-zeros) or "non-empty". The convention is that the wallet emits
-randomly-chosen padding for empty memos, but this is not enforced.
-
-## 15. Where this lives in the code
-
-There is little direct code in this workspace dedicated to
-anonymity-set analysis; it is the wallet developer's
-responsibility. But several pieces matter:
-
-- `zcash_client_backend::scanning`: must be constant-time per
-  output regardless of which key matches.
-- `zcash_client_backend::data_api::wallet`: proposal pipeline; can
-  add dummies, can prefer Orchard over Sapling.
-- `zcash_client_backend::tor`: the privacy-preserving network
-  layer.
-- The PCZT design: hardware wallets can sign without revealing
-  spend keys or note values to the host.
-
-## 16. The "shielded value pool consolidation"
-
-There is an ongoing protocol discussion about whether to encourage
-or even mandate consolidation into a single shielded pool (likely
-Orchard) over time, by:
-
-- Disabling new Sapling outputs (post-NU6 discussion).
-- Adding incentive structures for migration.
-- Eventually retiring Sapling entirely.
-
-The arguments for and against involve anonymity-set economics:
-a single large pool is better than two small pools, but only if
-the migration is graceful.
-
-## 17. Best-practice list (for you, as a principal)
-
-When reviewing or designing a wallet feature, ask:
-
-1. Does this leak any *secret*-dependent timing?
-2. Does this leak any *user behaviour*-dependent metadata
-   (which keys, which counterparties, which times)?
-3. Does this introduce a new way for users to make their
-   transactions distinctive?
-4. Does this allow batching with other users' txs?
-5. Are dummies used to obscure counts?
-6. Does the network layer respect Tor or other anonymity
-   provisions?
-7. Is the memo handling explicit about its trust model?
-
-## What you should know after this chapter
-
-- That privacy in Zcash is cryptography + anonymity set +
-  user behaviour, not just cryptography.
-- The historical analyses (Quesnelle, Kappos, Tramèr) and what
-  they taught us.
-- Operational mitigations: dummies, address rotation, Tor,
-  pool consolidation.
-- That the wallet stack mediates many of these decisions, and
-  that "library" decisions propagate to user privacy at scale.
-
-Next: a catalog of the ZIPs you should read, in suggested order.
+- [chapter 14](./14-side-channels-and-constant-time.md):
+  constant-time scanning and other side-channel disciplines.
+- [chapter 21](./21-active-research-and-nu7.md): anonymity-set
+  consolidation discussions and ZIP 233 burn mechanism.
+- Biryukov, Khovratovich, Tikhomirov, "Privacy aspects and
+  subliminal channels in Zcash" (CCS 2019): a broader empirical
+  view of Zcash privacy from outside the project.
+- [The Zcash Foundation engineering blog](https://www.zfnd.org/blog/):
+  periodic posts on anonymity-set size and protocol-level mitigations.

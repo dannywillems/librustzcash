@@ -6,173 +6,221 @@ description: "Sapling Spend, Sapling Output, Orchard Action constraint-by-constr
 
 # 24 - Circuits, constraint by constraint
 
-## Goal
+## 1. Why this chapter exists
 
 The Sapling Spend circuit, the Sapling Output circuit, and the
 Orchard Action circuit are the cryptographic heart of Zcash's
 shielded protocols. Earlier chapters described them at the
-"statement" level. This chapter walks each constraint clause, in
-the order the prover witnesses and the verifier checks, with an
-explicit "what attack does this clause prevent" for each.
+statement level. A contributor who modifies a circuit, adds a
+public input, or changes a generator without understanding each
+constraint will either break soundness or invalidate the trusted
+setup. This chapter walks every clause in the order the prover
+witnesses and the verifier checks, with an explicit "attack on
+omission" note showing what fails if the clause is removed. The
+implementations live in the external
+[`sapling-crypto`](https://github.com/zcash/sapling-crypto) and
+[`orchard`](https://github.com/zcash/orchard) crates, consumed by
+this workspace via
+[`zcash_proofs/src/circuit`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/circuit)
+(for Sprout) and the high-level builders in
+[`zcash_primitives/src/transaction/builder.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/builder.rs).
 
-The constraint counts are approximate; the exact numbers depend on
-gadget implementation and have shifted over time as optimisations
-landed.
+Constraint counts are approximate; exact numbers depend on gadget
+implementation and shift over time as optimisations land.
 
-## 0. The two constraint models
+## 2. Definitions
 
-### R1CS (Sapling / Sprout / Groth16)
-
-A Rank-1 Constraint System: each constraint is
-
-$$
-\Bigl(\sum_i a_i \cdot w_i\Bigr) \cdot \Bigl(\sum_i b_i \cdot w_i\Bigr) \;=\; \Bigl(\sum_i c_i \cdot w_i\Bigr),
-$$
-
-with $w_i$ the wires (witness + 1) and $a_i, b_i, c_i$ public
-coefficients. The Sapling Spend circuit has $\sim 100{,}000$ such
-constraints. `bellman` is the toolkit.
-
-### PLONKish (Orchard / Halo 2)
-
-A table of cells with custom gates: each row $i$ has constraints
-of the form
+**Definition (R1CS).** A Rank-1 Constraint System. Each
+constraint has the form
 
 $$
-G(w_1(\omega^i), w_2(\omega^i), \ldots) \cdot q_{\text{sel}}(\omega^i) \;=\; 0,
+\Bigl(\sum_i a_i\, w_i\Bigr) \cdot
+\Bigl(\sum_i b_i\, w_i\Bigr) \;=\;
+\Bigl(\sum_i c_i\, w_i\Bigr),
 $$
 
-where $q_{\text{sel}}$ is the selector polynomial. Plus permutation
-arguments for copy constraints and lookups for table membership.
-The Orchard Action circuit uses $\sim 2^{11}$ rows.
+with $w_i$ the wires (witness vector plus a constant) and
+$a_i, b_i, c_i$ public coefficients. Sapling Spend uses
+approximately $1.5 \times 10^5$ such constraints in
+[`sapling-crypto`](https://github.com/zcash/sapling-crypto)'s
+circuit. The toolkit is `bellman`.
 
-The two models can express the same statements; only the
-arithmetisation differs.
+**Definition (PLONKish / Halo 2).** A table of cells with custom
+gates. Each row $i$ may impose constraints of the form
 
-## 1. Sapling Spend circuit
+$$
+G\bigl(w_1(\omega^i), w_2(\omega^i), \ldots\bigr) \cdot
+q_{\text{sel}}(\omega^i) \;=\; 0,
+$$
 
-The full statement (consolidated from chapter 04):
+where $q_{\text{sel}}$ is the selector polynomial that activates
+the gate. Permutation arguments encode copy constraints, and
+lookups enforce table membership. The Orchard Action circuit uses
+$2^{11}$ rows by default and is implemented in
+[`halo2_proofs`](https://github.com/zcash/halo2).
 
-> *The prover knows secret $(v, g_d, \mathsf{pk}_d, \mathsf{rcm},
-> \alpha, \mathsf{ak}, \mathsf{nsk}, \text{auth-path}, \text{pos})$
-> such that:*
+**Definition (Underconstrained advice cell).** An advice cell in
+a Halo 2 circuit that no selector-gated gate constrains. A
+malicious prover can assign such a cell arbitrarily, breaking
+soundness. The Trail of Bits review of Orchard codified this as
+a recurring finding class.
 
-> *1. $\mathsf{cm} = \mathsf{NoteCommit}^{\mathsf{rcm}}(g_d,
->    \mathsf{pk}_d, v)$.*
-> *2. The Merkle path from $\mathsf{cm}$ at position $\text{pos}$
->    leads to the public anchor.*
-> *3. $\mathsf{pk}_d = [\mathsf{ivk}]\,g_d$ for
->    $\mathsf{ivk} = \mathsf{CRH}^{\mathsf{ivk}}(\mathsf{ak}, \mathsf{nk})$
->    with $\mathsf{nk} = [\mathsf{nsk}]\,G^{\mathsf{nk}}$.*
-> *4. $\mathsf{rk} = \mathsf{ak} + [\alpha]\,G^{\mathsf{ak}}$
->    (public).*
-> *5. $\mathsf{nf} = \mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}(
->    \mathsf{MixingPedersenHash}(\mathsf{cm}, \text{pos}))$
->    (public).*
-> *6. $\mathsf{cv} = [v]\,V + [\mathsf{rcv}]\,R$ (public $\mathsf{cv}$).*
-> *7. $v \in [0, 2^{64})$.*
-> *8. Either $v = 0$ (dummy spend, Merkle check skipped) or the
->    Merkle path is checked.*
+**Definition (Incomplete addition).** A point-addition formula
+that fails when the operands coincide. The unified twisted-
+Edwards formula (used for Jubjub) does not have this issue;
+incomplete short-Weierstrass addition (used for Pallas in some
+gates) does, and requires a distinctness witness.
+
+**Definition (Pedersen hash gadget, $\mathsf{PH}$).** The Jubjub-
+based windowed-multiplication hash defined in chapter 16 and used
+across the Sapling circuit. Constraint cost is approximately $6$
+constraints per input bit.
+
+**Definition (Sinsemilla).** The Pallas-based chunk-and-add hash
+used in Orchard. Each $10$-bit chunk is looked up in a generator
+table, and successive points are combined via incomplete
+addition. Constraint cost is roughly proportional to the chunk
+count.
+
+**Definition (Statement).** The relation the circuit enforces
+between public inputs and witness. Each chapter section names
+the statement before walking its clauses.
+
+## 3. The code
+
+### 3.1 Sapling Spend statement
+
+The full statement (consolidated from chapter 04): the prover
+knows secret $(v, g_d, \mathsf{pk}_d, \mathsf{rcm}, \alpha,
+\mathsf{ak}, \mathsf{nsk}, \text{auth-path}, \text{pos})$ such
+that:
+
+1. $\mathsf{cm} =
+   \mathsf{NoteCommit}^{\mathsf{rcm}}(g_d, \mathsf{pk}_d, v)$.
+2. The Merkle path from $\mathsf{cm}$ at $\text{pos}$ leads to the
+   public anchor.
+3. $\mathsf{pk}_d = [\mathsf{ivk}]\,g_d$ with
+   $\mathsf{ivk} = \mathsf{CRH}^{\mathsf{ivk}}(\mathsf{ak},
+   \mathsf{nk})$ and $\mathsf{nk} = [\mathsf{nsk}]\,
+   G^{\mathsf{nk}}$.
+4. $\mathsf{rk} = \mathsf{ak} + [\alpha]\,G^{\mathsf{ak}}$
+   (public).
+5. $\mathsf{nf} = \mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}(
+   \mathsf{MixingPedersenHash}(\mathsf{cm}, \text{pos}))$
+   (public).
+6. $\mathsf{cv} = [v]\,V + [\mathsf{rcv}]\,R$ (public
+   $\mathsf{cv}$).
+7. $v \in [0, 2^{64})$.
+8. Either $v = 0$ (dummy spend, Merkle check skipped) or the
+   Merkle path is checked.
 
 Public inputs: $\mathsf{rk}$, $\mathsf{cv}$, $\mathsf{nf}$,
-$\mathsf{anchor}$, plus implementation-required encoding bits.
+$\mathsf{anchor}$.
 
-### 1.1 - Witness allocation
+The verifying-key hash for this circuit is pinned in
+[`zcash_proofs/src/lib.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs):
+
+```rust reference title="zcash_proofs/src/lib.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs#L40-L60
+```
+
+### 3.2 Sapling Spend witness allocation
 
 Approximate sub-circuit costs (R1CS constraints):
 
 | Witness | Bits | Constraints |
 | --- | --- | --- |
 | $v$ | 64 | 64 boolean + 1 packing |
-| $g_d$ | 256 (encoded as bits) | $\sim 750$ (subgroup membership inside circuit) |
-| $\mathsf{pk}_d$ | 256 | $\sim 750$ |
+| $g_d$ | 256 (encoded as bits) | ~750 |
+| $\mathsf{pk}_d$ | 256 | ~750 |
 | $\mathsf{rcm}$ | 252 | 252 boolean |
 | $\alpha$ | 252 | 252 boolean |
-| $\mathsf{ak}$ | 256 | $\sim 750$ |
+| $\mathsf{ak}$ | 256 | ~750 |
 | $\mathsf{nsk}$ | 252 | 252 boolean |
-| auth-path | $32 \times 256$ | $\sim 8000$ bit constraints |
+| auth-path | $32 \times 256$ | ~8000 bit constraints |
 
-So the witness alone is $\sim 12{,}000$ constraints before any
-checks run.
+The witness alone is ~12,000 constraints before any checks run.
 
-### 1.2 - Clause: $\mathsf{nk} = [\mathsf{nsk}]\,G^{\mathsf{nk}}$
+### 3.3 Clause: $\mathsf{nk} = [\mathsf{nsk}]\,G^{\mathsf{nk}}$
 
-Scalar mul of a *fixed* generator by a 252-bit secret. Using the
+Scalar mul of a fixed generator by a 252-bit secret. Using the
 fixed-base windowed comb gadget in `sapling-crypto`:
 
 - 252 bits of $\mathsf{nsk}$ are decomposed.
-- For each 3-bit window, a constant-time table select picks one of
-  8 precomputed multiples.
+- For each 3-bit window, a constant-time table select picks one
+  of 8 precomputed multiples.
 - The selected multiples are summed.
 
 Constraint cost: ~750.
 
-**Attack on omission**: if $\mathsf{nk}$ is allowed to be any
-witnessed point unrelated to $\mathsf{nsk}$, the spender could
-inject a $\mathsf{nk}$ they chose post-hoc, allowing them to predict
-nullifiers for notes they have not yet spent (or to forge nullifier
-collisions). The clause anchors $\mathsf{nk}$ in $\mathsf{nsk}$.
+**Attack on omission**: a witnessed $\mathsf{nk}$ unrelated to
+$\mathsf{nsk}$ lets the spender choose $\mathsf{nk}$ post-hoc,
+allowing nullifier prediction for unspent notes or forged
+nullifier collisions.
 
-### 1.3 - Clause: $\mathsf{ivk} = \mathsf{CRH}^{\mathsf{ivk}}(\mathsf{ak}, \mathsf{nk})$
+### 3.4 Clause: $\mathsf{ivk} = \mathsf{CRH}^{\mathsf{ivk}}(\mathsf{ak}, \mathsf{nk})$
 
 $\mathsf{CRH}^{\mathsf{ivk}}$ is BLAKE2s-256 of the concatenated
-encodings of $\mathsf{ak}$ and $\mathsf{nk}$ (as their $u$-coordinates),
-plus parity bits. Implementing BLAKE2s in R1CS is expensive (one of
-the largest sub-circuits in Sapling, ~16{,}000 constraints).
+encodings of $\mathsf{ak}$ and $\mathsf{nk}$ (as $u$-coordinates)
+plus parity bits. Implementing BLAKE2s in R1CS is expensive: one
+of the largest sub-circuits in Sapling, ~16,000 constraints.
 
-The output is reduced modulo $\ell_J$ to produce $\mathsf{ivk}$. The
-reduction is a controlled bit-truncation rather than a full modular
-reduction; this is OK because $\ell_J < 2^{252}$ and the top bits of
-$\mathsf{ivk}$ are zeroed.
+The output is reduced modulo $\ell_J$ to produce $\mathsf{ivk}$.
+The reduction is a controlled bit-truncation rather than a full
+modular reduction, valid because $\ell_J < 2^{252}$ and the top
+bits are zeroed.
 
-Constraint cost: ~16{,}000.
+Constraint cost: ~16,000.
 
 **Attack on omission**: an unmoored $\mathsf{ivk}$ would let the
-prover claim ownership of arbitrary $\mathsf{pk}_d$ they did not
+prover claim ownership of arbitrary $\mathsf{pk}_d$ they do not
 control.
 
-### 1.4 - Clause: $\mathsf{pk}_d = [\mathsf{ivk}]\,g_d$
+### 3.5 Clause: $\mathsf{pk}_d = [\mathsf{ivk}]\,g_d$
 
-Variable-base scalar mul: $g_d$ is itself witnessed, so cannot use a
-fixed-base table. Implementation: 252-bit Edwards scalar mul gadget
-using strongly-unified addition.
+Variable-base scalar mul: $g_d$ is itself witnessed, so cannot
+use a fixed-base table. Implementation: 252-bit Edwards
+scalar-mul gadget using strongly-unified addition.
 
 Constraint cost: ~3000.
 
-**Attack on omission**: a prover could spend a note addressed to an
-arbitrary $(d, \mathsf{pk}_d)$ they do not own.
+**Attack on omission**: a prover could spend a note addressed to
+an arbitrary $(d, \mathsf{pk}_d)$ they do not own.
 
-### 1.5 - Clause: $\mathsf{rk} = \mathsf{ak} + [\alpha]\,G^{\mathsf{ak}}$
+### 3.6 Clause: $\mathsf{rk} = \mathsf{ak} + [\alpha]\,G^{\mathsf{ak}}$
 
-Fixed-base scalar mul $[\alpha]G^{\mathsf{ak}}$ (~750 constraints),
-plus one Edwards addition (~6 constraints), then equality with
-the *public* $\mathsf{rk}$.
+Fixed-base scalar mul $[\alpha]\,G^{\mathsf{ak}}$ (~750
+constraints) plus one Edwards addition (~6 constraints), then
+equality with the public $\mathsf{rk}$.
 
 Constraint cost: ~760.
 
-**Attack on omission**: the publicised $\mathsf{rk}$ would not be a
-re-randomisation of the actual $\mathsf{ak}$. An attacker could
+**Attack on omission**: the published $\mathsf{rk}$ would not be
+a re-randomisation of the actual $\mathsf{ak}$. An attacker could
 sign with their own key under their own $\mathsf{rk}$ while
-spending a victim's note (since the binding to $\mathsf{ak}$ would
-be lost).
+spending a victim's note.
 
-### 1.6 - Clause: NoteCommitment
+### 3.7 Clause: NoteCommitment
 
-$\mathsf{cm} = \mathsf{PedersenHash}_{D_{\text{nc}}}(\text{repr}(v) \,\|\, \text{repr}(g_d) \,\|\, \text{repr}(\mathsf{pk}_d)) + [\mathsf{rcm}] R_{\text{nc}}$.
+$$
+\mathsf{cm} = \mathsf{PedersenHash}_{D_{\text{nc}}}\bigl(
+\text{repr}(v) \,\|\, \text{repr}(g_d) \,\|\,
+\text{repr}(\mathsf{pk}_d)\bigr) + [\mathsf{rcm}]\,R_{\text{nc}}.
+$$
 
 The Pedersen hash gadget (chapter 16) is the most heavily used
 sub-circuit. For an input of $64 + 256 + 256 = 576$ bits:
 
-- $\sim 6$ constraints per bit, so $\sim 3500$ for the hash.
+- ~6 constraints per bit, so ~3500 for the hash.
 - Plus the randomness term: 252-bit fixed-base scalar mul on
-  $R_{\text{nc}}$: $\sim 750$.
+  $R_{\text{nc}}$, ~750 constraints.
 
 Constraint cost: ~4250.
 
-The result is *the* commitment; the prover does not get to choose
-it freely.
+**Attack on omission**: a prover that picks $\mathsf{cm}$ freely
+can spend a note that does not exist.
 
-### 1.7 - Clause: Merkle path
+### 3.8 Clause: Merkle path
 
 For each layer $\ell \in \{0, 1, \ldots, 31\}$:
 
@@ -180,40 +228,38 @@ For each layer $\ell \in \{0, 1, \ldots, 31\}$:
    indicating "is the current node the left or right child".
 2. Compute $\mathsf{MerkleHash}_\ell(\text{left}, \text{right})$
    where left/right are conditionally swapped based on the bit.
-3. Use the result as the current node at layer $\ell+1$.
+3. Use the result as the current node at layer $\ell + 1$.
 
-The conditional swap costs $\sim 2$ constraints; the Pedersen hash
-for a 512-bit input is $\sim 3000$ constraints; the layer
-personalisation adds a small constant.
+The conditional swap costs ~2 constraints; the Pedersen hash for
+a 512-bit input is ~3000 constraints; the layer personalisation
+adds a small constant.
 
-Per layer: ~3000 constraints. Times 32 layers: ~96{,}000
-constraints. **This is the dominant cost of the Spend circuit.**
+Per layer: ~3000 constraints. Times 32 layers: ~96,000
+constraints. This is the dominant cost of the Spend circuit.
 
 **Attack on omission**: a prover could spend an arbitrary
 $\mathsf{cm}$ they invented, without it being in the tree. Money
 out of thin air.
 
-### 1.8 - Clause: dummy spend handling
+### 3.9 Clause: dummy spend handling
 
 If $v = 0$, the Merkle path check is skipped: a dummy spend does
 not correspond to a real note in the tree. The circuit implements
-this by computing the Merkle output *and* a "dummy override"
+this by computing the Merkle output and a "dummy override"
 output, then conditionally selecting between them based on
-$v = 0$.
-
-The override does *not* set the anchor to a free choice; rather,
+$v = 0$. The override does not set the anchor to a free choice;
 the dummy clause makes the Merkle-path computation a no-op while
 all other clauses still hold. The effect: when $v = 0$, the
-$\mathsf{cm}$ may be any well-formed commitment, but no anchor
+$\mathsf{cm}$ may be any well-formed commitment but no anchor
 membership is claimed.
 
-This is implemented as an "if-then-else" in `bellman` gadgets
-(boolean multiplexing).
+Implemented as an if-then-else over boolean multiplexing in
+`bellman` gadgets.
 
 **Attack on omission**: without the dummy mechanism, every spend
 revealed the bundle's true input count, leaking metadata.
 
-### 1.9 - Clause: $\rho = \mathsf{MixingPedersenHash}(\mathsf{cm}, \text{pos})$
+### 3.10 Clause: $\rho = \mathsf{MixingPedersenHash}(\mathsf{cm}, \text{pos})$
 
 $\rho$ is computed in-circuit:
 
@@ -221,182 +267,183 @@ $$
 \rho \;=\; \mathsf{cm} \;+\; [\text{pos}]\,G_\rho.
 $$
 
-For $\text{pos}$ bounded by $2^{32}$, the scalar mul is cheap (~100
-constraints). Plus one Edwards add (~6 constraints).
+For $\text{pos}$ bounded by $2^{32}$, the scalar mul is cheap
+(~100 constraints). Plus one Edwards add (~6 constraints).
 
 Total: ~110 constraints.
 
-### 1.10 - Clause: $\mathsf{nf} = \mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}(\rho)$
+### 3.11 Clause: $\mathsf{nf} = \mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}(\rho)$
 
 The PRF is BLAKE2s with key $\mathsf{nk}$ and input $\rho$. Same
 BLAKE2s gadget as $\mathsf{CRH}^{\mathsf{ivk}}$.
 
-Constraint cost: ~16{,}000.
+Constraint cost: ~16,000.
 
 The public output is $\mathsf{nf}$.
 
-**Attack on omission**: the nullifier could be arbitrary, allowing
-double-spends.
+**Attack on omission**: the nullifier could be arbitrary,
+allowing double-spends.
 
-### 1.11 - Clause: ValueCommitment
+### 3.12 Clause: ValueCommitment
 
 $\mathsf{cv} = [v]\,V + [\mathsf{rcv}]\,R$.
 
-Fixed-base scalar mul on $V$ with the 64-bit $v$ (~250 constraints)
-plus fixed-base on $R$ with 252-bit $\mathsf{rcv}$ (~750).
+Fixed-base scalar mul on $V$ with the 64-bit $v$ (~250
+constraints) plus fixed-base on $R$ with 252-bit $\mathsf{rcv}$
+(~750).
 
 Constraint cost: ~1000.
 
-The result is checked against the *public* $\mathsf{cv}$.
+The result is checked against the public $\mathsf{cv}$.
 
-**Attack on omission**: the published $\mathsf{cv}$ could fail to
-commit to $v$, breaking the binding-signature equation and allowing
-value forgery.
+**Attack on omission**: the published $\mathsf{cv}$ could fail
+to commit to $v$, breaking the binding-signature equation and
+allowing value forgery.
 
-### 1.12 - Clause: 64-bit range check on $v$
+### 3.13 Clause: 64-bit range check on $v$
 
-The boolean decomposition of $v$ is into exactly 64 bits, enforced
-by 64 boolean constraints during witnessing.
+The boolean decomposition of $v$ is into exactly 64 bits,
+enforced by 64 boolean constraints during witnessing.
 
 **Attack on omission**: a value $> 2^{64}$ would overflow the
 binding-signature value-balance accumulator, allowing implicit
 value forgery.
 
-### 1.13 - Total
+### 3.14 Sapling Spend total
 
-The Sapling Spend circuit has approximately **~150{,}000
-constraints** in current implementations:
+The Sapling Spend circuit has approximately 150,000 constraints
+in current implementations:
 
 | Clause | Constraints |
 | --- | --- |
-| Witness encoding | ~12{,}000 |
-| Subgroup-check gadgets | ~6{,}000 |
+| Witness encoding | ~12,000 |
+| Subgroup-check gadgets | ~6,000 |
 | $\mathsf{nk}$ derivation | ~750 |
-| $\mathsf{CRH}^{\mathsf{ivk}}$ (BLAKE2s) | ~16{,}000 |
-| $\mathsf{pk}_d$ check | ~3{,}000 |
+| $\mathsf{CRH}^{\mathsf{ivk}}$ (BLAKE2s) | ~16,000 |
+| $\mathsf{pk}_d$ check | ~3,000 |
 | $\mathsf{rk}$ check | ~760 |
-| NoteCommitment | ~4{,}250 |
-| Merkle path (32 layers) | ~96{,}000 |
+| NoteCommitment | ~4,250 |
+| Merkle path (32 layers) | ~96,000 |
 | $\rho$ mixing | ~110 |
-| Nullifier PRF | ~16{,}000 |
-| ValueCommitment | ~1{,}000 |
+| Nullifier PRF | ~16,000 |
+| ValueCommitment | ~1,000 |
 | Range check | ~64 |
 | Misc / linking | ~few thousand |
 
-Numbers from the public sapling-crypto code, subject to change
+Numbers from the public `sapling-crypto` code, subject to change
 with optimisations.
 
-## 2. Sapling Output circuit
+### 3.15 Sapling Output statement
 
-Statement (from chapter 04):
+From chapter 04: the prover knows $(v, g_d, \mathsf{pk}_d,
+\mathsf{rcm}, \mathsf{rcv}, \mathsf{esk})$ such that:
 
-> *The prover knows $(v, g_d, \mathsf{pk}_d, \mathsf{rcm}, \mathsf{rcv},
-> \mathsf{esk})$ such that:*
-
-> *1. $\mathsf{cm} = \mathsf{NoteCommit}^{\mathsf{rcm}}(g_d,
->    \mathsf{pk}_d, v)$, with $\mathsf{cm}^u$ as the public
->    output.*
-> *2. $\mathsf{cv} = [v]\,V + [\mathsf{rcv}]\,R$ (public).*
-> *3. $\mathsf{epk} = [\mathsf{esk}]\,g_d$ (public).*
-> *4. $v \in [0, 2^{64})$.*
-> *5. $g_d$ is a valid prime-order subgroup element (non-zero).*
+1. $\mathsf{cm} =
+   \mathsf{NoteCommit}^{\mathsf{rcm}}(g_d, \mathsf{pk}_d, v)$,
+   with $\mathsf{cm}^u$ as the public output.
+2. $\mathsf{cv} = [v]\,V + [\mathsf{rcv}]\,R$ (public).
+3. $\mathsf{epk} = [\mathsf{esk}]\,g_d$ (public).
+4. $v \in [0, 2^{64})$.
+5. $g_d$ is a valid prime-order subgroup element (non-zero).
 
 Sub-circuit costs:
 
 | Clause | Constraints |
 | --- | --- |
-| Witness encoding | ~6{,}000 |
+| Witness encoding | ~6,000 |
 | Subgroup check on $g_d$ | ~750 |
-| NoteCommitment | ~4{,}250 |
+| NoteCommitment | ~4,250 |
 | Extract $u$-coordinate | ~5 |
-| ValueCommitment | ~1{,}000 |
-| $\mathsf{epk}$ scalar mul | ~3{,}000 |
+| ValueCommitment | ~1,000 |
+| $\mathsf{epk}$ scalar mul | ~3,000 |
 | Range check $v$ | 64 |
 | Misc | ~few thousand |
 
-**Total**: ~20{,}000 constraints. The Output circuit is much
-cheaper than the Spend circuit (no Merkle path, no nullifier).
+Total: ~20,000 constraints. The Output circuit is much cheaper
+than Spend (no Merkle path, no nullifier).
 
-### 2.1 - Clause: subgroup check on $g_d$
+#### Clause: subgroup check on $g_d$
 
-The circuit asserts that the witnessed $g_d$ is in the prime-order
-subgroup. For Jubjub, this requires checking that $[\ell_J] g_d = \mathcal{O}$,
-which is expensive but unavoidable.
+The circuit asserts that the witnessed $g_d$ is in the prime-
+order subgroup. For Jubjub this requires checking
+$[\ell_J]\,g_d = \mathcal{O}$, which is expensive but
+unavoidable.
 
-In practice, the implementation uses an *implicit* subgroup check:
-the value $g_d = \mathsf{DiversifyHash}(d)$ is computed by the
-sender via cofactor-multiplication outside the circuit, but inside
-the circuit the prover only proves "$g_d \neq \mathcal{O}$" (one
-non-zero check) and the rest of the structure relies on the
-subgroup-membership being witnessed honestly.
+In practice the implementation uses an implicit subgroup check:
+$g_d = \mathsf{DiversifyHash}(d)$ is computed by the sender via
+cofactor multiplication outside the circuit; inside the circuit
+the prover proves $g_d \neq \mathcal{O}$ (one non-zero check) and
+the rest of the structure relies on the subgroup membership
+being witnessed honestly. The canonical encoding of $g_d$ in the
+encrypted note plaintext, combined with the recipient's re-
+derivation $g_d = \mathsf{DiversifyHash}(d)$ at decryption time,
+catches non-subgroup $g_d$ from the recipient side. This is the
+kind of subtlety chapter 13 warns about; reading the circuit
+code is essential.
 
-Wait: this is delicate. If $g_d$ is not in the subgroup, the
-recipient cannot decrypt (they would use $[\mathsf{ivk}] \mathsf{epk}$
-which would land outside the subgroup), so a malicious sender
-cannot benefit. But a witness-substitution attack might be possible
-in principle. The implementation defence: the canonical encoding
-of $g_d$ in the encrypted note plaintext, combined with the
-recipient's re-derivation $g_d = \mathsf{DiversifyHash}(d)$ at
-decryption time, catches non-subgroup $g_d$ from the recipient
-side. The circuit's explicit check is light.
-
-This is the kind of subtlety chapter 13 warns about; reading the
-exact Sapling circuit code is essential.
-
-### 2.2 - Clause: $\mathsf{epk} = [\mathsf{esk}]\,g_d$
+#### Clause: $\mathsf{epk} = [\mathsf{esk}]\,g_d$
 
 Variable-base scalar mul. ~3000 constraints.
 
 **Attack on omission**: the published $\mathsf{epk}$ could be
-unrelated to $\mathsf{esk}$, breaking note-encryption recovery for
-the sender (via $\mathsf{ovk}$).
+unrelated to $\mathsf{esk}$, breaking note-encryption recovery
+for the sender (via $\mathsf{ovk}$).
 
-### 2.3 - Why no anchor / no nullifier
+#### Why no anchor or nullifier
 
-An Output creates value; it does not need to prove the new note
-is in the tree (it adds itself to the tree) and does not have a
-nullifier (it has not been spent). Hence the missing clauses.
+An Output creates value; it does not prove the new note is in
+the tree (it adds itself) and does not have a nullifier (it has
+not been spent).
 
-## 3. Orchard Action circuit
+### 3.16 Orchard Action statement
 
-The Action circuit is more complex because it unifies Spend and
-Output. The statement (from chapter 05):
+The Action circuit unifies Spend and Output. From chapter 05:
+for each Action, the prover knows:
 
-> *For each Action, the prover knows:*
+- **Old note**: $(v_{\text{old}}, g_d^{\text{old}},
+  \mathsf{pk}_d^{\text{old}}, \rho^{\text{old}},
+  \psi^{\text{old}}, \mathsf{rcm}^{\text{old}},
+  \text{auth-path}, \mathsf{ak}, \mathsf{nk}, \mathsf{rivk},
+  \alpha)$.
+- **New note**: $(v_{\text{new}}, g_d^{\text{new}},
+  \mathsf{pk}_d^{\text{new}}, \psi^{\text{new}},
+  \mathsf{rcm}^{\text{new}})$.
 
-> *Old note: $(v_{\text{old}}, g_d^{\text{old}}, \mathsf{pk}_d^{\text{old}}, \rho^{\text{old}}, \psi^{\text{old}}, \mathsf{rcm}^{\text{old}}, \text{auth-path}, \mathsf{ak}, \mathsf{nk}, \mathsf{rivk}, \alpha)$.*
+Such that:
 
-> *New note: $(v_{\text{new}}, g_d^{\text{new}}, \mathsf{pk}_d^{\text{new}}, \psi^{\text{new}}, \mathsf{rcm}^{\text{new}})$.*
+1. If spends enabled: the old commitment is in the tree at the
+   public anchor.
+2. $\rho^{\text{new}} = \mathsf{nf}^{\text{old}}$ - the new
+   note's $\rho$ chains from the spent nullifier.
+3. Nullifier formula yields public $\mathsf{nf}$.
+4. $\mathsf{rk} = \mathsf{ak} + [\alpha]\,G^{\mathsf{ak}}$
+   (public).
+5. $\mathsf{cm}^{\text{new}} =
+   \mathsf{NoteCommit}^{\mathsf{rcm}^{\text{new}}}(\ldots)$
+   matches public $\mathsf{cmx}$.
+6. $\mathsf{cv}^{\text{net}} =
+   [v_{\text{old}} - v_{\text{new}}]\,V + [\mathsf{rcv}]\,R$
+   (public).
+7. If outputs enabled: $\mathsf{epk} =
+   [\mathsf{esk}]\,g_d^{\text{new}}$.
+8. $v_{\text{old}}, v_{\text{new}} \in [0, 2^{64})$.
+9. $\mathsf{ivk} = \mathsf{Extract}(
+   \mathsf{SinsemillaCommit}^{\mathsf{rivk}}(
+   \mathsf{ak}, \mathsf{nk}))$ and
+   $\mathsf{pk}_d^{\text{old}} =
+   [\mathsf{ivk}]\,g_d^{\text{old}}$.
 
-> *Such that:*
+Public inputs per Action: $\mathsf{anchor}$,
+$\mathsf{cv}^{\text{net}}$, $\mathsf{nf}$, $\mathsf{rk}$,
+$\mathsf{cmx}$, $\mathsf{epk}$, plus the two flag bits.
 
-> *1. If spends enabled: the old note's commitment is in the tree
->    at the public anchor.*
-> *2. $\rho^{\text{new}} = \mathsf{nf}^{\text{old}}$ - the new
->    note's $\rho$ chains from the spent nullifier.*
-> *3. Nullifier formula yields public $\mathsf{nf}$.*
-> *4. $\mathsf{rk} = \mathsf{ak} + [\alpha]\,G^{\mathsf{ak}}$
->    (public).*
-> *5. $\mathsf{cm}^{\text{new}} = \mathsf{NoteCommit}^{\mathsf{rcm}^{\text{new}}}(\ldots)$
->    matches public $\mathsf{cmx}$.*
-> *6. $\mathsf{cv}^{\text{net}} = [v_{\text{old}} - v_{\text{new}}]\,V + [\mathsf{rcv}]\,R$
->    (public).*
-> *7. If outputs enabled: $\mathsf{epk} = [\mathsf{esk}]\,g_d^{\text{new}}$.*
-> *8. $v_{\text{old}}, v_{\text{new}} \in [0, 2^{64})$.*
-> *9. $\mathsf{ivk} = \mathsf{Extract}(\mathsf{SinsemillaCommit}^{\mathsf{rivk}}(\mathsf{ak}, \mathsf{nk}))$
->    and $\mathsf{pk}_d^{\text{old}} = [\mathsf{ivk}]\,g_d^{\text{old}}$.*
-
-Public inputs per Action: $\mathsf{anchor}$, $\mathsf{cv}^{\text{net}}$,
-$\mathsf{nf}$, $\mathsf{rk}$, $\mathsf{cmx}$, $\mathsf{epk}$, plus the
-two flag bits.
-
-### 3.1 - Halo 2 column layout
+### 3.17 Halo 2 column layout
 
 The Orchard circuit uses ~10 advice columns over a $2^{11}$-row
 domain. Each row is a small piece of computation; together the
 rows realise the full statement.
 
-Custom gates groups (approximate):
+Custom gate groups (approximate):
 
 - `q_ecc_add`, `q_ecc_double`: Pallas point arithmetic.
 - `q_sinsemilla`: Sinsemilla chain steps.
@@ -404,129 +451,133 @@ Custom gates groups (approximate):
 - `q_lookup_range`: range checks via lookup.
 - `q_lookup_sinsemilla_S`: Sinsemilla 10-bit chunk to point.
 - `q_decomposition`: bit-decomposition gates.
-- `q_constraints`: high-level "this equals that" gates.
+- `q_constraints`: high-level equality gates.
 
-Each is a polynomial identity over advice columns, gated by a
-selector.
+Each gate is a polynomial identity over advice columns, gated by
+a selector.
 
-### 3.2 - Sinsemilla in-circuit
+### 3.18 Sinsemilla in-circuit
 
 For the Note Commitment, the prover uses Sinsemilla:
 
-1. Bit-decompose the input (value, $g_d$, $\mathsf{pk}_d$, $\rho$,
+1. Bit-decompose the input ($v$, $g_d$, $\mathsf{pk}_d$, $\rho$,
    $\psi$) into 10-bit chunks.
-2. Each chunk is *looked up* in the Sinsemilla generator table:
+2. Each chunk is looked up in the Sinsemilla generator table:
    $(\text{chunk}, S(\text{chunk}))$.
 3. Iteratively combine via the incomplete-addition gate.
-4. After all chunks are processed, add the $\mathsf{rcm}$ blinding.
+4. After all chunks are processed, add the $\mathsf{rcm}$
+   blinding.
 
-The Sinsemilla path costs ~$300$ rows for typical inputs.
+The Sinsemilla path costs ~300 rows for typical inputs.
 
-**Pitfall**: incomplete addition fails when its operands coincide
-(chapter 13). The circuit must prove the operands are distinct,
-typically by witnessing intermediate accumulator values and
-asserting non-equality in a gate.
+**Pitfall**: incomplete addition fails when its operands
+coincide (chapter 13). The circuit must prove the operands are
+distinct, typically by witnessing intermediate accumulator
+values and asserting non-equality in a gate.
 
-### 3.3 - Merkle path with Sinsemilla
+### 3.19 Merkle path with Sinsemilla
 
 Each of the 32 Merkle layers uses one Sinsemilla hash of (layer
-index, left, right). The layer index is part of the personalisation
-$D_{\text{MH},\ell}$ which is encoded as a Sinsemilla domain.
+index, left, right). The layer index is part of the
+personalisation $D_{\text{MH}, \ell}$ encoded as a Sinsemilla
+domain.
 
-Cost per layer: ~150 rows. Times 32: ~4{,}800 rows.
+Cost per layer: ~150 rows. Times 32: ~4,800 rows.
 
-### 3.4 - The $\rho^{\text{new}} = \mathsf{nf}^{\text{old}}$ trick
+### 3.20 The $\rho^{\text{new}} = \mathsf{nf}^{\text{old}}$ trick
 
 The novel Orchard idea: after computing $\mathsf{nf}^{\text{old}}$,
 the circuit feeds it as $\rho^{\text{new}}$ into the new note
-commitment. This eliminates the need for an extra Pedersen-hash
-based position-mix as in Sapling.
-
-It also means that the new note's $\rho$ is fully determined by the
-Action's inputs; the prover cannot freely choose it.
+commitment. This eliminates the need for an extra Pedersen-hash-
+based position-mix as in Sapling. The new note's $\rho$ is fully
+determined by the Action's inputs; the prover cannot choose it
+freely.
 
 Implementation: an explicit copy constraint from "the row that
 outputs $\mathsf{nf}^{\text{old}}$" to "the row that takes
 $\rho^{\text{new}}$ as input".
 
-### 3.5 - Nullifier derivation
+### 3.21 Nullifier derivation
 
 The Orchard nullifier:
 
 $$
 \mathsf{nf} \;=\;
-\mathsf{Extract}\!\Bigl(\,
-\bigl[\mathsf{Hash}(\mathsf{nk}, \rho^{\text{old}}) + \psi^{\text{old}}\bigr]\,K_{\text{nf}} \;+\; \mathsf{cm}^{\text{old}}\,
-\Bigr),
+\mathsf{Extract}\bigl(
+[\mathsf{Hash}(\mathsf{nk}, \rho^{\text{old}}) +
+\psi^{\text{old}}]\,K_{\text{nf}} \;+\;
+\mathsf{cm}^{\text{old}}\bigr),
 $$
 
-with $\mathsf{Hash}$ a Poseidon-based PRF keyed by $\mathsf{nk}$.
+with $\mathsf{Hash}$ a Poseidon-based PRF keyed by
+$\mathsf{nk}$.
 
-Sub-circuit: ~200 rows for the Poseidon part, ~100 for the scalar
-mul, ~50 for the addition and extract.
+Sub-circuit: ~200 rows for Poseidon, ~100 for the scalar mul,
+~50 for the addition and extract.
 
-### 3.6 - Value commitment (net)
+### 3.22 Value commitment (net)
 
 Net value: $v^{\text{net}} = v_{\text{old}} - v_{\text{new}}$,
 range-checked to lie in $[-(2^{64} - 1), 2^{64} - 1]$. Then
 
 $$
-\mathsf{cv}^{\text{net}} = [v^{\text{net}}]\,V_{\text{Orch}} + [\mathsf{rcv}]\,R_{\text{Orch}}.
+\mathsf{cv}^{\text{net}} = [v^{\text{net}}]\,V_{\text{Orch}} +
+[\mathsf{rcv}]\,R_{\text{Orch}}.
 $$
 
 In-circuit cost: ~150 rows.
 
-### 3.7 - $\mathsf{CommitIvk}$ in-circuit
+### 3.23 CommitIvk in-circuit
 
 The Orchard incoming viewing key is derived inside the circuit:
 
 $$
-\mathsf{ivk} \;=\; \mathsf{Extract}(\mathsf{SinsemillaCommit}^{\mathsf{rivk}}(\mathsf{ak}, \mathsf{nk})).
+\mathsf{ivk} \;=\;
+\mathsf{Extract}(\mathsf{SinsemillaCommit}^{\mathsf{rivk}}(
+\mathsf{ak}, \mathsf{nk})).
 $$
 
 The Sinsemilla commit is one Sinsemilla hash (over the encoded
-$\mathsf{ak}, \mathsf{nk}$) plus a randomness term $[\mathsf{rivk}]
-R_{\mathsf{ivk}}$. Cost: ~300 rows.
+$\mathsf{ak}, \mathsf{nk}$) plus a randomness term
+$[\mathsf{rivk}]\,R_{\mathsf{ivk}}$. Cost: ~300 rows.
 
-### 3.8 - Flag-conditional logic
+### 3.24 Flag-conditional logic
 
-The bundle's flags determine whether spends and outputs are
-enabled per Action. If spends are disabled, the Merkle path check
-and nullifier publication are "no-op"d (specific dummy values
-substituted). If outputs are disabled, the new note commitment and
-$\mathsf{epk}$ are dummy.
+Bundle flags determine whether spends and outputs are enabled
+per Action. If spends are disabled, the Merkle path check and
+nullifier publication are no-op'd (specific dummy values
+substituted). If outputs are disabled, the new note commitment
+and $\mathsf{epk}$ are dummy.
 
 In-circuit: each clause is multiplied by a flag bit, and a
-"dummy substitution" gadget produces the public-input value when
-the flag is off.
+dummy-substitution gadget produces the public-input value when
+the flag is off. This is more complex than Sapling's "dummy
+when $v = 0$" because Orchard allows mixed-mode Actions (only
+spend, only output, or both).
 
-This is more complex than Sapling's "dummy when $v = 0$" because
-Orchard allows mixed-mode Actions (e.g. an Action that only spends
-or only outputs).
+### 3.25 Orchard Action total
 
-### 3.9 - Total
-
-Approximate row counts per Action (out of $2^{11} = 2048$ rows in
-the domain):
+Approximate row counts per Action (out of $2^{11} = 2048$ rows
+in the domain):
 
 | Clause | Rows |
 | --- | --- |
 | Witnessing + decomposition | ~200 |
 | Sinsemilla note commitment | ~300 |
-| Merkle path (32 layers) | ~4{,}800 |
+| Merkle path (32 layers) | ~4,800 |
 | Nullifier | ~300 |
 | $\mathsf{rk}$ check | ~100 |
 | $\mathsf{epk}$ check | ~100 |
 | Net value commitment | ~150 |
 | CommitIvk | ~300 |
-| pk_d check | ~200 |
+| $\mathsf{pk}_d$ check | ~200 |
 | Flag conditional logic | ~50 |
 
-Total: ~6{,}500 rows per Action. With $n$ Actions, the circuit is
-sized to fit (typically $k = 11$ for 2-action bundles, $k = 12$ for
-larger).
+Total: ~6,500 rows per Action. With $n$ Actions, the circuit is
+sized to fit (typically $k = 11$ for 2-action bundles, $k = 12$
+for larger).
 
-## 4. Comparison
+### 3.26 Comparison
 
 | | Sapling Spend | Sapling Output | Orchard Action |
 | --- | --- | --- | --- |
@@ -537,106 +588,148 @@ larger).
 | Includes Merkle path? | yes | no | yes |
 | Prover time (single) | ~2 s | ~0.2 s | ~1 s for bundle |
 
-## 5. Why each clause is necessary - consolidated
+### 3.27 Why each clause is necessary
 
 The "attack on omission" notes throughout this chapter all reduce
 to one of:
 
 - **Money forgery**: prove a non-existent commitment as spent;
   prove a value larger than the input.
-- **Double-spend**: produce different nullifiers for the same note.
+- **Double-spend**: produce different nullifiers for the same
+  note.
 - **Identity theft**: spend a note whose recipient was not the
   prover.
-- **Metadata leak**: distinguish dummy vs real spends.
+- **Metadata leak**: distinguish dummy from real spends.
 
-Every clause in the circuits maps to one of these. If you cannot
-articulate which attack it prevents, the clause is suspect.
+Every clause in the circuits maps to one of these. If you
+cannot articulate which attack a clause prevents, the clause is
+suspect.
 
-## 6. Test vectors and circuit testing
+### 3.28 Reading the actual circuit code
 
-Public test vectors for the circuits:
+#### Sapling (in [`sapling-crypto`](https://github.com/zcash/sapling-crypto))
 
-- `sapling-crypto/src/test_vectors/`: per-field plaintexts and
-  expected commitments.
-- `orchard/src/test_vectors/`: per-Action input/output.
+- `sapling-crypto::circuit`: top-level circuit definition.
+- `sapling-crypto::circuit::spend`: the Spend circuit synthesis.
+- `sapling-crypto::circuit::output`: the Output circuit.
+- `sapling-crypto::circuit::pedersen_hash`: the Pedersen hash
+  gadget.
+- `sapling-crypto::circuit::merkle`: the Merkle path gadget.
 
-When working on a circuit change, add a test vector that
-specifically exercises the clause you modified. If the clause is a
-hash, the test vector should include a known-collision-avoidance
-input.
+This workspace's Sapling integration includes the Sprout circuit
+in
+[`zcash_proofs/src/circuit/sprout`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/circuit/sprout):
 
-## 7. Common circuit-author mistakes
+```rust reference title="zcash_proofs/src/circuit/sprout/mod.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/circuit/sprout/mod.rs#L25-L54
+```
 
-From audit findings and informal lore:
+#### Orchard (in [`orchard`](https://github.com/zcash/orchard))
+
+- `orchard::circuit`: top-level `Circuit::synthesize`.
+- `orchard::circuit::note_commit`: note commitment gadget.
+- `orchard::circuit::commit_ivk`: $\mathsf{CommitIvk}$.
+- `orchard::circuit::value_commit_orchard`: value commitment.
+- `orchard::circuit::derive_nullifier`: nullifier.
+- `orchard::circuit::gadget::sinsemilla`: Sinsemilla gadgets.
+- `orchard::circuit::gadget::ecc`: Pallas EC gadgets.
+
+The proof artifacts are loaded by
+[`zcash_proofs/src/prover.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/prover.rs).
+
+### 3.29 The verifier's view
+
+The Sapling Spend verifier checks one Groth16 pairing equation
+(chapter 04, section 3.7). Public inputs:
+
+- $\mathsf{rk}$ (2 field elements).
+- $\mathsf{cv}$ (2 field elements).
+- $\mathsf{nf}$ (1 packed field element).
+- $\mathsf{anchor}$ (1 field element).
+
+The encoding is fixed and must match the circuit's expected
+order. If you change the public-input order, you must rerun the
+trusted setup.
+
+For Orchard, the verifier runs Halo 2's verifier, ~10 ms vs
+~7 ms for Groth16, with no trusted setup.
+
+## 4. Failure modes
+
+See "Attack on omission" notes in each clause above and the
+consolidated list in section 3.27. Additional circuit-author
+mistakes from audit findings and informal lore:
 
 - **Underconstrained advice cells**: an advice cell with no gate
-  forcing its value can be set to anything by the prover. Verify
+  forcing its value can be set arbitrarily by the prover. Verify
   every advice cell is used in at least one constraint with a
   selector on.
 - **Off-by-one selector**: a selector that is on at row $i$ but
-  the gate references row $i - 1$ can subtly misalign.
-- **Incomplete-addition coincidence**: as noted, both inputs must
-  be provably distinct.
+  whose gate references row $i - 1$ can subtly misalign.
+- **Incomplete-addition coincidence**: as noted, both inputs
+  must be provably distinct.
 - **Lookup-table collision**: two distinct chunks mapping to the
   same point break the lookup soundness.
-- **Public-input ordering**: the prover and verifier must agree on
-  which public input maps to which constraint. A swap is invisible
-  in tests until a real attack exploits it.
+- **Public-input ordering**: prover and verifier must agree on
+  which public input maps to which constraint. A swap is
+  invisible in tests until a real attack exploits it.
 
-## 8. Reading the actual circuit code
+## 5. Spec pointers
 
-### Sapling
+- [Zcash Protocol Specification, section 4.8 (Spend statement)](https://zips.z.cash/protocol/protocol.pdf):
+  the normative Spend statement that section 3.1 paraphrases.
+- [Zcash Protocol Specification, section 4.9 (Output statement)](https://zips.z.cash/protocol/protocol.pdf):
+  the normative Output statement.
+- [Zcash Protocol Specification, section 4.13 (Action statement)](https://zips.z.cash/protocol/protocol.pdf):
+  the normative Orchard Action statement.
+- [ZIP 224](https://zips.z.cash/zip-0224): the Orchard Action
+  semantics and key derivation.
+- [Halo paper](https://eprint.iacr.org/2019/1021): the proof
+  system underpinning the Orchard verifier.
+- [Sinsemilla note](https://zips.z.cash/protocol/protocol.pdf):
+  the chunk-and-add hash used in Orchard, defined in the
+  protocol specification appendix.
 
-- `sapling-crypto/src/circuit.rs`: top-level circuit Definition.
-- `sapling-crypto/src/circuit/spend.rs` (or analogous): the Spend
-  circuit synthesis.
-- `sapling-crypto/src/circuit/output.rs`: Output circuit.
-- `sapling-crypto/src/circuit/pedersen_hash.rs`: the Pedersen hash
-  gadget.
-- `sapling-crypto/src/circuit/sapling.rs` or `merkle.rs`: Merkle
-  path gadget.
+## 6. Exercises
 
-Match each clause in this chapter to a code section there.
+1. **Match a clause to a function.** For each clause in section
+   3.3 through 3.13 (Sapling Spend), open the corresponding file
+   in `sapling-crypto/src/circuit/` and find the function that
+   implements it. Record the file and the function name.
+2. **Count constraints for a smaller circuit.** Run the
+   `bellman` constraint counter on the Sapling Spend circuit
+   (see `sapling-crypto`'s test harness) and compare the actual
+   constraint count to the table in section 3.14. State any
+   discrepancy.
+3. **Add an Orchard test vector.** In a checkout, add a test
+   vector under `orchard/src/test_vectors/` (external repo) that
+   exercises an Action with the spend flag off. Verify the
+   `Circuit::synthesize` path runs without panicking.
+4. **Trace public inputs.** For a Sapling Spend proof, list the
+   public inputs in the order the verifier expects them. Cite
+   the file and function in `sapling-crypto` that defines the
+   ordering. Argue why swapping any two would constitute a
+   consensus break.
 
-### Orchard
+### Answers in the code
 
-- `orchard/src/circuit.rs`: top-level Circuit::synthesize.
-- `orchard/src/circuit/note_commit.rs`: note commitment gadget.
-- `orchard/src/circuit/commit_ivk.rs`: $\mathsf{CommitIvk}$.
-- `orchard/src/circuit/value_commit_orchard.rs`: value commitment.
-- `orchard/src/circuit/derive_nullifier.rs`: nullifier.
-- `orchard/src/circuit/gadget/sinsemilla/`: Sinsemilla gadgets.
-- `orchard/src/circuit/gadget/ecc/`: Pallas EC gadgets.
+- Sprout circuit top-level types:
+  [`zcash_proofs/src/circuit/sprout/mod.rs#L25-L54`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/circuit/sprout/mod.rs#L25-L54).
+- Sapling verifying-key hashes:
+  [`zcash_proofs/src/lib.rs#L40-L60`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs#L40-L60).
+- Prover interface (Sapling Spend and Output, Orchard):
+  [`zcash_proofs/src/prover.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/prover.rs).
+- The external circuit code lives at
+  [`sapling-crypto`](https://github.com/zcash/sapling-crypto) and
+  [`orchard`](https://github.com/zcash/orchard).
 
-## 9. The verifier's view
+## 7. Further reading
 
-The verifier of a Sapling Spend proof checks one Groth16 pairing
-equation. The "public inputs" presented to the verifier:
-
-- $\mathsf{rk}$ (encoded as 2 field elements).
-- $\mathsf{cv}$ (encoded as 2 field elements).
-- $\mathsf{nf}$ (encoded as 1 field element by packing).
-- $\mathsf{anchor}$ (1 field element).
-
-The encoding is fixed and must match the circuit's expected order.
-If you change the public-input order, you must rerun the trusted
-setup.
-
-For Orchard, the verifier runs Halo 2's verifier, which is more
-work (~10 ms vs ~7 ms) but uses no trusted setup.
-
-## 10. What you should know after this chapter
-
-- Each clause of the Sapling Spend, Sapling Output, and Orchard
-  Action circuits, in order, with the attack it prevents.
-- Approximate constraint/row counts.
-- Why the Merkle path dominates the Sapling Spend cost.
-- The Orchard nullifier-chain trick.
-- Where to find the actual circuit code in the external crates.
-
-You now have a complete picture: chapter 23 catalogues every
-keying material symbol; chapter 24 walks every clause of every
-circuit. Combined with chapters 03-08 and 12-22, you have the
-cryptographic substance of Zcash.
-
-Welcome, again.
+- [chapter 17](./17-halo2-deep-dive.md): the Halo 2 proof
+  system mechanics that underpin sections 3.16 through 3.25.
+- [chapter 16](./16-pedersen-hash-deep-dive.md): the Pedersen
+  hash gadget central to the Sapling circuit.
+- [chapter 23](./23-key-catalog.md): the keying material that
+  each clause consumes as witness or produces as public output.
+- Trail of Bits, Orchard / Halo 2 audit reports: source of
+  several "attack on omission" framings.
