@@ -3,221 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
-<title data-rh="true">Overview and roadmap | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/overview-and-roadmap"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Overview and roadmap | librustzcash Onboarding"><meta data-rh="true" name="description" content="Crate graph and layering of the librustzcash workspace."><meta data-rh="true" property="og:description" content="Crate graph and layering of the librustzcash workspace."><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/overview-and-roadmap"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/overview-and-roadmap" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/overview-and-roadmap" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Overview and roadmap","item":"https://dannywillems.github.io/librustzcash/overview-and-roadmap"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
-<script src="/librustzcash/assets/js/runtime~main.4651d504.js" defer="defer"></script>
-<script src="/librustzcash/assets/js/main.73bd9393.js" defer="defer"></script>
+<title data-rh="true">Overview and roadmap | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/overview-and-roadmap"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Overview and roadmap | librustzcash Onboarding"><meta data-rh="true" name="description" content="Crate graph and layering of the librustzcash workspace."><meta data-rh="true" property="og:description" content="Crate graph and layering of the librustzcash workspace."><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/overview-and-roadmap"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/overview-and-roadmap" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/overview-and-roadmap" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Overview and roadmap","item":"https://dannywillems.github.io/librustzcash/overview-and-roadmap"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css" integrity="sha384-nH0MfJ44wi1dd7w6jinlyBgljjS8EJAh2JBoRad8a3VDw2K69vfaaqm4WnR+gXtA" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
+<script src="/librustzcash/assets/js/runtime~main.f8d24d3d.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/main.62667d2f.js" defer="defer"></script>
 </head>
 <body>
 <svg style="display: none;"><defs>
 <symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
 </defs></svg>
 <script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}(),document.documentElement.setAttribute("data-announcement-bar-initially-dismissed",function(){try{return"true"===localStorage.getItem("docusaurus.announcement.dismiss")}catch(t){}return!1}())</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><div class="theme-announcement-bar announcementBar_mb4j" style="background-color:#fef3c7;color:#78350f" role="banner"><div class="content_knG7 announcementBarContent_xLdY">This site is automatically generated using Claude Code. Errors may have been introduced. The code is the law, always refer to the source in the librustzcash workspace.</div></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/librustzcash/"><b class="navbar__title text--truncate">librustzcash Onboarding</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/librustzcash/">Course</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository (onboarding branch)"></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"><div class="navbar__search searchBarContainer_NW3z" dir="ltr"><input placeholder="Search" aria-label="Search" class="navbar__search-input searchInput_YFbd" value=""><div class="loadingRing_RJI3 searchBarLoadingRing_YnHq"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG menuWithAnnouncementBar_GW3s"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/"><span title="librustzcash Onboarding" class="linkLabel_WmDU">librustzcash Onboarding</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/librustzcash/overview-and-roadmap"><span title="Overview and roadmap" class="linkLabel_WmDU">Overview and roadmap</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/01b-build-test-contribute"><span title="Build, test, contribute" class="linkLabel_WmDU">Build, test, contribute</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zcash-protocol-foundations"><span title="Zcash protocol foundations" class="linkLabel_WmDU">Zcash protocol foundations</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptography-primer"><span title="Cryptography primer" class="linkLabel_WmDU">Cryptography primer</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/sprout-and-sapling"><span title="Sprout and Sapling" class="linkLabel_WmDU">Sprout and Sapling</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/orchard-and-halo2"><span title="Orchard and Halo 2" class="linkLabel_WmDU">Orchard and Halo 2</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/keys-addresses-zip32"><span title="Keys, addresses, ZIP 32, unified addresses" class="linkLabel_WmDU">Keys, addresses, ZIP 32, unified addresses</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/transactions-and-builder"><span title="Transactions, sighash, builder, PCZT" class="linkLabel_WmDU">Transactions, sighash, builder, PCZT</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/note-encryption"><span title="Note encryption" class="linkLabel_WmDU">Note encryption</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/equihash-and-consensus"><span title="Equihash and consensus rules" class="linkLabel_WmDU">Equihash and consensus rules</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/wallet-stack"><span title="The wallet stack" class="linkLabel_WmDU">The wallet stack</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/study-plan-and-exercises"><span title="Study plan and exercises" class="linkLabel_WmDU">Study plan and exercises</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/historical-bugs"><span title="Historical bugs and security incidents" class="linkLabel_WmDU">Historical bugs and security incidents</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cofactors-subgroups-canonical"><span title="Cofactors, subgroups, canonical encodings" class="linkLabel_WmDU">Cofactors, subgroups, canonical encodings</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/side-channels-and-constant-time"><span title="Side channels and constant-time" class="linkLabel_WmDU">Side channels and constant-time</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/trusted-setup"><span title="Trusted setup ceremonies" class="linkLabel_WmDU">Trusted setup ceremonies</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pedersen-hash-deep-dive"><span title="Pedersen hash deep dive" class="linkLabel_WmDU">Pedersen hash deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/halo2-deep-dive"><span title="Halo 2 deep dive" class="linkLabel_WmDU">Halo 2 deep dive</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/anonymity-set-and-metadata"><span title="Anonymity set and metadata" class="linkLabel_WmDU">Anonymity set and metadata</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/zip-catalog"><span title="ZIP catalog and reading order" class="linkLabel_WmDU">ZIP catalog and reading order</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/audits-and-cross-impl"><span title="Audits and cross-implementation testing" class="linkLabel_WmDU">Audits and cross-implementation testing</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/active-research-and-nu7"><span title="Active research and the road to NU7" class="linkLabel_WmDU">Active research and the road to NU7</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/cryptographer-code-review"><span title="Cryptographer&#x27;s code-review checklist" class="linkLabel_WmDU">Cryptographer&#x27;s code-review checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/key-catalog"><span title="The complete key catalog" class="linkLabel_WmDU">The complete key catalog</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/circuits-constraint-by-constraint"><span title="Circuits, constraint by constraint" class="linkLabel_WmDU">Circuits, constraint by constraint</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/pr-checklist"><span title="PR checklist" class="linkLabel_WmDU">PR checklist</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/dev-cheatsheet"><span title="Developer cheat sheet" class="linkLabel_WmDU">Developer cheat sheet</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/librustzcash/glossary"><span title="Glossary" class="linkLabel_WmDU">Glossary</span></a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/librustzcash/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Overview and roadmap</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>01 - Overview and roadmap</h1></header>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="goal">Goal<a href="#goal" class="hash-link" aria-label="Direct link to Goal" title="Direct link to Goal" translate="no">​</a></h2>
-<p>This chapter is the bird&#x27;s-eye view of <code>librustzcash</code>. It explains what each
-crate is for, why the crates are split the way they are, and the order in
-which to study them. Read this first; come back to it when you forget which
-crate owns what.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-is-librustzcash">What is <code>librustzcash</code>?<a href="#what-is-librustzcash" class="hash-link" aria-label="Direct link to what-is-librustzcash" title="Direct link to what-is-librustzcash" translate="no">​</a></h2>
-<p><code>librustzcash</code> is a Rust workspace of cryptographic libraries that implement
-the Zcash protocol. It is the canonical Rust implementation of:</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-why-this-chapter-exists">1. Why this chapter exists<a href="#1-why-this-chapter-exists" class="hash-link" aria-label="Direct link to 1. Why this chapter exists" title="Direct link to 1. Why this chapter exists" translate="no">​</a></h2>
+<p><code>librustzcash</code> is a Cargo workspace of about twenty crates that
+together implement Zcash wallets, transaction construction, and
+zero-knowledge proving. A reader who jumps straight into a specific
+crate without a map will repeatedly misattribute responsibility:
+sighash math lives in <code>zcash_primitives</code>, key derivation lives in
+<code>zcash_keys</code>, the shielded circuits live in external crates
+(<code>sapling-crypto</code>, <code>orchard</code>). This chapter fixes the dependency
+layering once so every subsequent chapter can refer to it by name.
+By the end of it, you will be able to read the workspace declaration
+in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml" target="_blank" rel="noopener noreferrer" class=""><code>Cargo.toml</code></a>
+and explain why each member is in the layer it is in.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-definitions">2. Definitions<a href="#2-definitions" class="hash-link" aria-label="Direct link to 2. Definitions" title="Direct link to 2. Definitions" translate="no">​</a></h2>
+<p><strong>Definition (workspace).</strong> A Cargo workspace is a set of crates
+that share a single <code>Cargo.lock</code>, a single <code>target/</code> directory, and
+optionally common metadata declared under <code>[workspace.package]</code> and
+<code>[workspace.dependencies]</code>. Membership is declared in the top-level
+<code>[workspace] members</code> array.</p>
+<p><strong>Definition (layer).</strong> Throughout this course, a layer is a maximal
+set of workspace crates such that no member of layer <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">L_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em"><span></span></span></span></span></span></span></span></span></span> depends on
+any member of layer <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">L_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em"></span><span class="mord"><span class="mord mathnormal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em"><span class="pstrut" style="height:2.7em"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.0572em">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em"><span></span></span></span></span></span></span></span></span></span> with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>j</mi><mo>&gt;</mo><mi>i</mi></mrow><annotation encoding="application/x-tex">j &gt; i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.854em;vertical-align:-0.1944em"></span><span class="mord mathnormal" style="margin-right:0.0572em">j</span><span class="mspace" style="margin-right:0.2778em"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:0.6595em"></span><span class="mord mathnormal">i</span></span></span></span>. Layers are determined by the
+directed dependency graph; the graph is acyclic by construction
+(Cargo rejects cycles).</p>
+<p><strong>Invariant (downward dependencies).</strong> For any two workspace crates
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal">A</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal" style="margin-right:0.0502em">B</span></span></span></span>, if <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal">A</span></span></span></span> depends on <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi></mrow><annotation encoding="application/x-tex">B</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em"></span><span class="mord mathnormal" style="margin-right:0.0502em">B</span></span></span></span> then <code>layer(A) &gt;= layer(B)</code>. This
+is what allows the wallet layer to reach for protocol types but not
+the reverse.</p>
+<p><strong>Definition (consensus boundary).</strong> <code>librustzcash</code> is not a
+consensus node. The
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/README.md" target="_blank" rel="noopener noreferrer" class="">README</a>
+states: &quot;The only way to check Zcash consensus validity is to use a
+Zcash consensus node.&quot; Parsing in this repo is permissive on purpose;
+the libraries focus on cryptographic correctness for wallet and
+transaction-construction use cases.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-the-code">3. The code<a href="#3-the-code" class="hash-link" aria-label="Direct link to 3. The code" title="Direct link to 3. The code" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="31-the-workspace-declaration">3.1 The workspace declaration<a href="#31-the-workspace-declaration" class="hash-link" aria-label="Direct link to 3.1 The workspace declaration" title="Direct link to 3.1 The workspace declaration" translate="no">​</a></h3>
+<p>The full member list is at the top of the root <code>Cargo.toml</code>:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-toml codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">Cargo.toml</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-toml codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">.</span><span class="token punctuation" style="color:#393A34">.</span><span class="token punctuation" style="color:#393A34">.</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml#L1-L22" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<p>Rust edition is <code>2024</code>, MSRV is <code>1.85.1</code>, license is
+<code>MIT OR Apache-2.0</code>. The resolver is <code>2</code>, which is required for the
+feature unification semantics most chapters rely on.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="32-layer-0---standalone-components-components">3.2 Layer 0 - Standalone components (<code>components/</code>)<a href="#32-layer-0---standalone-components-components" class="hash-link" aria-label="Direct link to 32-layer-0---standalone-components-components" title="Direct link to 32-layer-0---standalone-components-components" translate="no">​</a></h3>
 <ul>
-<li class="">Zcash transaction parsing, construction, signing, and ZK-proof generation.</li>
-<li class="">Key derivation and address management (ZIP 32, ZIP 316, unified addresses).</li>
-<li class="">A wallet framework (<code>zcash_client_backend</code>) and reference storage backends.</li>
-<li class="">Auxiliary primitives: Equihash PoW verifier, F4Jumble, Bitcoin-style
-encoding, the Sprout circuit.</li>
+<li class=""><code>zcash_encoding</code>: Bitcoin-style varint, <code>Vector</code>, <code>Optional</code>,
+<code>Array</code> serialization helpers. Pure, no protocol logic.</li>
+<li class=""><code>zcash_protocol</code>: Constants and base types: <code>BlockHeight</code>,
+<code>BranchId</code>, <code>Zatoshis</code>, <code>ZatBalance</code>, network upgrade enum
+(<code>NetworkUpgrade</code>), memo types. Every other crate transitively
+depends on this.</li>
+<li class=""><code>equihash</code>: Verifier (and optionally solver) for the Equihash PoW.
+No Zcash-specific transaction logic.</li>
+<li class=""><code>f4jumble</code>: 4-round unkeyed Feistel construction over BLAKE2b used
+by unified addresses.</li>
+<li class=""><code>zcash_address</code>: Pure parser/serialiser for Zcash addresses and
+unified containers. Knows nothing about keys.</li>
+<li class=""><code>zip321</code>, <code>eip681</code>: Payment-request URI parsers.</li>
 </ul>
-<p>It is consumed by light wallets (Zashi, Nighthawk, Zingo), by <code>zcashd</code> (for
-some functions), by Zebra, and increasingly by hardware wallets via the PCZT
-(Partially Constructed Zcash Transaction) flow.</p>
-<p>It deliberately does <strong>not</strong> implement a consensus node. As the top-level
-<code>README.md</code> warns:</p>
-<blockquote>
-<p>The only way to check Zcash consensus validity is to use a Zcash consensus
-node.</p>
-</blockquote>
-<p>Parsing is permissive on purpose; the libraries focus on cryptographic
-correctness for wallet and transaction-construction use cases.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="layering">Layering<a href="#layering" class="hash-link" aria-label="Direct link to Layering" title="Direct link to Layering" translate="no">​</a></h2>
-<p>The workspace divides into four conceptual layers, from low to high:</p>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-0---standalone-components">Layer 0 - Standalone components<a href="#layer-0---standalone-components" class="hash-link" aria-label="Direct link to Layer 0 - Standalone components" title="Direct link to Layer 0 - Standalone components" translate="no">​</a></h3>
-<p>In <code>components/</code>:</p>
+<p><code>Zatoshis</code> is the most important newtype in this layer; it pins the
+type-level invariant that no contributor can build a transaction
+with a negative or out-of-range amount:</p>
+<div class="docusaurus-theme-github-codeblock"><div class="language-rust codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockTitle_OeMC">components/zcash_protocol/src/value.rs</div><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-rust codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token plain">loading</span><span class="token punctuation" style="color:#393A34">...</span><br></div></code></pre></div></div><div style="font-size:.9em;font-weight:600;color:#0E75DD;text-align:right;padding-bottom:13px;text-decoration:underline"><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/value.rs#L262-L268" class="githubLink" style="margin:0 10px" target="_blank">View on GitHub</a></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="33-layer-1---protocol-primitives">3.3 Layer 1 - Protocol primitives<a href="#33-layer-1---protocol-primitives" class="hash-link" aria-label="Direct link to 3.3 Layer 1 - Protocol primitives" title="Direct link to 3.3 Layer 1 - Protocol primitives" translate="no">​</a></h3>
 <ul>
-<li class=""><code>zcash_encoding</code>: Bitcoin-style varint, <code>Vector</code>, <code>Optional</code>, <code>Array</code>
-serialization helpers. Pure, no protocol logic.</li>
-<li class=""><code>zcash_protocol</code>: Constants and base types: <code>BlockHeight</code>, <code>BranchId</code>,
-<code>Zatoshis</code>, <code>ZatBalance</code>, network upgrade enum (<code>NetworkUpgrade</code>), memo
-types. Every other crate transitively depends on this.</li>
-<li class=""><code>equihash</code>: Verifier (and optionally solver) for the Equihash PoW. No
-Zcash-specific transaction logic.</li>
-<li class=""><code>f4jumble</code>: 4-round unkeyed Feistel construction over BLAKE2b used by
-unified addresses.</li>
-<li class=""><code>zcash_address</code>: Pure parser/serialiser for Zcash addresses and unified
-containers. Knows nothing about keys.</li>
-<li class=""><code>zip321</code>, <code>eip681</code>: Payment request URI parsers.</li>
-</ul>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-1---protocol-primitives">Layer 1 - Protocol primitives<a href="#layer-1---protocol-primitives" class="hash-link" aria-label="Direct link to Layer 1 - Protocol primitives" title="Direct link to Layer 1 - Protocol primitives" translate="no">​</a></h3>
-<ul>
-<li class=""><code>zcash_transparent</code>: Bitcoin-derived transparent address, output, input,
-bundle, sighash. Houses the transparent half of PCZT.</li>
-<li class="">External: <code>sapling-crypto</code>, <code>orchard</code>, <code>zcash_note_encryption</code>, <code>zip32</code>,
-<code>zcash_spec</code>. These are separate repos but you must understand them; the
-shielded cryptography lives there.</li>
-<li class=""><code>zcash_primitives</code>: The Zcash transaction type itself (<code>Transaction</code>,
-<code>TransactionData</code>), the builder, sighash trees (v4/v5/v6), the Merkle tree
-module.</li>
+<li class=""><code>zcash_transparent</code>: Bitcoin-derived transparent address, output,
+input, bundle, sighash. Houses the transparent half of PCZT.</li>
+<li class=""><code>zcash_primitives</code>: The Zcash transaction type itself
+(<code>Transaction</code>, <code>TransactionData</code>), the builder, sighash trees
+(v4/v5/v6), the Merkle-tree module.</li>
 <li class=""><code>zcash_proofs</code>: The Sprout circuit (a Groth16 SNARK encoded with
 <code>bellman</code>) and the bindings to Sapling proving parameters
 (<code>sapling-spend.params</code>, <code>sapling-output.params</code>,
 <code>sprout-groth16.params</code>).</li>
 </ul>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-2---keys-and-addresses">Layer 2 - Keys and addresses<a href="#layer-2---keys-and-addresses" class="hash-link" aria-label="Direct link to Layer 2 - Keys and addresses" title="Direct link to Layer 2 - Keys and addresses" translate="no">​</a></h3>
+<p>External crates pulled in at this layer (separate repositories, but
+load-bearing):</p>
 <ul>
-<li class=""><code>zcash_keys</code>: Spending keys, viewing keys, unified spending/viewing keys,
-ZIP 32 derivation for Sapling/Orchard/transparent.</li>
-<li class=""><code>pczt</code>: The Partially Constructed Zcash Transaction format; defines the
-five roles (Creator, Constructor, Signer, Prover, Combiner, Spend
-Authoriser, Transaction Extractor) and the data shape passed between them.</li>
-</ul>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-3---wallet-stack">Layer 3 - Wallet stack<a href="#layer-3---wallet-stack" class="hash-link" aria-label="Direct link to Layer 3 - Wallet stack" title="Direct link to Layer 3 - Wallet stack" translate="no">​</a></h3>
-<ul>
-<li class=""><code>zcash_client_backend</code>: The wallet framework: chain-scanning, fee
-strategies, transaction proposals, light-client (lightwalletd) protocol,
-ZIP 321 payment-request handling.</li>
-<li class=""><code>zcash_client_memory</code>: In-memory backend implementation, mostly for
-testing.</li>
-<li class=""><code>zcash_client_sqlite</code>: SQLite implementation of the wallet storage trait
-family. The reference downstream.</li>
-</ul>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="a-note-on-zcash_history-and-zcash_extensions">A note on <code>zcash_history</code> and <code>zcash_extensions</code><a href="#a-note-on-zcash_history-and-zcash_extensions" class="hash-link" aria-label="Direct link to a-note-on-zcash_history-and-zcash_extensions" title="Direct link to a-note-on-zcash_history-and-zcash_extensions" translate="no">​</a></h3>
-<ul>
-<li class=""><code>zcash_history</code>: ZIP 221 / Block Header Commitments tree (a recursive
-hash-tree of block metadata). Lives in this repo because the structure is
-consensus-defined but rarely touched in wallet contexts.</li>
-<li class=""><code>zcash_extensions</code>: Experimental &quot;transaction extensions&quot; (TZE), behind
-the <code>zfuture</code> cfg flag. Mostly historical interest.</li>
-</ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-dependency-graph-in-one-glance">The dependency graph in one glance<a href="#the-dependency-graph-in-one-glance" class="hash-link" aria-label="Direct link to The dependency graph in one glance" title="Direct link to The dependency graph in one glance" translate="no">​</a></h2>
-<p>If you only remember one thing, remember <strong>dependencies flow downward</strong>.
-<code>zcash_client_sqlite</code> depends on <code>zcash_client_backend</code>, which depends on
-<code>zcash_primitives</code>, which depends on <code>zcash_protocol</code>, etc. The reverse
-never happens.</p>
-<p>The Mermaid diagram in the top-level <code>README.md</code> is the authoritative source
-of truth. Open it; it is the most important diagram in the repository.</p>
-<p>Important external crates (separate repos but central):</p>
-<ul>
-<li class=""><code>sapling-crypto</code> (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∼</mo></mrow><annotation encoding="application/x-tex">\sim</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em"></span><span class="mrel">∼</span></span></span></span> <code>sapling::*</code> imports): the entire Sapling
-protocol (notes, commitments, value commitments, Spend, Output, the
-circuit). Was previously a module inside <code>zcash_primitives</code>, was extracted
-for separation of concerns.</li>
+<li class=""><code>sapling-crypto</code>: the entire Sapling protocol (notes, commitments,
+value commitments, Spend, Output, the circuit). Previously a
+module inside <code>zcash_primitives</code>; extracted for separation of
+concerns.</li>
 <li class=""><code>orchard</code>: the entire Orchard protocol (Action description, Halo 2
 circuit, PCZT-orchard).</li>
-<li class=""><code>zcash_note_encryption</code>: a generic in-band secret distribution scheme
-parameterised by domain (used by both Sapling and Orchard).</li>
-<li class=""><code>zip32</code>: hierarchical-deterministic derivation, shared by all pools.</li>
-<li class=""><code>zcash_spec</code>: small helpers that encode primitives from the protocol
-specification (e.g. <code>PRF^{expand}</code>).</li>
+<li class=""><code>zcash_note_encryption</code>: a generic in-band secret distribution
+scheme parameterised by domain (used by both Sapling and Orchard).</li>
+<li class=""><code>zip32</code>: hierarchical-deterministic derivation, shared by all
+pools.</li>
+<li class=""><code>zcash_spec</code>: small helpers that encode primitives from the
+protocol specification (e.g. <code>PRF^{expand}</code>).</li>
 </ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="reading-order">Reading order<a href="#reading-order" class="hash-link" aria-label="Direct link to Reading order" title="Direct link to Reading order" translate="no">​</a></h2>
-<p>A senior cryptographer joining the project can profitably read the source in
-this order:</p>
-<ol>
-<li class=""><strong>Chapter 02</strong>: protocol foundations - skim the protocol PDF
-sections 3-4 first.</li>
-<li class=""><strong>Chapter 03</strong>: cryptography primer - calibrate your notation with mine.</li>
-<li class=""><strong>Chapter 04</strong>: Sprout and Sapling - this is where you spend the most
-time. Sapling is mature, well-specified, mathematically clean, and the
-bulk of historical shielded value lives there.</li>
-<li class=""><strong>Chapter 05</strong>: Orchard and Halo 2 - the modern shielded pool, which
-uses a different proof system and curve choice.</li>
-<li class=""><strong>Chapter 06-09</strong>: keys, transactions, note encryption, Equihash.</li>
-<li class=""><strong>Chapter 10</strong>: wallet stack (read last; it consumes everything above).</li>
-<li class=""><strong>Chapter 11</strong>: study plan with exercises.</li>
-</ol>
-<p>If you only have a week, focus on chapters 03, 04, 05, 08. They contain
-<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><mn>90</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">\approx 90\%</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em"></span><span class="mord">90%</span></span></span></span> of the cryptographic substance.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="useful-entry-points-in-the-code">Useful entry points in the code<a href="#useful-entry-points-in-the-code" class="hash-link" aria-label="Direct link to Useful entry points in the code" title="Direct link to Useful entry points in the code" translate="no">​</a></h2>
-<p>When in doubt, start reading from these files:</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Goal</th><th>File</th></tr></thead><tbody><tr><td>What is a transaction made of?</td><td><code>zcash_primitives/src/transaction/mod.rs</code></td></tr><tr><td>How is a transaction built?</td><td><code>zcash_primitives/src/transaction/builder.rs</code></td></tr><tr><td>How is a TxId computed?</td><td><code>zcash_primitives/src/transaction/txid.rs</code></td></tr><tr><td>What is the Sprout circuit?</td><td><code>zcash_proofs/src/circuit/sprout/mod.rs</code></td></tr><tr><td>What does a Zcash address look like?</td><td><code>components/zcash_address/src/kind/unified.rs</code></td></tr><tr><td>What does F4Jumble do?</td><td><code>components/f4jumble/src/lib.rs</code></td></tr><tr><td>How does the wallet scan a block?</td><td><code>zcash_client_backend/src/scanning.rs</code></td></tr><tr><td>What does Equihash verify?</td><td><code>components/equihash/src/verify.rs</code></td></tr><tr><td>How do we derive Sapling keys?</td><td><code>zcash_keys/src/keys.rs</code> (and <code>sapling-crypto</code> repo)</td></tr></tbody></table>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="conventions-in-the-code">Conventions in the code<a href="#conventions-in-the-code" class="hash-link" aria-label="Direct link to Conventions in the code" title="Direct link to Conventions in the code" translate="no">​</a></h2>
-<p>A short list of project-wide patterns. Each is justified in <code>AGENTS.md</code>,
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="34-layer-2---keys-and-addresses">3.4 Layer 2 - Keys and addresses<a href="#34-layer-2---keys-and-addresses" class="hash-link" aria-label="Direct link to 3.4 Layer 2 - Keys and addresses" title="Direct link to 3.4 Layer 2 - Keys and addresses" translate="no">​</a></h3>
+<ul>
+<li class=""><code>zcash_keys</code>: Spending keys, viewing keys, unified spending /
+viewing keys, ZIP 32 derivation for Sapling/Orchard/transparent.</li>
+<li class=""><code>pczt</code>: The Partially Constructed Zcash Transaction format;
+defines the roles (Creator, Constructor, IO Finalizer, Prover,
+Signer, Spend Authoriser, Combiner, Transaction Extractor) and the
+data shape passed between them.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="35-layer-3---wallet-stack">3.5 Layer 3 - Wallet stack<a href="#35-layer-3---wallet-stack" class="hash-link" aria-label="Direct link to 3.5 Layer 3 - Wallet stack" title="Direct link to 3.5 Layer 3 - Wallet stack" translate="no">​</a></h3>
+<ul>
+<li class=""><code>zcash_client_backend</code>: The wallet framework: chain-scanning, fee
+strategies, transaction proposals, light-client (lightwalletd)
+protocol, ZIP 321 payment-request handling.</li>
+<li class=""><code>zcash_client_memory</code>: In-memory backend implementation, mostly
+for testing.</li>
+<li class=""><code>zcash_client_sqlite</code>: SQLite implementation of the wallet storage
+trait family. The reference downstream.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="36-auxiliary-crates">3.6 Auxiliary crates<a href="#36-auxiliary-crates" class="hash-link" aria-label="Direct link to 3.6 Auxiliary crates" title="Direct link to 3.6 Auxiliary crates" translate="no">​</a></h3>
+<ul>
+<li class=""><code>zcash_history</code>: ZIP 221 / Block Header Commitments tree (a
+recursive hash-tree of block metadata). Lives in this repo because
+the structure is consensus-defined but rarely touched in wallet
+contexts.</li>
+<li class=""><code>zcash_extensions</code>: Experimental &quot;transaction extensions&quot; (TZE),
+behind the <code>zfuture</code> cfg flag. Mostly of historical interest.</li>
+<li class=""><code>zcash</code>: meta-crate that re-exports the others; the most common
+dependency for downstream consumers.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="37-code-conventions-to-remember">3.7 Code conventions to remember<a href="#37-code-conventions-to-remember" class="hash-link" aria-label="Direct link to 3.7 Code conventions to remember" title="Direct link to 3.7 Code conventions to remember" translate="no">​</a></h3>
+<p>A short list of project-wide patterns. Each is justified in
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/AGENTS.md" target="_blank" rel="noopener noreferrer" class=""><code>AGENTS.md</code></a>;
 read that file before contributing.</p>
 <ul>
-<li class=""><code>#![no_std]</code> by default. Most crates use <code>extern crate alloc</code>. Anything
-needing <code>std</code> lives behind a <code>std</code> feature flag.</li>
+<li class=""><code>#![no_std]</code> by default. Most crates use <code>extern crate alloc</code>.
+Anything needing <code>std</code> lives behind a <code>std</code> feature flag.</li>
 <li class="">Bundles use the authorization typestate pattern: a <code>Bundle&lt;A&gt;</code> is
-parameterised by an <code>Authorization</code> associated type so that the type
-system can distinguish &quot;I have spend authorisations&quot; from &quot;I have a
+parameterised by an <code>Authorization</code> associated type so the type
+system distinguishes &quot;I have spend authorisations&quot; from &quot;I have a
 partially-built bundle that still needs signing/proving&quot;. Look for
 <code>MapAuth</code> and <code>InProgress</code> markers.</li>
-<li class="">Struct fields are private. Construction goes through <code>from_parts(...)</code>
-that returns <code>Result&lt;_, Error&gt;</code> and enforces invariants.</li>
+<li class="">Struct fields are private. Construction goes through
+<code>from_parts(...)</code> which returns <code>Result&lt;_, Error&gt;</code> and enforces
+invariants.</li>
 <li class="">All error types are non-exhaustive enums.</li>
-<li class="">Newtypes are aggressively preferred over bare integers. <code>Zatoshis</code>,
-<code>ZatBalance</code>, <code>BlockHeight</code>, <code>TxId</code>, ...</li>
-<li class="">Side effects (clocks, RNGs, network calls) are passed as explicit trait
-arguments. This pattern is sometimes called &quot;capability-oriented&quot;.</li>
+<li class="">Newtypes are aggressively preferred over bare integers:
+<code>Zatoshis</code>, <code>ZatBalance</code>, <code>BlockHeight</code>, <code>TxId</code>, etc.</li>
+<li class="">Side effects (clocks, RNGs, network calls) are passed as explicit
+trait arguments (&quot;capability-oriented&quot; style).</li>
 </ul>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="build-and-test">Build and test<a href="#build-and-test" class="hash-link" aria-label="Direct link to Build and test" title="Direct link to Build and test" translate="no">​</a></h2>
-<p>From <code>AGENTS.md</code> (paraphrased):</p>
-<div class="language-sh codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-sh codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> check  </span><span class="token parameter variable" style="color:#36acaa">--workspace</span><span class="token plain"> --all-features</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> build  </span><span class="token parameter variable" style="color:#36acaa">--workspace</span><span class="token plain"> --all-features</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> </span><span class="token builtin class-name">test</span><span class="token plain">   </span><span class="token parameter variable" style="color:#36acaa">--workspace</span><span class="token plain"> --all-features</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> clippy --all-features --all-targets -- </span><span class="token parameter variable" style="color:#36acaa">-D</span><span class="token plain"> warnings</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token function" style="color:#d73a49">cargo</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">fmt</span><span class="token plain">    </span><span class="token parameter variable" style="color:#36acaa">--all</span><span class="token plain"> -- </span><span class="token parameter variable" style="color:#36acaa">--check</span><br></div></code></pre></div></div>
-<p>CI runs across multiple feature combinations. Tests are slow because the
-default profile uses <code>opt-level = 3</code> (Sapling/Orchard proofs are
-expensive). For pure compile-error iteration, use <code>--profile=dev</code>.</p>
-<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-you-should-know-after-this-chapter">What you should know after this chapter<a href="#what-you-should-know-after-this-chapter" class="hash-link" aria-label="Direct link to What you should know after this chapter" title="Direct link to What you should know after this chapter" translate="no">​</a></h2>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-failure-modes">4. Failure modes<a href="#4-failure-modes" class="hash-link" aria-label="Direct link to 4. Failure modes" title="Direct link to 4. Failure modes" translate="no">​</a></h2>
+<p>A contributor who modifies the workspace layering without
+understanding it can produce three kinds of damage:</p>
 <ul>
-<li class="">Where each piece of functionality lives.</li>
-<li class="">That <code>zcash_protocol</code> is the floor and <code>zcash_client_sqlite</code> is the
-ceiling.</li>
-<li class="">That Sapling and Orchard are external crates pulled in here.</li>
-<li class="">That <code>librustzcash</code> is not a consensus node.</li>
+<li class=""><strong>Cycle introduction.</strong> Adding a wallet-layer dependency to a
+protocol-layer crate breaks compilation across every consumer.
+Cargo will refuse to resolve.</li>
+<li class=""><strong>Feature-flag breakage.</strong> The repo CI matrix exercises specific
+feature combinations
+(<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/.github/workflows/ci.yml" target="_blank" rel="noopener noreferrer" class=""><code>ci.yml</code></a>).
+Adding a feature that pulls <code>std</code> into a <code>no_std</code> crate will pass
+locally and fail in CI under <code>--no-default-features</code>.</li>
+<li class=""><strong>Cross-crate version skew.</strong> When two workspace crates depend on
+the same external crate at different versions (e.g. <code>sapling</code> vs
+<code>sapling-crypto</code>), the resolver may pick a single resolution that
+silently downgrades a security fix. <code>cargo tree -d</code> exposes such
+duplicates. The CI runs <code>cargo vet</code> against
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/supply-chain/audits.toml" target="_blank" rel="noopener noreferrer" class=""><code>supply-chain/audits.toml</code></a>
+to flag this.</li>
 </ul>
-<p>The next chapter introduces what Zcash actually does at the protocol level
-before any cryptography.</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/01-overview-and-roadmap.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">librustzcash Onboarding</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/01b-build-test-contribute"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Build, test, contribute</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#goal" class="table-of-contents__link toc-highlight">Goal</a></li><li><a href="#what-is-librustzcash" class="table-of-contents__link toc-highlight">What is <code>librustzcash</code>?</a></li><li><a href="#layering" class="table-of-contents__link toc-highlight">Layering</a><ul><li><a href="#layer-0---standalone-components" class="table-of-contents__link toc-highlight">Layer 0 - Standalone components</a></li><li><a href="#layer-1---protocol-primitives" class="table-of-contents__link toc-highlight">Layer 1 - Protocol primitives</a></li><li><a href="#layer-2---keys-and-addresses" class="table-of-contents__link toc-highlight">Layer 2 - Keys and addresses</a></li><li><a href="#layer-3---wallet-stack" class="table-of-contents__link toc-highlight">Layer 3 - Wallet stack</a></li><li><a href="#a-note-on-zcash_history-and-zcash_extensions" class="table-of-contents__link toc-highlight">A note on <code>zcash_history</code> and <code>zcash_extensions</code></a></li></ul></li><li><a href="#the-dependency-graph-in-one-glance" class="table-of-contents__link toc-highlight">The dependency graph in one glance</a></li><li><a href="#reading-order" class="table-of-contents__link toc-highlight">Reading order</a></li><li><a href="#useful-entry-points-in-the-code" class="table-of-contents__link toc-highlight">Useful entry points in the code</a></li><li><a href="#conventions-in-the-code" class="table-of-contents__link toc-highlight">Conventions in the code</a></li><li><a href="#build-and-test" class="table-of-contents__link toc-highlight">Build and test</a></li><li><a href="#what-you-should-know-after-this-chapter" class="table-of-contents__link toc-highlight">What you should know after this chapter</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
+<p>The test most often broken by careless layering changes is
+<code>cargo check --workspace --all-features --no-default-features</code>,
+which the CI runs in matrix form. Always run it locally before
+pushing.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-spec-pointers">5. Spec pointers<a href="#5-spec-pointers" class="hash-link" aria-label="Direct link to 5. Spec pointers" title="Direct link to 5. Spec pointers" translate="no">​</a></h2>
+<ul>
+<li class="">Top-level
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/README.md" target="_blank" rel="noopener noreferrer" class=""><code>README.md</code></a>:
+contains the authoritative crate-graph diagram and the explicit
+&quot;this is not a consensus node&quot; disclaimer.</li>
+<li class=""><a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/AGENTS.md" target="_blank" rel="noopener noreferrer" class=""><code>AGENTS.md</code></a>:
+PR compliance gate (the change must be tied to an open GitHub
+issue acknowledged by a team member) and the canonical local
+command list. Read it before opening a PR.</li>
+<li class=""><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="">Zcash Protocol Specification</a>:
+sections 3 and 4 give the abstract protocol that the
+<code>zcash_protocol</code> and <code>zcash_primitives</code> crates encode. Section 5
+gives the concrete protocol that drives every shielded crate.</li>
+<li class=""><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="">ZIP index</a>: every consensus rule the
+workspace implements is anchored to a ZIP number; the crate
+README files cite them directly.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-exercises">6. Exercises<a href="#6-exercises" class="hash-link" aria-label="Direct link to 6. Exercises" title="Direct link to 6. Exercises" translate="no">​</a></h2>
+<ol>
+<li class="">
+<p><strong>Read the workspace.</strong> Open the root
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml" target="_blank" rel="noopener noreferrer" class=""><code>Cargo.toml</code></a>
+and list every workspace member alongside one sentence on what
+it owns. Compare your list to Section 3 of this chapter and
+identify any crate you misclassified.</p>
+</li>
+<li class="">
+<p><strong>Draw the local dependency graph.</strong> Run
+<code>cargo tree --workspace --depth 1 --no-default-features</code> and
+confirm that no Layer 0 crate depends on a Layer 1+ crate.
+Identify the one workspace crate with the highest fan-in (most
+crates depending on it).</p>
+</li>
+<li class="">
+<p><strong>Touch the code.</strong> Pick the
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/value.rs#L262-L268" target="_blank" rel="noopener noreferrer" class=""><code>Zatoshis</code></a>
+newtype. Add a private helper method <code>pub fn is_dust(&amp;self) -&gt; bool</code>
+that returns <code>true</code> when the value is below the relay-rule dust
+threshold (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\geq 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:0.6444em"></span><span class="mord">0</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≤</mo><mn>54</mn></mrow><annotation encoding="application/x-tex">\leq 54</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em"></span></span><span class="base"><span class="strut" style="height:0.6444em"></span><span class="mord">54</span></span></span></span> zatoshis, per ZIP 317).
+Build with <code>cargo check -p zcash_protocol</code> and add one unit test
+covering both branches. Do not commit; this is a scratch exercise
+to confirm the build loop works.</p>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="answers-in-the-code">Answers in the code<a href="#answers-in-the-code" class="hash-link" aria-label="Direct link to Answers in the code" title="Direct link to Answers in the code" translate="no">​</a></h3>
+<ul>
+<li class="">Workspace members:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml#L1-L22" target="_blank" rel="noopener noreferrer" class=""><code>Cargo.toml</code></a>.</li>
+<li class="">Highest-fan-in crate:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol" target="_blank" rel="noopener noreferrer" class=""><code>components/zcash_protocol</code></a>.</li>
+<li class=""><code>Zatoshis</code> definition and arithmetic:
+<a href="https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/value.rs" target="_blank" rel="noopener noreferrer" class=""><code>components/zcash_protocol/src/value.rs</code></a>.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-further-reading">7. Further reading<a href="#7-further-reading" class="hash-link" aria-label="Direct link to 7. Further reading" title="Direct link to 7. Further reading" translate="no">​</a></h2>
+<ul>
+<li class="">Reading order for the rest of this course: chapter 02 covers
+protocol foundations; chapter 03 calibrates cryptographic
+notation; chapter 04 enters Sprout and Sapling; chapter 05 covers
+Orchard and Halo 2; chapter 10 finally re-uses every layer above
+inside the wallet stack. The
+<a class="" href="/librustzcash/study-plan-and-exercises">study plan</a> gives a week-by-week
+read order with associated exercises.</li>
+<li class="">For a quick file-to-purpose lookup when you forget which crate
+owns what:</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Question</th><th>File</th></tr></thead><tbody><tr><td>What is a transaction made of?</td><td><code>zcash_primitives/src/transaction/mod.rs</code></td></tr><tr><td>How is a transaction built?</td><td><code>zcash_primitives/src/transaction/builder.rs</code></td></tr><tr><td>How is a TxId computed?</td><td><code>zcash_primitives/src/transaction/txid.rs</code></td></tr><tr><td>What is the Sprout circuit?</td><td><code>zcash_proofs/src/circuit/sprout/mod.rs</code></td></tr><tr><td>What does a Zcash address look like?</td><td><code>components/zcash_address/src/kind/unified.rs</code></td></tr><tr><td>What does F4Jumble do?</td><td><code>components/f4jumble/src/lib.rs</code></td></tr><tr><td>How does the wallet scan a block?</td><td><code>zcash_client_backend/src/scanning.rs</code></td></tr><tr><td>What does Equihash verify?</td><td><code>components/equihash/src/verify.rs</code></td></tr><tr><td>How do we derive Sapling keys?</td><td><code>zcash_keys/src/keys.rs</code> plus the <code>sapling-crypto</code> repo</td></tr></tbody></table></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/dannywillems/librustzcash/edit/onboarding/onboarding/docs/docs/01-overview-and-roadmap.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/librustzcash/"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">librustzcash Onboarding</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/librustzcash/01b-build-test-contribute"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Build, test, contribute</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-why-this-chapter-exists" class="table-of-contents__link toc-highlight">1. Why this chapter exists</a></li><li><a href="#2-definitions" class="table-of-contents__link toc-highlight">2. Definitions</a></li><li><a href="#3-the-code" class="table-of-contents__link toc-highlight">3. The code</a><ul><li><a href="#31-the-workspace-declaration" class="table-of-contents__link toc-highlight">3.1 The workspace declaration</a></li><li><a href="#32-layer-0---standalone-components-components" class="table-of-contents__link toc-highlight">3.2 Layer 0 - Standalone components (<code>components/</code>)</a></li><li><a href="#33-layer-1---protocol-primitives" class="table-of-contents__link toc-highlight">3.3 Layer 1 - Protocol primitives</a></li><li><a href="#34-layer-2---keys-and-addresses" class="table-of-contents__link toc-highlight">3.4 Layer 2 - Keys and addresses</a></li><li><a href="#35-layer-3---wallet-stack" class="table-of-contents__link toc-highlight">3.5 Layer 3 - Wallet stack</a></li><li><a href="#36-auxiliary-crates" class="table-of-contents__link toc-highlight">3.6 Auxiliary crates</a></li><li><a href="#37-code-conventions-to-remember" class="table-of-contents__link toc-highlight">3.7 Code conventions to remember</a></li></ul></li><li><a href="#4-failure-modes" class="table-of-contents__link toc-highlight">4. Failure modes</a></li><li><a href="#5-spec-pointers" class="table-of-contents__link toc-highlight">5. Spec pointers</a></li><li><a href="#6-exercises" class="table-of-contents__link toc-highlight">6. Exercises</a><ul><li><a href="#answers-in-the-code" class="table-of-contents__link toc-highlight">Answers in the code</a></li></ul></li><li><a href="#7-further-reading" class="table-of-contents__link toc-highlight">7. Further reading</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Source</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Repository (onboarding branch)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/dannywillems/librustzcash/tree/onboarding/onboarding" target="_blank" rel="noopener noreferrer" class="footer__link-item">Documentation source<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/zcash/librustzcash" target="_blank" rel="noopener noreferrer" class="footer__link-item">Upstream (zcash/librustzcash)<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Zcash</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://zips.z.cash/protocol/protocol.pdf" target="_blank" rel="noopener noreferrer" class="footer__link-item">Protocol Specification<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://zips.z.cash/" target="_blank" rel="noopener noreferrer" class="footer__link-item">ZIPs<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">librustzcash onboarding course. Source on GitHub under MIT OR Apache-2.0.</div></div></div></footer></div>
 </body>
 </html>
