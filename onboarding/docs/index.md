@@ -7,6 +7,25 @@ description: A graduate-level reading course on librustzcash, with deep focus on
 
 # librustzcash Onboarding
 
+:::warning Automatically generated content
+
+This documentation is automatically generated using
+[Claude Code](https://claude.com/claude-code). Errors, omissions, and
+inaccuracies may have been introduced during generation. Treat every
+claim as a starting point for your own reading of the source, not as
+authoritative.
+
+The code is the law, always. When in doubt, refer to:
+
+- the source files in the `librustzcash` workspace,
+- the [Zcash Protocol Specification](https://zips.z.cash/protocol/protocol.pdf),
+- the relevant [ZIPs](https://zips.z.cash/).
+
+If you spot an error, please open an issue or a pull request on the
+[onboarding branch](https://github.com/dannywillems/librustzcash/tree/onboarding).
+
+:::
+
 A graduate-level reading course on `librustzcash`, with strong focus
 on the cryptography. Each chapter combines protocol theory (with
 LaTeX math), pointers into the actual Rust code in the workspace,

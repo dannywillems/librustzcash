@@ -106,6 +106,16 @@ const config: Config = {
     colorMode: {
       respectPrefersColorScheme: true,
     },
+    announcementBar: {
+      id: 'ai-generated-disclaimer',
+      content:
+        'This site is automatically generated using Claude Code. Errors ' +
+        'may have been introduced. The code is the law, always refer to ' +
+        'the source in the librustzcash workspace.',
+      backgroundColor: '#fef3c7',
+      textColor: '#78350f',
+      isCloseable: false,
+    },
     navbar: {
       title: 'librustzcash Onboarding',
       items: [
