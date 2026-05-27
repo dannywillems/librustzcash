@@ -7,7 +7,8 @@ constant-time with respect to secret data. This chapter explains why,
 what "constant-time" means precisely, how the supporting Rust crates
 realise it, the specific patterns to use (and avoid), and the
 historical context for the constant-time work in `bellman`,
-`bls12_381`, `jubjub`, `pasta_curves`, and friends.
+`bls12_381`, `jubjub`,
+[`pasta_curves`](https://github.com/zcash/pasta_curves), and friends.
 
 ## 1. The threat model
 
@@ -127,8 +128,8 @@ the selection happens via masking, not array indexing.
 ### What you do not need to write
 
 `jubjub::SubgroupPoint::mul(scalar)` and
-`pallas::Point::mul(scalar)` are implemented constant-time. You
-typically just use them.
+[`pallas::Point`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L12)`::mul(scalar)`
+are implemented constant-time. You typically just use them.
 
 You should never roll your own scalar multiplication for secret
 scalars. If you find yourself doing that, stop and reuse the crate
@@ -136,7 +137,9 @@ API.
 
 ## 6. Constant-time field arithmetic
 
-`bls12_381::Scalar`, `jubjub::Fr`, `pallas::Base`, etc. all use
+`bls12_381::Scalar`, `jubjub::Fr`,
+[`pallas::Base`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L6),
+etc. all use
 Montgomery form and constant-time Barrett reduction. Field inversion
 is implemented via the inverter (Bernstein-Yang's safegcd or its
 predecessors), which is constant-time.
@@ -320,7 +323,8 @@ The Rust crypto ecosystem mitigates this by:
 - Periodic audits with constant-time analysis tools (`ctgrind`,
   `dudect`, `Lima`).
 
-The Zcash core crypto crates (`bls12_381`, `jubjub`, `pasta_curves`,
+The Zcash core crypto crates (`bls12_381`, `jubjub`,
+[`pasta_curves`](https://github.com/zcash/pasta_curves),
 `pairing`) have been audited and have constant-time test suites in
 their repos.
 

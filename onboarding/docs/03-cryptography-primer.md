@@ -38,7 +38,12 @@ means scalar arithmetic inside a BLS12-381-based SNARK is cheap. Sapling
 uses this for in-circuit elliptic-curve operations.
 
 Read in code: the workspace `Cargo.toml` pulls `bls12_381`, `jubjub`,
-`pasta_curves`, `secp256k1`, `group`, `ff` from crates.io.
+[`pasta_curves`](https://github.com/zcash/pasta_curves), `secp256k1`,
+`group`, `ff` from crates.io. The Pallas / Vesta type aliases used
+throughout the Orchard code live in
+[`pasta_curves/src/pallas.rs`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs)
+and
+[`pasta_curves/src/vesta.rs`](https://github.com/zcash/pasta_curves/blob/main/src/vesta.rs).
 
 ## 2. Pairings
 

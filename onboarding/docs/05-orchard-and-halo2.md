@@ -63,8 +63,18 @@ Vesta's base field, but the circuit itself manipulates Pallas scalars
 $\mathbb{F}_q$ which equal Vesta base field). This circular dependence
 is the whole point of the cycle.
 
-In code: the `pasta_curves` crate, with types `pallas::Base`,
-`pallas::Scalar`, `pallas::Point`, etc.
+In code: the [`pasta_curves`](https://github.com/zcash/pasta_curves)
+crate, with types
+[`pallas::Base`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L6),
+[`pallas::Scalar`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L9),
+[`pallas::Point`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L12),
+[`pallas::Affine`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L15);
+the corresponding Vesta aliases live in
+[`src/vesta.rs`](https://github.com/zcash/pasta_curves/blob/main/src/vesta.rs).
+The underlying field and curve implementations are in
+[`src/fields/`](https://github.com/zcash/pasta_curves/tree/main/src/fields)
+and
+[`src/curves.rs`](https://github.com/zcash/pasta_curves/blob/main/src/curves.rs).
 
 ## 2. Sinsemilla
 

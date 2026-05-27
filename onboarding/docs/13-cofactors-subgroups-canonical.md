@@ -283,9 +283,11 @@ requires `TryFrom` (returns `Option<SubgroupPoint>` after a subgroup
 check). The `From` for `ExtendedPoint::from(bytes)` returns an
 `ExtendedPoint`; the subgroup check is *not* automatic.
 
-Mirror pattern in `pasta_curves`: `pallas::Point` is the full type
-(cofactor 1 so equivalent to subgroup point already), with
-`from_bytes` enforcing canonical encoding.
+Mirror pattern in
+[`pasta_curves`](https://github.com/zcash/pasta_curves):
+[`pallas::Point`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L12)
+is the full type (cofactor 1 so equivalent to subgroup point already),
+with `from_bytes` enforcing canonical encoding.
 
 ## 10. Practical checklist when adding a curve-point field
 

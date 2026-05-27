@@ -269,9 +269,10 @@ channel could leak the witness during proving.
 For a wallet running locally on a user's device this is mostly
 theoretical (the user controls the machine), but for a remote prover
 or a multi-party prover setup it is critical. The current `bls12_381`,
-`pairing`, `bellman`, `jubjub`, `pasta_curves` crates implement
-constant-time field arithmetic and constant-time conditional
-selection (`subtle` crate). 
+`pairing`, `bellman`, `jubjub`,
+[`pasta_curves`](https://github.com/zcash/pasta_curves) crates
+implement constant-time field arithmetic and constant-time
+conditional selection (`subtle` crate). 
 
 Chapter 14 covers constant-time programming in this codebase in
 depth.
