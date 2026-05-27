@@ -125,19 +125,19 @@ types live in `components/zcash_protocol/src/consensus.rs`:
 <!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L18-L20 -->
 
 ```rust reference title="components/zcash_protocol/src/consensus.rs"
-https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/consensus.rs#L18-L20
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L18-L20
 ```
 
 <!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L568-L614 -->
 
 ```rust reference title="components/zcash_protocol/src/consensus.rs"
-https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/consensus.rs#L568-L614
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L568-L614
 ```
 
 <!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L701-L728 -->
 
 ```rust reference title="components/zcash_protocol/src/consensus.rs"
-https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/consensus.rs#L701-L728
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L701-L728
 ```
 
 Almost every consensus rule is parameterised by `BranchId`. Sighash code

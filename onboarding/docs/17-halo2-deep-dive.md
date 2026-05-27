@@ -6,6 +6,23 @@ description: "PLONKish, custom gates, lookups, IPA, transcript."
 
 # 17 - Halo 2 deep dive
 
+:::info Dedicated Halo 2 course
+
+The constraint-system internals, IPA, the polynomial-IOP, custom
+gates, lookups, and transcript machinery live in the dedicated
+companion course:
+
+[`dannywillems.github.io/halo2`](https://dannywillems.github.io/halo2/)
+
+That course is generated from the
+[`zcash/halo2`](https://github.com/zcash/halo2) repository directly,
+so the math, the gadgets, and the live source embeds match the
+proving system implementation. This chapter only positions Halo 2
+inside the `librustzcash` workspace; for the proving-system mechanics
+themselves, jump to the companion course.
+
+:::
+
 ## Goal
 
 Chapter 05 introduced Halo 2 at a black-box level. This chapter goes

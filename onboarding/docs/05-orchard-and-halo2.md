@@ -6,6 +6,27 @@ description: "Pallas/Vesta, Action circuit, Halo 2 + IPA."
 
 # 05 - Orchard and Halo 2
 
+:::info Dedicated companion courses
+
+This chapter places Orchard inside the `librustzcash` workspace: how
+the crate is wired in, what an Action is at protocol level, where
+Halo 2 sits in the stack. The technical detail belongs in two
+dedicated companion courses:
+
+- [`dannywillems.github.io/orchard`](https://dannywillems.github.io/orchard/)
+  for the Orchard circuit, gadgets, key tree, and Sinsemilla, built
+  from
+  [`zcash/orchard`](https://github.com/zcash/orchard).
+- [`dannywillems.github.io/halo2`](https://dannywillems.github.io/halo2/)
+  for the proving system itself (PLONKish, IPA, transcript, custom
+  gates, lookups), built from
+  [`zcash/halo2`](https://github.com/zcash/halo2).
+
+Read this chapter first to place Orchard in the workspace; jump to
+the companion courses for the cryptographic mechanics.
+
+:::
+
 ## Goal
 
 Sapling solved the privacy story but inherits Groth16 and a trusted

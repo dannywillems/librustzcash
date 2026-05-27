@@ -263,7 +263,7 @@ The hardcoded SHA-256 hashes are in `zcash_proofs/src/lib.rs`:
 <!-- CODE_REFERENCE: zcash_proofs/src/lib.rs#L49-L52 -->
 
 ```rust reference title="zcash_proofs/src/lib.rs"
-https://github.com/zcash/librustzcash/blob/main/zcash_proofs/src/lib.rs#L49-L52
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs#L49-L52
 ```
 
 The integrity-check flow is in `load_parameters`:
@@ -271,7 +271,7 @@ The integrity-check flow is in `load_parameters`:
 <!-- CODE_REFERENCE: zcash_proofs/src/lib.rs#L288-L343 -->
 
 ```rust reference title="zcash_proofs/src/lib.rs"
-https://github.com/zcash/librustzcash/blob/main/zcash_proofs/src/lib.rs#L288-L343
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs#L288-L343
 ```
 
 The SHA-256 of the on-disk bytes uniquely identifies the parameter

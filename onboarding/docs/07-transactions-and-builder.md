@@ -33,7 +33,7 @@ Defined in `components/zcash_protocol/src/constants.rs`:
 <!-- CODE_REFERENCE: components/zcash_protocol/src/constants.rs#L16-L44 -->
 
 ```rust reference title="components/zcash_protocol/src/constants.rs"
-https://github.com/zcash/librustzcash/blob/main/components/zcash_protocol/src/constants.rs#L16-L44
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/constants.rs#L16-L44
 ```
 
 The parser at `zcash_primitives/src/transaction/mod.rs::Transaction::read`
