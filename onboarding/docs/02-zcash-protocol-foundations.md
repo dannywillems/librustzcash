@@ -6,278 +6,344 @@ description: "Consensus, value pools, network upgrades, transaction shape."
 
 # 02 - Zcash protocol foundations
 
-## Goal
+## 1. Why this chapter exists
 
-Before any cryptography, you need a working model of what a Zcash node and
-wallet do. This chapter introduces consensus, the transaction model, value
-pools, and network upgrades. The pace is brisk but the math is light;
-chapters 03-05 fill in the cryptographic content.
+Before any cryptography, a reader needs a working model of what a
+Zcash node and wallet actually do: where value lives, how the
+transaction format is structured, what a "network upgrade" implies
+for parser dispatch, and how the four value pools relate. Without
+this model, the type `Transaction` in
+[`zcash_primitives/src/transaction/mod.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs)
+is just an opaque tag-union. By the end of this chapter you will be
+able to map every field of that struct onto a consensus rule and
+explain why
+[`txid.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs)
+does not hash the wire bytes directly.
 
-## What Zcash is, in one paragraph
+## 2. Definitions
 
-Zcash is a UTXO-style cryptocurrency descended from Bitcoin. It extends the
-transparent UTXO model with **shielded value pools** in which transaction
-inputs and outputs are commitments instead of plaintext addresses and
-amounts. Every shielded transaction is accompanied by a **zero-knowledge
-proof** that the inputs are unspent, the outputs are well-formed, and the
-input value equals the output value (modulo public flows between pools).
-The set of unspent shielded outputs is represented as commitments in an
-**incremental Merkle tree**, and spends are proved by demonstrating
-knowledge of a tree path without revealing which one.
+**Definition (UTXO).** An unspent transaction output. In Zcash the
+transparent pool inherits Bitcoin's UTXO model verbatim: an output
+is an amount plus a `scriptPubKey`, and an input references an
+earlier output by `(txid, vout)`.
 
-## The four value pools
+**Definition (shielded value pool).** A pool in which outputs are
+cryptographic *commitments* rather than plaintext addresses and
+amounts. Membership is tested through a Merkle inclusion proof
+against a per-pool *note commitment tree*; spending is proven in
+zero knowledge.
 
-A Zcash transaction can move value between four pools:
+**Definition (zatoshi).** The base unit of Zcash value:
+$1\ \text{ZEC} = 10^{8}\ \text{zatoshi}$. The total supply ceiling
+is $21\,000\,000 \cdot 10^{8}$ zatoshi
+([`MAX_MONEY`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/value.rs#L13-L14)).
+
+**Definition (network upgrade).** A change to consensus rules
+identified by a `BranchId` (a 32-bit constant) and an activation
+height. The `BranchId` value is hashed into every sighash and TxId,
+so the same wire bytes produce different identifiers under different
+network upgrades. This is two-way replay protection (ZIP 200).
+
+**Definition (anchor).** A historical root of a note-commitment
+tree. A shielded spend references an anchor instead of a specific
+output; the zero-knowledge proof certifies that *some* note in the
+tree with that root is being spent without disclosing which one.
+
+**Definition (nullifier).** A deterministic, per-note tag revealed
+on spend. The mapping note $\to$ nullifier is a PRF keyed by the
+spending key, so an outside observer cannot link the two; consensus
+rejects any duplicate nullifier.
+
+**Invariant (transaction balance).** A Zcash transaction is valid
+only if
+
+$$
+v_{\text{transparent}}^{\text{in}}
+\;+\; v_{\text{sprout}}^{\text{in}}
+\;+\; v_{\text{sapling}}^{\text{in}}
+\;+\; v_{\text{orchard}}^{\text{in}}
+\;-\; \sum (\text{all outputs}) \;\geq\; 0,
+$$
+
+with the surplus going to the miner as a fee. Per-pool balances
+$v_{\text{sapling}}^{\text{balance}}$ and
+$v_{\text{orchard}}^{\text{balance}}$ are public scalars in the
+transaction header and are enforced both by ZK proofs (inside the
+bundle) and by binding signatures (so that the published balance
+matches the implicit balance inside the proofs). Chapter 04 derives
+the math.
+
+**Definition (TxId).** The transaction identifier. Since v5 (NU5)
+it is the root of a small BLAKE2b tree of personalised digests, not
+a flat hash of the serialised bytes. See Section 3.3.
+
+## 3. The code
+
+### 3.1 The four value pools
 
 | Pool | Mechanism | Active since |
 | --- | --- | --- |
 | Transparent | Bitcoin-style UTXOs | Genesis |
 | Sprout | Original Zerocash, BCTV14 SNARKs, Groth16 after Sapling | Genesis |
 | Sapling | Jubjub + BLS12-381 + Groth16 | Sapling NU (Oct 2018) |
-| Orchard | Pallas/Vesta + Halo 2 | NU5 (May 2022) |
+| Orchard | Pallas / Vesta + Halo 2 | NU5 (May 2022) |
 
-Sprout has been disabled for new outputs since NU5 (Sprout-to-anything is
-allowed, but nothing can be sent into Sprout). Sapling and Orchard coexist
-and are the active shielded pools.
+Sprout has been disabled for new outputs since NU5: Sprout-to-any
+is allowed, but nothing can be sent into Sprout. Sapling and Orchard
+coexist and are the active shielded pools.
 
-Each transaction carries an explicit signed balance:
+### 3.2 The transaction shape
 
-$$
-v_{\text{balance}} \;=\; v_{\text{transparent}}^{\text{in}}
-\;+\; v_{\text{sprout}}^{\text{in}} \;+\; v_{\text{sapling}}^{\text{in}}
-\;+\; v_{\text{orchard}}^{\text{in}}
-\;-\; (\text{all outputs}),
-$$
-
-and consensus requires $v_{\text{balance}} \geq 0$, with the surplus going
-to the miner as a fee. The per-pool balances $v_{\text{sapling}}^{\text{balance}}$
-and $v_{\text{orchard}}^{\text{balance}}$ are public scalars announced in
-the transaction header and constrained both by ZK proofs (inside the bundle)
-and by binding signatures (so that the published balance matches the
-implicit balance inside the proofs). See chapter 04 for the math.
-
-The unit of value is the **zatoshi**: $1 \text{ ZEC} = 10^8 \text{ zatoshi}$.
-In the code this is `Zatoshis` (unsigned) and `ZatBalance` (signed) in
-`components/zcash_protocol/src/value.rs`. Use these newtypes; never raw
-integers.
-
-## Anatomy of a transaction (high level)
-
-A v5 Zcash transaction (since NU5) carries:
+A v5 Zcash transaction carries:
 
 1. **Header**: version (5), version group ID, consensus branch ID,
    lock time, expiry height.
-2. **Transparent bundle**: vector of `TxIn` (each a `(prevout, scriptSig,
-   sequence)`) and vector of `TxOut` (each a `(value, scriptPubKey)`).
-   Bitcoin-style.
-3. **Sapling bundle**: a vector of **Spend descriptions**, a vector of
+2. **Transparent bundle**: vector of `TxIn` (each a
+   `(prevout, scriptSig, sequence)`) and vector of `TxOut` (each a
+   `(value, scriptPubKey)`). Bitcoin-style.
+3. **Sapling bundle**: vector of **Spend descriptions**, vector of
    **Output descriptions**, a value-balance scalar
-   $v_{\text{sapling}}^{\text{balance}}$, and a **binding signature**.
-4. **Orchard bundle**: a vector of **Action descriptions**, a value-balance
-   $v_{\text{orchard}}^{\text{balance}}$, flags, an anchor, a proof, and a
-   binding signature. Each Action description bundles one spend and one
-   output. Output-only and spend-only Actions use dummy notes.
+   $v_{\text{sapling}}^{\text{balance}}$, and a **binding
+   signature**.
+4. **Orchard bundle**: vector of **Action descriptions**, a
+   value-balance $v_{\text{orchard}}^{\text{balance}}$, flags,
+   anchor, proof, and binding signature. Each Action description
+   bundles one spend and one output; output-only and spend-only
+   Actions use dummy notes.
 
-The Sprout bundle is empty in practice for new transactions but the format
-still permits up to one `JsDescription` (JoinSplit description). v4 also
-exists and is still used for some Sapling-only transactions.
+The Sprout bundle is empty in practice for new transactions but the
+format still permits up to one `JsDescription` (JoinSplit
+description). v4 also exists and is still used for some
+Sapling-only transactions.
 
-Read this in the code:
+Where this lives in the code:
 
-- `zcash_primitives/src/transaction/mod.rs` defines `TxVersion`,
-  `TransactionData`, `Authorization`, etc.
-- `zcash_primitives/src/transaction/components/sapling.rs` and
-  `.../components/orchard.rs` define the serialization formats.
-- `zcash_transparent/src/bundle.rs` defines the transparent bundle.
+- [`zcash_primitives/src/transaction/mod.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs)
+  defines `TxVersion`, `TransactionData`, and the `Authorization`
+  trait family.
+- [`zcash_primitives/src/transaction/components/sapling.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/components/sapling.rs)
+  defines the Sapling serialization format and the v4/v5 split:
 
-## TxId is not a hash of the wire bytes
+```rust reference title="zcash_primitives/src/transaction/components/sapling.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/components/sapling.rs#L168-L189
+```
 
-A subtle but critical point. Since v5, the **TxId** is the root of a
-small BLAKE2b tree of personalised digests, not a hash of the serialized
-bytes. Concretely (paraphrasing
-`zcash_primitives/src/transaction/txid.rs`):
+- [`zcash_primitives/src/transaction/components/orchard.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/components/orchard.rs)
+  is the analogous file for Orchard.
+- [`zcash_transparent/src/bundle.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_transparent/src/bundle.rs)
+  defines the transparent bundle.
+
+### 3.3 TxId is not a hash of the wire bytes
+
+The TxId is computed by
+[`to_txid`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L435-L452)
+from per-bundle BLAKE2b sub-digests:
+
+```rust reference title="zcash_primitives/src/transaction/txid.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L33-L40
+```
+
+```rust reference title="zcash_primitives/src/transaction/txid.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L435-L452
+```
+
+Concretely:
 
 $$
 \mathsf{txid} \;=\; \mathsf{BLAKE2b\text{-}256}\bigl(
-\text{ZcashTxHash\_}\| C_{\text{branch}};
-H_{\text{header}} \| H_{\text{transparent}} \| H_{\text{sapling}} \| H_{\text{orchard}}
+\text{ZcashTxHash\_} \mathbin{\|} C_{\text{branch}};\;
+H_{\text{header}} \mathbin{\|} H_{\text{transparent}}
+\mathbin{\|} H_{\text{sapling}} \mathbin{\|} H_{\text{orchard}}
 \bigr),
 $$
 
-where each sub-digest $H_{\bullet}$ is itself a BLAKE2b hash with a domain
-separator personalisation tag (`ZTxIdHeadersHash`, `ZTxIdTranspaHash`,
-`ZTxIdSaplingHash`, `ZTxIdOrchardHash`). The personalisation includes the
-**consensus branch ID** so that the same wire bytes have different TxIds in
-different network upgrades, which makes replay-across-forks impossible.
+where each sub-digest $H_{\bullet}$ is itself a BLAKE2b hash with a
+domain-separator personalisation
+(`ZTxIdHeadersHash`, `ZTxIdTranspaHash`, `ZTxIdSaplingHash`,
+`ZTxIdOrchardHash`). The personalisation includes the consensus
+branch ID, so the same wire bytes have different TxIds in different
+network upgrades.
 
-The motivation: this tree shape allows constructing the **sighash** as the
-TxId tree with one sub-leaf replaced by a per-input commitment, which is
-much cheaper than recomputing a flat hash. Sighash design is ZIP 244.
+The motivation is twofold:
 
-Reference: ZIP 244 https://zips.z.cash/zip-0244.
+1. Replay protection across forks.
+2. Cheap sighashes: a sighash is computed by replacing one sub-leaf
+   of the TxId tree with a per-input commitment, far cheaper than
+   recomputing a flat hash. See ZIP 244.
 
-## Network upgrades and BranchId
+### 3.4 Network upgrades and `BranchId`
 
-Zcash mutates by **network upgrades** (NU). Each NU is identified by a
-`BranchId` (a 32-bit constant) and an activation height. The canonical
-types live in `components/zcash_protocol/src/consensus.rs`:
-
-<!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L18-L20 -->
-
-```rust reference title="components/zcash_protocol/src/consensus.rs"
-https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L18-L20
-```
-
-<!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L568-L614 -->
+The canonical types live in
+[`components/zcash_protocol/src/consensus.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs):
 
 ```rust reference title="components/zcash_protocol/src/consensus.rs"
 https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L568-L614
 ```
 
-<!-- CODE_REFERENCE: components/zcash_protocol/src/consensus.rs#L701-L728 -->
-
 ```rust reference title="components/zcash_protocol/src/consensus.rs"
 https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L701-L728
 ```
 
-Almost every consensus rule is parameterised by `BranchId`. Sighash code
-forks on it. Block-header commitment rules fork on it. When you read
-`zcash_primitives::transaction::sighash_v4` versus `..._v5` versus
-`..._v6`, the branch ID is the discriminator. The match arms in
-`Transaction::read` route to different parsers based on `(version,
-version_group_id)`, which encode the branch.
+Almost every consensus rule is parameterised by `BranchId`. Sighash
+code forks on it. Block-header commitment rules fork on it. When you
+read
+[`sighash_v4`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash_v4.rs)
+versus
+[`sighash_v5`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash_v5.rs),
+the branch ID is the discriminator. The match arms in
+`Transaction::read` route to different parsers based on
+`(version, version_group_id)`, which encode the branch.
 
-A `BranchId` is computed from a string label hashed in a standardised way;
-the values are encoded in
-`components/zcash_protocol/src/consensus.rs`. Test vectors in
-`zcash_primitives/src/transaction/tests/` exercise every supported
-branch.
-
-## Anchors and Merkle trees
+### 3.5 Anchors, Merkle trees, nullifiers
 
 The set of unspent shielded outputs is **not** a UTXO set in the
-transparent sense. It is the set of commitments included in a global
-**note commitment tree** (one per shielded pool). The Sapling tree has
-depth 32, the Orchard tree has depth 32, the Sprout tree has depth 29.
+transparent sense. It is the set of commitments included in a
+global note-commitment tree (one per shielded pool):
 
-A Spend in a shielded transaction does not point to a specific commitment;
-it points to an **anchor**, which is the root of the commitment tree as of
-some past block (the wallet may choose any sufficiently recent root). The
-ZK proof certifies that there exists a leaf in the tree whose path leads
-to that anchor and whose spending key is known.
+- Sprout tree: depth 29, SHA-256 hashes.
+- Sapling tree: depth 32, Pedersen-hash over Jubjub (chapter 04).
+- Orchard tree: depth 32, Sinsemilla over Pallas (chapter 05).
 
-This decoupling between *which note is spent* and *which anchor is used* is
-what gives Zcash strong unlinkability: two spends of the same note from
-different anchors look identical to an outside observer (because of
-**nullifiers**, see below).
+A Spend in a shielded transaction does not point to a specific
+commitment; it points to an *anchor*, the root of the commitment
+tree as of some past block. The ZK proof certifies that there
+exists a leaf in the tree whose path leads to that anchor and whose
+spending key is known.
 
-The Merkle tree itself is computed using protocol-specific hashes:
-
-- Sprout: SHA-256.
-- Sapling: a **Pedersen hash** over Jubjub (chapter 04 for the math).
-- Orchard: **Sinsemilla**, a Pedersen-hash variant tuned for in-circuit
-  cost over Pallas (chapter 05).
-
-The incremental Merkle tree library lives in `incrementalmerkletree` (a
-separate crate). The wallet uses `shardtree` for efficient checkpointed
-state.
-
-## Nullifiers and double-spend prevention
-
-Spending a shielded note produces a **nullifier** $\mathsf{nf}$ that is
+Spending a shielded note produces a nullifier $\mathsf{nf}$ that is
 revealed in the transaction. The mapping note $\to$ nullifier is
-deterministic in the note and the spending key, but a third-party observer
-cannot link them. Two valid spends of the same note would produce the same
-nullifier, so consensus simply requires that no nullifier appear twice.
+deterministic in the note and the spending key, but a third party
+cannot link them. Two valid spends of the same note would produce
+the same nullifier, so consensus simply requires that no nullifier
+appears twice.
 
-Concretely (Sapling):
+Concretely, for Sapling:
 
 $$
 \mathsf{nf} \;=\; \mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}\!\bigl(\rho\bigr),
 $$
 
-where $\mathsf{nk}$ is the **nullifier deriving key** derived from the
-spending key, and $\rho$ is a unique per-note value derived from the
-commitment position. Orchard is similar but uses a Poseidon-based PRF.
+where $\mathsf{nk}$ is the *nullifier-deriving key* derived from
+the spending key and $\rho$ is a unique per-note value derived from
+the commitment position. Orchard is similar but uses a
+Poseidon-based PRF.
 
-The nullifier set is the only consensus-significant state derived from
-shielded spends. Wallets that track their own spending only need to
-remember which of their nullifiers have appeared on-chain to know which
-notes are spent.
+The incremental Merkle tree library lives in
+[`incrementalmerkletree`](https://github.com/zcash/incrementalmerkletree)
+(a separate crate). The wallet uses
+[`shardtree`](https://github.com/zcash/incrementalmerkletree)
+for efficient checkpointed state.
 
-## How a wallet "sees" its money
+### 3.6 How a wallet "sees" its money
 
-Because outputs are commitments and recipients are not directly tagged,
-wallets must **trial-decrypt** every shielded output to find the ones
-addressed to them. The note encryption scheme (chapter 08) is designed so
-that trial decryption is fast and only succeeds for the intended
-recipient.
+Because outputs are commitments and recipients are not directly
+tagged, wallets must *trial-decrypt* every shielded output to find
+the ones addressed to them. The note encryption scheme (chapter 08)
+is designed so that trial decryption is fast and only succeeds for
+the intended recipient.
 
-This is what `zcash_client_backend`'s scanning code does. For each block,
-for each shielded output, the wallet attempts decryption with each of its
-incoming viewing keys. On success it has the cleartext note (value,
-recipient diversifier, $\rho$, randomness), which it can use to construct
-a spend later.
+`zcash_client_backend::scanning` is the loop that does this. For
+each block, for each shielded output, the wallet attempts
+decryption with each of its incoming viewing keys. On success it
+has the cleartext note (value, recipient diversifier, $\rho$,
+randomness), which it can use to construct a spend later.
 
-## The PCZT abstraction
+### 3.7 PCZT in one paragraph
 
-Constructing a shielded transaction requires combining several
-capabilities that may live in different trust domains:
+Constructing a shielded transaction combines capabilities that may
+live in different trust domains: key custody, proving parameters,
+chain view, and the user-facing UI. The
+[`pczt`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/pczt)
+crate generalises Bitcoin's PSBT to Zcash. A partially constructed
+transaction flows through roles: Creator, Constructor, IO
+Finalizer, Prover, Signer, Spend Authoriser, Combiner, Transaction
+Extractor. Each role only needs its own slice of the data; this is
+why hardware wallets, threshold signing, air-gapped signers, and
+MPC are all supported.
 
-- **Knowledge of the spending keys** (signs).
-- **Knowledge of the random secrets and proving parameters** (proves).
-- **A reliable view of the chain** (selects anchors, picks notes).
-- **A user-facing UI** (specifies recipient, amount, memo).
+## 4. Failure modes
 
-The `pczt` crate generalises Bitcoin's PSBT to Zcash. It defines a
-**partially constructed transaction** that goes through roles:
+A contributor changing transaction parsing or sighash code without
+understanding the layering can produce subtle, hard-to-catch bugs:
 
-1. **Creator** - decides version, branch, expiry.
-2. **Constructor** - adds inputs/outputs without proofs/signatures.
-3. **IO Finalizer** - finalises the input/output set.
-4. **Prover** - computes zk-proofs for shielded components.
-5. **Signer** - signs transparent inputs and spend-authorising
-   signatures.
-6. **Spend Authoriser** - actually performs spend-authorisation for
-   shielded inputs (separate from Signer because of re-randomisation).
-7. **Combiner** - merges parallel PCZTs.
-8. **Transaction Extractor** - emits the final wire format.
+- **Wrong `BranchId` routing.** Treating a v5 transaction with the
+  Sapling `BranchId` as if it were under NU5 leads to silently
+  wrong sighashes; signatures verify nowhere and transactions get
+  rejected after broadcast. The test vectors in
+  [`zcash_primitives/src/transaction/tests.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/tests.rs)
+  exercise every supported branch; run them before touching
+  `Transaction::read` or `to_txid`.
+- **Flat-hash TxId.** Re-introducing a hash of the wire bytes
+  removes the personalisation-based replay protection. ZIP 244 is
+  the law here; the TxId tree is not a refactoring opportunity.
+- **Mismatched value-balance signs.** `v_balance` is signed; the
+  sign convention is "input minus output". Builders that flip the
+  sign produce bundles that pass internal checks but fail the
+  binding signature at the consensus node. See
+  [`zcash_primitives/src/transaction/builder.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/builder.rs)
+  for the canonical sign handling, and the historical Sprout
+  counterfeiting bug
+  ([CVE-2019-7167](https://nvd.nist.gov/vuln/detail/CVE-2019-7167))
+  documented in
+  [chapter 12](./12-historical-bugs.md) for the most expensive
+  consequence of getting balance math wrong.
+- **Anchor staleness.** The wallet must pick a recent-enough anchor
+  (currently 10 blocks deep for Sapling/Orchard) but not so recent
+  that a reorg can invalidate it. Tests in
+  [`zcash_client_backend/src/data_api`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_client_backend/src/data_api)
+  cover the boundary.
 
-The reason for this baroque design: hardware wallets, threshold signing,
-air-gapped signers, multi-party computation. Each role only needs its own
-slice of the data.
+## 5. Spec pointers
 
-## Consensus rules from a wallet's point of view
+- [ZIP 200](https://zips.z.cash/zip-0200): network upgrade
+  mechanism, definition of `BranchId`, two-way replay protection.
+- [ZIP 225](https://zips.z.cash/zip-0225): the v5 transaction
+  format introduced at NU5.
+- [ZIP 244](https://zips.z.cash/zip-0244): the TxId / sighash tree
+  whose layout
+  [`txid.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs)
+  implements. Read it before changing any sub-digest.
+- [ZIP 317](https://zips.z.cash/zip-0317): the fee algorithm. The
+  default fee is $0.00005\ \text{ZEC}$ plus per-action increments;
+  see
+  [`zcash_primitives/src/transaction/fees.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/fees.rs).
+- [Zcash Protocol Specification, sections 3 and 4](https://zips.z.cash/protocol/protocol.pdf):
+  abstract protocol covering transactions, blocks, value pools,
+  trees, and nullifiers; the source from which `zcash_protocol` and
+  `zcash_primitives` are derived.
 
-`librustzcash` does not enforce consensus, but several consensus rules
-affect what a wallet must construct correctly:
+## 6. Exercises
 
-- **Transaction fee**: positive integer in zatoshis (post-ZIP 317 the
-  default fee is $0.00005 \text{ ZEC}$ plus per-action increments). See
-  ZIP 317 and `zcash_primitives/src/transaction/fees.rs`.
-- **Expiry height**: a transaction is invalid after this block height.
-- **Coinbase rules**: coinbase outputs must be either transparent (with
-  certain restrictions on which addresses can receive miner pays) or
-  shielded.
-- **Anchor depth**: anchors must be from blocks of a certain minimum
-  depth on the chain (currently 10 blocks for Sapling/Orchard).
-- **Output uniqueness**: per-pool nullifiers cannot be reused.
-- **Banded value balance**: the `value_balance` scalar published in the
-  transaction must equal the implicit balance inside the proofs.
+1. **Identify the parser dispatch.** Read `Transaction::read` in
+   [`zcash_primitives/src/transaction/mod.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/mod.rs)
+   and list every `(version, version_group_id)` pair the function
+   accepts. State which `BranchId` each maps to.
+2. **Trace a sighash.** Pick `signature_hash` in
+   [`zcash_primitives/src/transaction/sighash.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash.rs)
+   and follow the call chain until you reach the BLAKE2b
+   personalisation constant used. Confirm that swapping the
+   constant changes the sighash but not the wire format.
+3. **Modify and test.** In a checkout, add a new debug-only
+   `print!` statement at the top of `to_txid` that logs the
+   incoming `consensus_branch_id`. Run
+   `cargo test -p zcash_primitives txid` and confirm at least one
+   test vector exercises a non-default branch. Remove the print
+   before committing.
 
-A wallet that emits transactions failing these rules will produce
-unspendable garbage that a node will reject.
+### Answers in the code
 
-## What you should know after this chapter
+- TxId construction:
+  [`zcash_primitives/src/transaction/txid.rs#L435-L452`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L435-L452).
+- Sighash dispatch by version:
+  [`zcash_primitives/src/transaction/sighash.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/sighash.rs).
+- `BranchId` enum:
+  [`components/zcash_protocol/src/consensus.rs#L701-L728`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/components/zcash_protocol/src/consensus.rs#L701-L728).
 
-- That a Zcash transaction is a tuple of header + four bundles (one per
-  pool) plus a TxId tree.
-- That value moves through pools subject to a public balance equation.
-- That shielded spends prove membership in a commitment tree and reveal a
-  nullifier.
-- That network upgrades are routed via `BranchId`, which everything
-  consensus-relevant is parameterised on.
-- Why PCZT exists.
+## 7. Further reading
 
-The next chapter introduces the mathematical machinery you need before
-reading the Sapling and Orchard chapters.
+- [chapter 07](./07-transactions-and-builder.md): the builder API
+  and how it wires together every bundle.
+- [chapter 12](./12-historical-bugs.md): the Sprout
+  counterfeiting CVE, dummy-note misuse, and Sapling InternalH;
+  each is a real example of how getting Section 4 wrong cost
+  real money.

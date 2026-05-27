@@ -61,10 +61,16 @@ const config: Config = {
   // each formula appears twice.
   stylesheets: [
     {
-      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
+      // KaTeX CDN version pinned to match the npm `katex` package
+      // pulled in transitively by rehype-katex@7.0.1, which has a
+      // `katex: ^0.16.0` constraint. Keeping CDN and npm aligned
+      // avoids class-name drift between the HTML generated at build
+      // time and the CSS loaded at runtime. Bumping past 0.16.x
+      // requires upgrading rehype-katex first.
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css',
       type: 'text/css',
       integrity:
-        'sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+',
+        'sha384-nH0MfJ44wi1dd7w6jinlyBgljjS8EJAh2JBoRad8a3VDw2K69vfaaqm4WnR+gXtA',
       crossorigin: 'anonymous',
     },
   ],

@@ -6,203 +6,223 @@ description: "Groups, pairings, Pedersen, BLAKE2, RedDSA, ZK primer."
 
 # 03 - Cryptography primer
 
-## Goal
+## 1. Why this chapter exists
 
-Calibrate notation and recall the cryptographic primitives used pervasively
-in the Zcash codebase. The treatment is dense but not encyclopaedic: if you
-have a graduate course in cryptography you can skim, but the Zcash-specific
-parameterisations matter and are not always documented elsewhere.
+Chapters 04 and 05 will talk about Spend statements, value
+commitments, binding signatures, and Halo 2 transcripts. None of
+that vocabulary is reusable if the reader has not pinned down the
+underlying notation: which group is which, what a pairing is, why
+Pedersen commitments are homomorphic, how BLAKE2 personalisation
+turns a hash function into a domain-separated PRF. This chapter is
+the calibration step. By the end of it, you should be able to read
+the personalisation tag
+`b"ZcashTxHash_"` in
+[`zcash_primitives/src/transaction/txid.rs#L33-L40`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L33-L40)
+and explain why every BLAKE2b call site needs one.
 
-## 1. Groups and fields
+## 2. Definitions
 
-Throughout, $p$ is a prime, $\mathbb{F}_p$ the finite field of order $p$,
-and $\mathbb{F}_p^*$ its multiplicative group. A cyclic group $\mathbb{G}$
-of prime order $q$ written additively has a generator $G$ with
-$|\mathbb{G}| = q$. For an integer $k$, $[k]G$ is $G$ added to itself $k$
-times.
+**Definition (prime field).** $\mathbb{F}_p$ is the finite field of
+order $p$ for prime $p$; $\mathbb{F}_p^*$ is its multiplicative
+group of $p-1$ non-zero elements.
 
-The **discrete logarithm problem (DLP)** in $\mathbb{G}$: given $G, H \in
-\mathbb{G}$ with $H = [k]G$, find $k$. We assume DLP is hard in all
-groups used by Zcash.
+**Definition (cyclic group, additive).** $\mathbb{G}$ is a cyclic
+group of prime order $q$ written additively with generator $G$;
+$|\mathbb{G}| = q$. For an integer $k$, $[k]G$ is $G$ added to
+itself $k$ times.
 
-Zcash uses several groups:
+**Definition (discrete logarithm problem, DLP).** Given
+$G, H \in \mathbb{G}$ with $H = [k]G$, find $k$. Zcash assumes DLP
+is hard in every group it uses.
+
+**Definition (pairing).** A non-degenerate bilinear map
+$e\colon \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T$ between
+three prime-order-$r$ groups, satisfying
+$e([a]P, [b]Q) = e(P, Q)^{ab}$ for all $a, b \in \mathbb{F}_r$,
+$P \in \mathbb{G}_1$, $Q \in \mathbb{G}_2$.
+
+**Definition (commitment scheme).** An algorithm
+$\mathsf{Com}(m; r) \to c$ that is
+
+- **binding**: hard to find $(m_1, r_1) \neq (m_2, r_2)$ with
+  $\mathsf{Com}(m_1; r_1) = \mathsf{Com}(m_2; r_2)$;
+- **hiding**: $c$ reveals nothing computational about $m$.
+
+**Definition (Pedersen commitment).** In $\mathbb{G}$ of prime
+order $q$ with two generators $G, H$ such that $\log_G H$ is
+unknown,
+$$
+\mathsf{Com}(m; r) \;=\; [m]G \;+\; [r]H.
+$$
+Pedersen commitments are additively homomorphic, perfectly hiding,
+and computationally binding under DLP.
+
+**Definition (PRF from BLAKE2b).** Sapling defines
+$\mathsf{PRF}^{x}_{k}(m) = \mathsf{BLAKE2b}(\text{pers}_x;\,
+k \mathbin{\|} m)$, where $\text{pers}_x$ is a 16-byte
+personalisation string fixing the PRF instance. The construction is
+in
+[`zcash_spec`](https://github.com/zcash/zcash_spec) and reused by
+every workspace crate via the
+[`PrfExpand`](https://docs.rs/zcash_spec/latest/zcash_spec/struct.PrfExpand.html)
+helper.
+
+**Definition (Fiat-Shamir transform).** A reduction from an
+interactive 3-move protocol to a non-interactive one: replace the
+verifier's challenge with $H(\text{transcript})$ for a public hash
+$H$ in the random-oracle model.
+
+**Invariant (one personalisation per call site).** Every BLAKE2b
+invocation in Zcash uses a unique 16-byte personalisation. The
+reason: cross-protocol replay. If two protocols use the same
+BLAKE2b on similar inputs and one accepts a value as a hash output,
+the attacker should not be able to repurpose it elsewhere. Adding a
+hash invocation means adding a new personalisation tag.
+
+## 3. The code
+
+### 3.1 Groups and fields
+
+Zcash uses several groups. Each row corresponds to one crate.io
+dependency declared in
+[`Cargo.toml`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml#L52-L78):
 
 | Curve | Field | Order | Used for |
 | --- | --- | --- | --- |
 | BLS12-381 ($\mathbb{G}_1, \mathbb{G}_2$) | $\mathbb{F}_q$, $q$ 381-bit | $r$, 255-bit | Sapling Groth16 |
 | Jubjub | $\mathbb{F}_r$ where $r$ is BLS12-381 scalar field | 252-bit prime | Sapling commitments, key agreement |
-| Pallas | $\mathbb{F}_p$, $p$ $\approx 2^{255}$ | $q$ Pallas | Orchard arithmetic |
-| Vesta | $\mathbb{F}_q$ | $p$ Pallas | Orchard recursion |
+| Pallas | $\mathbb{F}_p$, $p \approx 2^{255}$ | $q_{\text{Pallas}}$ | Orchard arithmetic |
+| Vesta | $\mathbb{F}_{q_{\text{Pallas}}}$ | $p_{\text{Pallas}}$ | Orchard recursion |
 | secp256k1 | Bitcoin curve | 256-bit | Transparent ECDSA |
 
-The Pallas/Vesta pair is a **2-cycle of elliptic curves**: the base field
-of one equals the scalar field of the other. This is essential for
-efficient recursive proofs (Halo); see chapter 05.
+The Pallas/Vesta pair is a **2-cycle of elliptic curves**: the base
+field of one equals the scalar field of the other. This is
+essential for efficient recursive proofs (Halo); see chapter 05.
 
-The Jubjub curve has scalar field equal to BLS12-381's scalar field, which
-means scalar arithmetic inside a BLS12-381-based SNARK is cheap. Sapling
-uses this for in-circuit elliptic-curve operations.
+The Jubjub curve has a scalar field equal to BLS12-381's scalar
+field, which means scalar arithmetic inside a BLS12-381-based SNARK
+is cheap. Sapling uses this for in-circuit elliptic-curve
+operations.
 
-Read in code: the workspace `Cargo.toml` pulls `bls12_381`, `jubjub`,
+Read in code: the workspace
+[`Cargo.toml`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml#L52-L78)
+pulls `bls12_381`, `jubjub`,
 [`pasta_curves`](https://github.com/zcash/pasta_curves), `secp256k1`,
-`group`, `ff` from crates.io. The Pallas / Vesta type aliases used
-throughout the Orchard code live in
+`group`, and `ff` from crates.io:
+
+```toml reference title="Cargo.toml"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/Cargo.toml#L52-L78
+```
+
+The Pallas / Vesta type aliases used throughout the Orchard code
+live in
 [`pasta_curves/src/pallas.rs`](https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs)
 and
 [`pasta_curves/src/vesta.rs`](https://github.com/zcash/pasta_curves/blob/main/src/vesta.rs).
 
-## 2. Pairings
+### 3.2 Pairings and Groth16
 
-A pairing is a non-degenerate bilinear map
+BLS12-381 is a pairing-friendly curve: $\mathbb{G}_1, \mathbb{G}_2$
+are specific subgroups of elliptic-curve points and
+$\mathbb{G}_T \subseteq \mathbb{F}_{q^{12}}^*$.
 
-$$
-e \colon \mathbb{G}_1 \times \mathbb{G}_2 \;\longrightarrow\; \mathbb{G}_T
-$$
-
-between three groups of prime order $r$ such that for all $a, b \in
-\mathbb{F}_r$ and $P \in \mathbb{G}_1$, $Q \in \mathbb{G}_2$:
+Sapling proofs are Groth16 SNARKs with a constant-size pairing
+check at verification:
 
 $$
-e([a]P, [b]Q) \;=\; e(P, Q)^{a b}.
+e(A, B) \;\stackrel{?}{=}\; e(\alpha G_1, \beta G_2) \cdot
+e(C, \gamma G_2) \cdot e(C_{\text{pub}}, \delta G_2).
 $$
 
-BLS12-381 is a pairing-friendly curve: $\mathbb{G}_1, \mathbb{G}_2$ are
-specific subgroups of elliptic-curve points, $\mathbb{G}_T \subseteq
-\mathbb{F}_{q^{12}}^*$.
+You do not need to memorise this; what matters is that the
+verification is a constant-size pairing equation, and that the
+verifying key contains $\alpha G_1, \beta G_2, \gamma G_2, \delta G_2$
+and a vector of $\mathbb{G}_1$ points for the public inputs.
+`bellman::groth16::Proof` is the type;
+[`zcash_proofs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs)
+consumes prepared verifying keys produced once and cached.
 
-Sapling proofs are Groth16 SNARKs which use one pairing check at
-verification time:
+### 3.3 Hash functions and PRFs
 
-$$
-e(A, B) \stackrel{?}{=} e(\alpha G_1, \beta G_2) \cdot e(C, \gamma G_2)
-\cdot e(C_{\text{pub}}, \delta G_2).
-$$
-
-You do not need to memorise this; what matters is that the verification is
-a constant-size pairing equation, and that the verifying key contains
-$\alpha G_1, \beta G_2, \gamma G_2, \delta G_2$ and a vector of
-$\mathbb{G}_1$ points for the public inputs.
-
-`bellman::groth16::Proof` is the type. `zcash_proofs` consumes prepared
-verifying keys produced once and cached.
-
-## 3. Hash functions and PRFs
-
-### BLAKE2
-
-`BLAKE2b` (64-byte digest) and `BLAKE2s` (32-byte digest) are pervasive in
-Zcash. Both support a 16-byte **personalisation** string that acts as
-domain separation. Idiomatic Zcash usage:
+**BLAKE2b / BLAKE2s.** Pervasive in Zcash. Both support a 16-byte
+**personalisation** string that acts as domain separation. The
+idiomatic Zcash usage is
 
 $$
 H_{\text{pers}}(m) \;=\; \mathsf{BLAKE2b}\!\bigl(
-    \text{key} = \emptyset, \text{personalisation} = \text{pers}, m
-\bigr).
+\text{key} = \emptyset,\;
+\text{personalisation} = \text{pers},\;
+m \bigr).
 $$
 
-Personalisation tags in this codebase are short ASCII strings such as
-`"ZcashTxHash_"`, `"ZTxIdSaplingHash"`, `"Zcash_ExpandSeed"`. Grep for them.
+Personalisation tags in this codebase are short ASCII strings such
+as `"ZcashTxHash_"`, `"ZTxIdSaplingHash"`, `"Zcash_ExpandSeed"`. The
+full list of TxId personalisations lives at the top of `txid.rs`:
 
-### SHA-256, RIPEMD-160
+```rust reference title="zcash_primitives/src/transaction/txid.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L33-L67
+```
 
-Used in the transparent layer for Bitcoin compatibility:
-$\mathsf{Hash160}(x) = \mathsf{RIPEMD160}(\mathsf{SHA256}(x))$ for P2PKH
-addresses; $\mathsf{Hash256}(x) = \mathsf{SHA256}(\mathsf{SHA256}(x))$ for
-some legacy contexts. Sprout circuits also use SHA-256 because the
+**SHA-256, RIPEMD-160.** Used in the transparent layer for Bitcoin
+compatibility:
+$\mathsf{Hash160}(x) = \mathsf{RIPEMD160}(\mathsf{SHA256}(x))$ for
+P2PKH addresses;
+$\mathsf{Hash256}(x) = \mathsf{SHA256}(\mathsf{SHA256}(x))$ for
+some legacy contexts. Sprout circuits also use SHA-256, because the
 original Zerocash construction did.
 
-### Pedersen and Sinsemilla hashes
+**Pedersen and Sinsemilla hashes.** *Algebraic* hash functions
+(output is a curve point) optimised for SNARK-friendliness. Defined
+and motivated in chapter 04 (Pedersen) and chapter 05 (Sinsemilla).
 
-These are *algebraic* hash functions (output is a curve point) optimised
-for SNARK-friendliness. Defined and motivated in chapters 04 (Pedersen)
-and 05 (Sinsemilla).
-
-### PRFs derived from BLAKE2
-
-Sapling defines a family $\mathsf{PRF}^{x}_{k}(m)$ where $x$ is a
-distinguishing tag and $k$ is a key. The construction is uniform:
+**`PRF^{expand}`.** The single PRF used pervasively for key
+derivation:
 
 $$
-\mathsf{PRF}^{x}_{k}(m)
-\;=\;
+\mathsf{PRF}^{\text{expand}}_{\mathsf{sk}}(t) \;=\;
 \mathsf{BLAKE2b}\!\bigl(
-    \text{personalisation} = \text{pers}_x,\;
-    k \mathbin{\|} m
-\bigr),
+\text{pers} = \text{"Zcash\_ExpandSeed"},\;
+\mathsf{sk} \mathbin{\|} t \bigr),
 $$
 
-with personalisations such as $\text{pers}_{\text{nf}} =
-\text{"Zcash\_SaplingNf"}$, $\text{pers}_{\text{ock}} =
-\text{"Zcash\_Derive\_ock"}$, etc. The set of personalisations used by
-Sapling/Orchard is enumerated in the protocol specification section 5.4.
+where $t$ is a tag byte (and sometimes more bytes). Defined once in
+[`zcash_spec`](https://github.com/zcash/zcash_spec)
+and reused everywhere. Grep `PrfExpand` in the workspace.
 
-### `PRF^{expand}`
+### 3.4 Commitments
 
-A specific PRF used pervasively for key derivation:
-
-$$
-\mathsf{PRF}^{\text{expand}}_{\mathsf{sk}}(t)
-\;=\;
-\mathsf{BLAKE2b}\!\bigl(
-    \text{pers} = \text{"Zcash\_ExpandSeed"},
-    \mathsf{sk} \mathbin{\|} t
-\bigr),
-$$
-
-where $t$ is a tag byte (and sometimes more bytes). This is defined
-once in `zcash_spec` and reused everywhere. Grep `PrfExpand` in the
-workspace.
-
-## 4. Commitment schemes
-
-A **commitment scheme** $\mathsf{Com}(m; r)$ takes a message $m$ and
-randomness $r$ and produces a commitment $c$. It is:
-
-- *Binding*: hard to find $(m_1, r_1) \neq (m_2, r_2)$ with
-  $\mathsf{Com}(m_1; r_1) = \mathsf{Com}(m_2; r_2)$.
-- *Hiding*: $c$ reveals nothing computational about $m$.
-
-### Pedersen commitment
-
-In a group $\mathbb{G}$ of prime order $q$ with two generators $G, H$
-where the discrete log of $H$ relative to $G$ is unknown:
-
-$$
-\mathsf{Com}(m; r) \;=\; [m] G \;+\; [r] H \;\in\; \mathbb{G}.
-$$
-
-Properties:
+**Pedersen.** As in Section 2. Properties:
 
 - **Additively homomorphic**:
   $\mathsf{Com}(m_1; r_1) + \mathsf{Com}(m_2; r_2)
-   = \mathsf{Com}(m_1 + m_2; r_1 + r_2)$.
-- **Perfectly hiding** (the randomness completely masks the message).
+   = \mathsf{Com}(m_1 + m_2;\, r_1 + r_2)$.
+- **Perfectly hiding** (the randomness completely masks the
+  message).
 - **Computationally binding** under DLP.
 
 The homomorphism is the mathematical engine behind shielded value
-conservation. See chapter 04 for how this is used to prove that input
-value equals output value without revealing the values themselves.
+conservation. Chapter 04 shows how it lets a transaction prove
+that input value equals output value without revealing the values
+themselves.
 
-### Pedersen hash
-
-Generalise the commitment to many generators
+**Pedersen hash.** Generalise the commitment to many generators
 $G_1, \ldots, G_n$:
 
 $$
-\mathsf{PedHash}(m_1, \ldots, m_n) \;=\; \sum_{i=1}^{n} [m_i] G_i.
+\mathsf{PedHash}(m_1, \ldots, m_n) \;=\;
+\sum_{i=1}^{n} [m_i] G_i.
 $$
 
-This is collision-resistant under DLP and is much cheaper inside a SNARK
-than SHA-256 because elliptic-curve arithmetic is the SNARK's native
-operation. Sapling's note commitments and Merkle tree hashes use
+Collision-resistant under DLP and much cheaper inside a SNARK than
+SHA-256 because elliptic-curve arithmetic is the SNARK's native
+operation. Sapling's note commitments and Merkle-tree hashes use
 Pedersen-hash variants.
 
-### Homomorphic Pedersen commitments to integers
-
-For value commitments, Sapling uses
+**Value commitments.** Sapling uses
 
 $$
-\mathsf{VCom}(v, r) \;=\; [v] V \;+\; [r] R \;\in\; \mathbb{G}_{\text{Jubjub}},
+\mathsf{VCom}(v, r) \;=\; [v]V \;+\; [r]R
+\;\in\; \mathbb{G}_{\text{Jubjub}},
 $$
 
 with curve-specific generators $V, R$. The crucial property is
@@ -215,63 +235,72 @@ $$
 [v_{\text{bal}}]V \;+\; [r_{\text{bal}}]R,
 $$
 
-which is the **binding equation**: the prover proves it knows $r_{\text{bal}}$
-relative to a public $v_{\text{bal}}$, completing the value-conservation
-proof. This is what the "binding signature" signs.
+the **binding equation**: the prover proves it knows
+$r_{\text{bal}}$ relative to a public $v_{\text{bal}}$, completing
+the value-conservation proof. This is what the "binding signature"
+signs.
 
-## 5. Digital signatures
+### 3.5 Signatures
 
-Zcash uses three signature schemes.
+**ECDSA (secp256k1).** Used for transparent inputs. Standard
+Bitcoin signatures; see the
+[`secp256k1`](https://docs.rs/secp256k1) crate.
 
-### ECDSA (secp256k1)
+**RedDSA / RedJubjub / RedPallas.** Sapling and Orchard use
+RedDSA, a re-randomisable EdDSA-style signature scheme. The
+instantiation over Jubjub is RedJubjub (Sapling); over Pallas is
+RedPallas (Orchard).
 
-Used for transparent inputs. Standard Bitcoin signatures. We do not say
-more here; see `secp256k1` crate documentation.
+A RedDSA signature key is a pair $(\mathsf{sk}, \mathsf{pk})$ with
+$\mathsf{pk} = [\mathsf{sk}]G$. To sign $M$:
 
-### RedDSA / RedJubjub / RedPallas
-
-Sapling and Orchard use **RedDSA**, a re-randomisable EdDSA-style
-signature scheme. The instantiation over Jubjub is RedJubjub (Sapling);
-over Pallas is RedPallas (Orchard).
-
-A RedDSA signature key is a pair $(\mathsf{sk}, \mathsf{pk})$ where
-$\mathsf{pk} = [\mathsf{sk}] G$. To sign message $M$:
-
-1. Sample $r \stackrel{\$}{\leftarrow} \mathbb{F}_q$, compute $R = [r]G$.
-2. Compute challenge $c = H(R \| \mathsf{pk} \| M) \in \mathbb{F}_q$.
-3. Set $s = r + c \cdot \mathsf{sk} \mod q$.
+1. Sample $r \stackrel{\$}{\leftarrow} \mathbb{F}_q$; compute
+   $R = [r]G$.
+2. Compute challenge
+   $c = H(R \mathbin{\|} \mathsf{pk} \mathbin{\|} M) \in
+   \mathbb{F}_q$.
+3. Set $s = r + c \cdot \mathsf{sk} \pmod{q}$.
 4. The signature is $(R, s)$.
 
 Verification: $[s]G \stackrel{?}{=} R + [c]\mathsf{pk}$.
 
-This is a Schnorr-style scheme; what makes it "Red" is the **re-randomisation**:
+This is Schnorr-style; what makes it "Red" is the
+**re-randomisation**:
 
 $$
-\mathsf{rk} \;=\; \mathsf{pk} \;+\; [\alpha] G, \qquad
+\mathsf{rk} \;=\; \mathsf{pk} \;+\; [\alpha]G, \qquad
 \mathsf{rsk} \;=\; \mathsf{sk} \;+\; \alpha \pmod{q}.
 $$
 
-A signature under $\mathsf{rsk}$ verifies under $\mathsf{rk}$. The randomiser
-$\alpha$ is uniform per spend, which means $\mathsf{rk}$ is unlinkable to
-the underlying $\mathsf{pk}$. Sapling spend authorisation uses this: the
-spend description publishes $\mathsf{rk}$, the spender signs under
-$\mathsf{rsk}$, and a Spend Authorisation Signature
-$\mathsf{spendAuthSig}_{\mathsf{rsk}}(M)$ is included in the description.
+A signature under $\mathsf{rsk}$ verifies under $\mathsf{rk}$. The
+randomiser $\alpha$ is uniform per spend, so $\mathsf{rk}$ is
+unlinkable to the underlying $\mathsf{pk}$. Sapling spend
+authorisation uses this: the spend description publishes
+$\mathsf{rk}$; the spender signs under $\mathsf{rsk}$; a Spend
+Authorisation Signature is included in the description.
 
-### Binding signature
+**Binding signature.** A signature whose verification key is
+computed from the value commitments themselves. The combined value
+commitment
 
-A signature whose verification key is computed *from* the value
-commitments themselves. The combined value commitment
-$\sum \mathsf{cv}_{\text{in}} - \sum \mathsf{cv}_{\text{out}} -
-[v_{\text{balance}}]V$ should equal $[r_{\text{bal}}]R$ for some
-$r_{\text{bal}}$ known only to the spender. The spender publishes a
-signature whose verification key is exactly that point, using $R$ as the
-group generator. Verifying the signature proves the prover knew
-$r_{\text{bal}}$, hence the values balance.
+$$
+\sum \mathsf{cv}_{\text{in}}
+\;-\; \sum \mathsf{cv}_{\text{out}}
+\;-\; [v_{\text{balance}}]V
+$$
 
-Read in code: `redjubjub` crate (used by Sapling), `reddsa` (Orchard).
+should equal $[r_{\text{bal}}]R$ for some $r_{\text{bal}}$ known
+only to the spender. The spender publishes a signature whose
+verification key is exactly that point, using $R$ as the group
+generator. Verifying the signature proves the prover knew
+$r_{\text{bal}}$; hence values balance.
 
-## 6. Key agreement (Diffie-Hellman)
+Read in code:
+[`redjubjub`](https://github.com/ZcashFoundation/redjubjub) (used
+by Sapling) and
+[`reddsa`](https://github.com/ZcashFoundation/reddsa) (Orchard).
+
+### 3.6 Key agreement
 
 In a group of prime order $q$ with generator $G$:
 
@@ -285,116 +314,181 @@ $$
 \quad B = [b]G,
 $$
 
-then $[a]B = [b]A = [ab]G$ is the shared secret. Both parties feed it to
-a key-derivation function $\mathsf{KDF}$ to get a symmetric key.
+then $[a]B = [b]A = [ab]G$ is the shared secret. Both parties feed
+it to a key-derivation function $\mathsf{KDF}$ to get a symmetric
+key.
 
-Sapling and Orchard both use ECDH on Jubjub / Pallas for the note
-encryption (chapter 08), with $G$ being a per-recipient *diversifier
-generator* $g_d$ rather than a fixed generator, which is part of how
-diversified addresses work.
+Sapling and Orchard both use ECDH on Jubjub / Pallas for note
+encryption (chapter 08), with $G$ being a per-recipient
+*diversifier generator* $g_d$ rather than a fixed generator. This
+is part of how diversified addresses work.
 
-## 7. Symmetric primitives
+### 3.7 Symmetric primitives
 
 Note encryption uses **ChaCha20-Poly1305**, an authenticated stream
-cipher: $\mathsf{Enc}_k(n, m) \to c$ where $n$ is a 12-byte nonce and the
-output includes a 16-byte tag. Always remember the AEAD discipline:
-*never* reuse $(k, n)$, always include associated data, always check the
-tag before using the plaintext. The Zcash spec uses $n = 0$ always
-because each key is single-use.
+cipher: $\mathsf{Enc}_k(n, m) \to c$ where $n$ is a 12-byte nonce
+and the output includes a 16-byte tag. The Zcash spec uses $n = 0$
+always because each key is single-use. The AEAD discipline still
+applies: never reuse $(k, n)$; always include associated data;
+always check the tag before using the plaintext. The dependency is
+declared in
+[`zcash_primitives/Cargo.toml`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/Cargo.toml).
 
-## 8. Zero-knowledge proofs
+### 3.8 Zero-knowledge proofs
 
-This is the heart of Zcash. The protocol uses two families of NIZK
-arguments:
+Zcash uses two families of NIZK arguments:
 
-- **Groth16** (Sapling, Sprout): preprocessing SNARK, constant proof
-  size ($3 \times \mathbb{G}_1$ + $1 \times \mathbb{G}_2 \approx 192$
-  bytes), constant verification cost (three pairing equations
-  collapsed). Requires a **trusted setup** per circuit, which Sapling
-  performed in a multi-party computation ceremony ("Powers of Tau"
-  + circuit-specific). The proving key is many megabytes; the
+- **Groth16** (Sapling, Sprout): preprocessing SNARK, constant
+  proof size ($3 \times \mathbb{G}_1 + 1 \times \mathbb{G}_2 \approx
+  192$ bytes), constant verification cost (three pairing equations
+  collapsed). Requires a per-circuit *trusted setup*, performed in
+  a multi-party computation ceremony ("Powers of Tau" plus
+  circuit-specific). The proving key is many megabytes; the
   verifying key is a few kilobytes.
-
 - **Halo 2** (Orchard): a PLONK-derived argument with a polynomial
   commitment based on the **Inner Product Argument (IPA)**. No
-  per-circuit trusted setup, but uses a **transparent universal setup**
-  (a "structured reference string" that anyone can verify) and a custom
-  arithmetisation (custom gates, lookups, permutations) tuned for the
-  Pallas/Vesta cycle.
+  per-circuit trusted setup, but uses a *transparent universal
+  setup* (a structured reference string that anyone can verify) and
+  a custom arithmetisation (custom gates, lookups, permutations)
+  tuned for the Pallas/Vesta cycle.
 
 The interface as seen from `librustzcash` is, in both cases:
 
 $$
-\mathsf{Prover}(\text{circuit}, \text{public inputs } x, \text{witness } w) \to \pi,
+\mathsf{Prover}(\text{circuit}, \text{public inputs } x,
+   \text{witness } w) \to \pi,
 $$
 
 $$
 \mathsf{Verifier}(\text{vk}, x, \pi) \to \{0, 1\}.
 $$
 
-The witness includes secret values such as note values, randomness, the
-spending key, and the Merkle path. The public input includes the anchor,
-the value commitment, the nullifier, $\mathsf{rk}$, and the output
-commitment.
+The witness includes secret values such as note values, randomness,
+the spending key, and the Merkle path. The public input includes
+the anchor, the value commitment, the nullifier, $\mathsf{rk}$, and
+the output commitment.
 
-For Sapling the verifying keys are bundled with the binaries (see
-`zcash_proofs/src/lib.rs` constants `SAPLING_SPEND_VK_HASH`,
-`SAPLING_OUTPUT_VK_HASH`); the proving keys are downloaded via
-`download-params`.
+For Sapling the verifying-key hashes are bundled with the binaries
+in
+[`zcash_proofs/src/lib.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs):
 
-## 9. The Fiat-Shamir transform
+```rust reference title="zcash_proofs/src/lib.rs"
+https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs#L40-L52
+```
+
+The proving keys are downloaded via `download-params`.
+
+### 3.9 Fiat-Shamir and personalisation
 
 Many protocols are stated as interactive: prover sends commitment,
 verifier sends challenge, prover sends response. The Fiat-Shamir
-transform replaces the verifier's challenge with a hash of the prover's
-messages (and any prior context), producing a non-interactive protocol
-in the random-oracle model. It is everywhere in Zcash:
+transform replaces the verifier's challenge with a hash of the
+prover's messages (and prior context), producing a non-interactive
+protocol in the random-oracle model. It is everywhere in Zcash:
 
-- The RedDSA challenge $c = H(R \| \mathsf{pk} \| M)$.
+- The RedDSA challenge $c = H(R \mathbin{\|} \mathsf{pk}
+  \mathbin{\|} M)$.
 - The IPA challenges inside Halo 2.
 - Sighash for transparent inputs (a generalised Fiat-Shamir).
 
-Whenever you see `let chal = blake2b(transcript)`, that is a Fiat-Shamir
-challenge.
+Whenever you see `let chal = blake2b(transcript)`, that is a
+Fiat-Shamir challenge.
 
-## 10. Domain separation by personalisation
+Personalisations are 16 bytes; if shorter, they are padded with
+zero bytes. Examples seen in this codebase:
 
-Every hash invocation in Zcash uses a unique personalisation string. The
-reason: prevent cross-protocol replays. If two protocols use the same
-BLAKE2b on similar inputs and one accepts a value as a hash output, the
-attacker should not be able to repurpose that value in the other.
+- `"Zcash_ExpandSeed"`: `PRF^{expand}`.
+- `"Zcash_SaplingNf"`: Sapling nullifier PRF.
+- `"ZTxIdSaplingHash"`: sighash sub-tree.
+- `"Zcash_OrchardMH"`: Orchard Merkle hash.
 
-Personalisations are 16 bytes; if shorter, they are padded with zero
-bytes. Examples seen in this codebase:
+If you ever add a new hash usage, define a new personalisation.
+Reusing an existing one is a bug.
 
-- `"Zcash_ExpandSeed"` - `PRF^expand`.
-- `"Zcash_SaplingNf"` - Sapling nullifier PRF.
-- `"ZTxIdSaplingHash"` - sighash sub-tree.
-- `"Zcash_OrchardMH"` - Orchard Merkle hash.
+## 4. Failure modes
 
-If you ever add a new hash usage, define a new personalisation. Reusing
-an existing one is a bug.
+A contributor who confuses the primitives in this chapter produces
+errors that pass unit tests but break interoperability:
 
-## 11. Common pitfalls
+- **Field confusion.** Jubjub's scalar field equals BLS12-381's
+  scalar field, but its base field does not. Pallas and Vesta swap
+  base and scalar. Calling `Fr::from_bytes` on a $\mathbb{F}_p$
+  representation looks plausible and compiles, but produces wrong
+  curve points downstream.
+- **Endianness drift.** Zcash standardises on little-endian for
+  most field serializations, but a handful of legacy
+  Bitcoin-derived contexts use big-endian. The ZIPs spell out the
+  order. Mixing the two has caused real production bugs across
+  multiple wallets.
+- **Pedersen-window off-by-one.** Each Pedersen window has its own
+  generator, derived deterministically from a hash of an index.
+  Reusing a generator across windows breaks collision resistance.
+- **Personalisation reuse.** As stated above, every new BLAKE2b
+  call site must add a new 16-byte personalisation. Two recent
+  changes to the protocol added new sighash sub-trees, each with
+  its own tag; do the same.
+- **Nonce / randomness reuse.** Every RedDSA signature, every note
+  randomness, every diversifier randomness must be sampled
+  uniformly and independently. The Sprout counterfeiting CVE
+  (chapter 12) is the canonical example of what a flaw at this
+  layer can cost.
 
-- Mixing up $\mathbb{F}_p$ and $\mathbb{F}_q$: Jubjub's scalar field
-  equals BLS12-381's scalar field, but its base field does not. Pallas
-  and Vesta swap base and scalar.
-- Off-by-one in Pedersen-hash domain separation: each window has its
-  own generator, derived deterministically from a hash of an index.
-- Mishandling little-endian versus big-endian when serialising field
-  elements: Zcash standardises on little-endian for most field
-  serializations; ZIPs spell out the order.
-- Reusing nonces or randomness: every RedDSA signature, every note
-  randomness, every diversifier randomness must be uniform and
-  independent.
+## 5. Spec pointers
 
-## What you should know after this chapter
+- [Zcash Protocol Specification, sections 5.4 and 5.6](https://zips.z.cash/protocol/protocol.pdf):
+  the full table of personalisations and the precise PRF
+  constructions used by Sapling and Orchard.
+- [ZIP 32](https://zips.z.cash/zip-0032): the
+  hierarchical-deterministic key derivation tree that all
+  `PRF^{expand}` invocations sit inside.
+- [Groth, 2016](https://eprint.iacr.org/2016/260): the original
+  Groth16 paper. Read sections 1 and 3 to understand the pairing
+  equation cited above.
+- [Halo 2 book](https://zcash.github.io/halo2/): the canonical
+  reference for the Halo 2 proof system used by Orchard. Chapter
+  05 cites specific sections.
+- [BLAKE2 RFC 7693](https://www.rfc-editor.org/rfc/rfc7693): the
+  authoritative specification for BLAKE2b and BLAKE2s, including
+  the personalisation parameter Zcash relies on.
 
-- Notation for groups, pairings, commitments, signatures.
-- Why Pedersen commitments matter for value conservation.
-- What re-randomisation buys (unlinkability of spend keys).
-- What Groth16 and Halo 2 are at a black-box level.
-- The role of personalisation strings.
+## 6. Exercises
 
-You are now equipped to read the Sapling and Orchard chapters.
+1. **Trace a personalisation.** Search the workspace for the byte
+   string `b"Zcash_ExpandSeed"`. List every call site and, for
+   each, identify the input `t` it passes.
+2. **Verify a Pedersen identity.** In a scratch test, sample
+   $m_1, m_2, r_1, r_2$ uniformly, compute
+   $c_1 = \mathsf{Com}(m_1; r_1)$ and
+   $c_2 = \mathsf{Com}(m_2; r_2)$, and confirm in code that
+   $c_1 + c_2 = \mathsf{Com}(m_1 + m_2;\, r_1 + r_2)$ holds in
+   `jubjub::SubgroupPoint`. Add it as a unit test under
+   `zcash_primitives` (do not commit; this is a scratch exercise).
+3. **Add a new BLAKE2b call.** Pretend you need a new BLAKE2b hash
+   under the personalisation `"OnboardingPrim "`. Write the
+   helper as `fn h_onboarding(input: &[u8]) -> [u8; 32]` in a
+   throwaway file. Run `cargo check`. Then delete the helper and
+   the file before moving on; the exercise is to convince yourself
+   that the personalisation is a 16-byte string parameter you can
+   add anywhere, not a magic constant.
+
+### Answers in the code
+
+- `PRF^{expand}` uses:
+  [`zcash_spec`](https://github.com/zcash/zcash_spec) (external)
+  and grep `PrfExpand` across the workspace.
+- TxId personalisations:
+  [`zcash_primitives/src/transaction/txid.rs#L33-L67`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/txid.rs#L33-L67).
+- Verifying-key hashes for Sapling:
+  [`zcash_proofs/src/lib.rs#L40-L52`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs#L40-L52).
+
+## 7. Further reading
+
+- [chapter 16](./16-pedersen-hash-deep-dive.md): the windowed
+  encoding for Pedersen hashes, in-circuit cost, generator
+  derivation.
+- [chapter 17](./17-halo2-deep-dive.md): the polynomial-commitment
+  layer underneath Halo 2.
+- Boneh, Drijvers, Neven,
+  *Compact Multi-Signatures for Smaller Blockchains*, 2018:
+  background on Schnorr-style signatures and their re-randomisation
+  properties, the foundation of RedDSA.
