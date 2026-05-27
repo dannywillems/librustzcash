@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
 <title data-rh="true">12 - Historical bugs and security incidents | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/historical-bugs"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="12 - Historical bugs and security incidents | librustzcash Onboarding"><meta data-rh="true" name="description" content="Goal"><meta data-rh="true" property="og:description" content="Goal"><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/historical-bugs"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/historical-bugs" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/historical-bugs" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"12 - Historical bugs and security incidents","item":"https://dannywillems.github.io/librustzcash/historical-bugs"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
-<script src="/librustzcash/assets/js/runtime~main.52294640.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/runtime~main.ef209490.js" defer="defer"></script>
 <script src="/librustzcash/assets/js/main.88973916.js" defer="defer"></script>
 </head>
 <body>
@@ -211,9 +211,10 @@ channel could leak the witness during proving.</p>
 <p>For a wallet running locally on a user&#x27;s device this is mostly
 theoretical (the user controls the machine), but for a remote prover
 or a multi-party prover setup it is critical. The current <code>bls12_381</code>,
-<code>pairing</code>, <code>bellman</code>, <code>jubjub</code>, <code>pasta_curves</code> crates implement
-constant-time field arithmetic and constant-time conditional
-selection (<code>subtle</code> crate).</p>
+<code>pairing</code>, <code>bellman</code>, <code>jubjub</code>,
+<a href="https://github.com/zcash/pasta_curves" target="_blank" rel="noopener noreferrer" class=""><code>pasta_curves</code></a> crates
+implement constant-time field arithmetic and constant-time
+conditional selection (<code>subtle</code> crate).</p>
 <p>Chapter 14 covers constant-time programming in this codebase in
 depth.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="lesson-3">Lesson<a href="#lesson-3" class="hash-link" aria-label="Direct link to Lesson" title="Direct link to Lesson" translate="no">​</a></h3>

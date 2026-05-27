@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
 <title data-rh="true">13 - Cofactors, subgroups, canonical encodings | librustzcash Onboarding</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://dannywillems.github.io/librustzcash/cofactors-subgroups-canonical"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="13 - Cofactors, subgroups, canonical encodings | librustzcash Onboarding"><meta data-rh="true" name="description" content="Goal"><meta data-rh="true" property="og:description" content="Goal"><link data-rh="true" rel="icon" href="/librustzcash/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://dannywillems.github.io/librustzcash/cofactors-subgroups-canonical"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/cofactors-subgroups-canonical" hreflang="en"><link data-rh="true" rel="alternate" href="https://dannywillems.github.io/librustzcash/cofactors-subgroups-canonical" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"13 - Cofactors, subgroups, canonical encodings","item":"https://dannywillems.github.io/librustzcash/cofactors-subgroups-canonical"}]}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous"><link rel="stylesheet" href="/librustzcash/assets/css/styles.a52fd09c.css">
-<script src="/librustzcash/assets/js/runtime~main.52294640.js" defer="defer"></script>
+<script src="/librustzcash/assets/js/runtime~main.ef209490.js" defer="defer"></script>
 <script src="/librustzcash/assets/js/main.88973916.js" defer="defer"></script>
 </head>
 <body>
@@ -279,9 +279,11 @@ validated by the time they reach there.</p>
 requires <code>TryFrom</code> (returns <code>Option&lt;SubgroupPoint&gt;</code> after a subgroup
 check). The <code>From</code> for <code>ExtendedPoint::from(bytes)</code> returns an
 <code>ExtendedPoint</code>; the subgroup check is <em>not</em> automatic.</p>
-<p>Mirror pattern in <code>pasta_curves</code>: <code>pallas::Point</code> is the full type
-(cofactor 1 so equivalent to subgroup point already), with
-<code>from_bytes</code> enforcing canonical encoding.</p>
+<p>Mirror pattern in
+<a href="https://github.com/zcash/pasta_curves" target="_blank" rel="noopener noreferrer" class=""><code>pasta_curves</code></a>:
+<a href="https://github.com/zcash/pasta_curves/blob/main/src/pallas.rs#L12" target="_blank" rel="noopener noreferrer" class=""><code>pallas::Point</code></a>
+is the full type (cofactor 1 so equivalent to subgroup point already),
+with <code>from_bytes</code> enforcing canonical encoding.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-practical-checklist-when-adding-a-curve-point-field">10. Practical checklist when adding a curve-point field<a href="#10-practical-checklist-when-adding-a-curve-point-field" class="hash-link" aria-label="Direct link to 10. Practical checklist when adding a curve-point field" title="Direct link to 10. Practical checklist when adding a curve-point field" translate="no">​</a></h2>
 <p>For any new field of curve-point type in a serialised structure:</p>
 <ol>
