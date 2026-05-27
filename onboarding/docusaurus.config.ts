@@ -16,7 +16,12 @@ const config: Config = {
   organizationName: 'dannywillems',
   projectName: 'librustzcash',
 
+  // Fail the build on any dead link, dead anchor, or dead Markdown
+  // link reference. The course only exists to point readers at code
+  // and specs, so a silently dead link is a real-time bug that must
+  // not survive CI.
   onBrokenLinks: 'throw',
+  onBrokenAnchors: 'throw',
 
   // Parse .md as plain CommonMark, .mdx as MDX. The chapters are
   // dense with LaTeX; CommonMark mode keeps math-adjacent characters
@@ -25,7 +30,7 @@ const config: Config = {
   markdown: {
     format: 'detect',
     hooks: {
-      onBrokenMarkdownLinks: 'warn',
+      onBrokenMarkdownLinks: 'throw',
     },
   },
 
