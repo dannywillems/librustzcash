@@ -30,61 +30,178 @@ implementation and shift over time as optimisations land.
 
 ## 2. Definitions
 
-**Definition (R1CS).** A Rank-1 Constraint System. Each
-constraint has the form
-
+**Definition 2.1 (R1CS).** A Rank-1 Constraint System is a
+triple $(\mathbf{A}, \mathbf{B}, \mathbf{C})$ of matrices over a
+field $\mathbb{F}$ together with a wire vector
+$\mathbf{w} = (1, w_1, \ldots, w_n) \in \mathbb{F}^{n+1}$ such
+that each constraint has the form
 $$
-\Bigl(\sum_i a_i\, w_i\Bigr) \cdot
-\Bigl(\sum_i b_i\, w_i\Bigr) \;=\;
-\Bigl(\sum_i c_i\, w_i\Bigr),
+\Bigl(\sum_i a_i w_i\Bigr) \cdot
+\Bigl(\sum_i b_i w_i\Bigr) \;=\;
+\Bigl(\sum_i c_i w_i\Bigr),
 $$
+where the rows of $\mathbf{A}, \mathbf{B}, \mathbf{C}$ supply
+the coefficients. Sapling Spend uses approximately $1.5 \times
+10^5$ constraints over $\mathbb{F}_r$ (the BLS12-381 scalar
+field) in
+[`sapling-crypto`](https://github.com/zcash/sapling-crypto). The
+toolkit is `bellman`.
 
-with $w_i$ the wires (witness vector plus a constant) and
-$a_i, b_i, c_i$ public coefficients. Sapling Spend uses
-approximately $1.5 \times 10^5$ such constraints in
-[`sapling-crypto`](https://github.com/zcash/sapling-crypto)'s
-circuit. The toolkit is `bellman`.
-
-**Definition (PLONKish / Halo 2).** A table of cells with custom
-gates. Each row $i$ may impose constraints of the form
-
+**Definition 2.2 (PLONKish / Halo 2 arithmetisation).** A
+PLONKish arithmetisation is a table of cells with custom gates.
+Let $\omega \in \mathbb{F}$ be a primitive $2^k$-th root of
+unity. For each row $i$, advice polynomials
+$w_1, \ldots, w_m : \mathbb{F} \rightarrow \mathbb{F}$ are
+evaluated at $\omega^i$ and may impose constraints
 $$
 G\bigl(w_1(\omega^i), w_2(\omega^i), \ldots\bigr) \cdot
-q_{\text{sel}}(\omega^i) \;=\; 0,
+q_{\mathrm{sel}}(\omega^i) \;=\; 0,
 $$
-
-where $q_{\text{sel}}$ is the selector polynomial that activates
-the gate. Permutation arguments encode copy constraints, and
-lookups enforce table membership. The Orchard Action circuit uses
-$2^{11}$ rows by default and is implemented in
+where $q_{\mathrm{sel}}$ is the selector polynomial that
+activates the gate $G$. Permutation arguments encode copy
+constraints; lookups enforce table membership. The Orchard
+Action circuit uses $2^{11}$ rows by default over the Pallas
+scalar field $\mathbb{F}_{q_P}$, implemented in
 [`halo2_proofs`](https://github.com/zcash/halo2).
 
-**Definition (Underconstrained advice cell).** An advice cell in
-a Halo 2 circuit that no selector-gated gate constrains. A
-malicious prover can assign such a cell arbitrarily, breaking
-soundness. The Trail of Bits review of Orchard codified this as
-a recurring finding class.
+**Definition 2.3 (Underconstrained advice cell).** In a Halo 2
+circuit with advice columns
+$\mathbf{a}_1, \ldots, \mathbf{a}_m$, an advice cell
+$\mathbf{a}_j(\omega^i)$ is *underconstrained* iff no selector-
+gated gate $G \cdot q_{\mathrm{sel}} = 0$ references it with a
+non-trivial coefficient. A malicious prover can assign such a
+cell arbitrarily without violating any constraint, breaking
+soundness. Trail of Bits codified this as a recurring finding
+class in the Orchard audit; see
+[Trail of Bits publications](https://github.com/trailofbits/publications).
 
-**Definition (Incomplete addition).** A point-addition formula
-that fails when the operands coincide. The unified twisted-
-Edwards formula (used for Jubjub) does not have this issue;
-incomplete short-Weierstrass addition (used for Pallas in some
-gates) does, and requires a distinctness witness.
+**Definition 2.4 (Incomplete addition).** Let $E$ be an
+elliptic curve in short Weierstrass form
+$y^2 = x^3 + a x + b$. The incomplete-addition formulas compute
+$P + Q$ from affine coordinates and become singular when
+$P = Q$ or $P = -Q$. The strongly-unified twisted-Edwards
+formulas used for Jubjub do not have this issue; the Pallas
+gates in Halo 2 do, and require an explicit distinctness
+witness to rule out the singular case.
 
-**Definition (Pedersen hash gadget, $\mathsf{PH}$).** The Jubjub-
-based windowed-multiplication hash defined in chapter 16 and used
-across the Sapling circuit. Constraint cost is approximately $6$
-constraints per input bit.
+**Definition 2.5 (Pedersen hash gadget $\mathsf{PH}$).** The
+Jubjub-based windowed-multiplication hash
+$\mathsf{PH}_D : \{0,1\}^{\ast} \rightarrow \mathbb{G}_J$ as
+formalised in chapter 16, Definition 2.5, instantiated as a
+$\mathbb{F}_r$-R1CS gadget. The constraint cost is
+approximately $6$ constraints per input bit.
 
-**Definition (Sinsemilla).** The Pallas-based chunk-and-add hash
-used in Orchard. Each $10$-bit chunk is looked up in a generator
-table, and successive points are combined via incomplete
-addition. Constraint cost is roughly proportional to the chunk
-count.
+**Definition 2.6 (Sinsemilla).** The Pallas-based chunk-and-add
+hash $\mathsf{Sinsemilla}_D : \{0,1\}^{\ast} \rightarrow
+\mathbb{G}_P$ used in Orchard. Each 10-bit chunk
+$c \in \{0,1\}^{10}$ is mapped via a lookup table to a generator
+$S(c) \in \mathbb{G}_P$, and successive points are combined via
+incomplete addition. The constraint cost is roughly proportional
+to the chunk count.
 
-**Definition (Statement).** The relation the circuit enforces
-between public inputs and witness. Each chapter section names
-the statement before walking its clauses.
+**Definition 2.7 (Circuit statement).** For a circuit $C$ over
+field $\mathbb{F}$, the *statement* is the NP relation
+$R_C \subseteq \mathcal{X} \times \mathcal{W}$ that $C$
+enforces between a public input $x \in \mathcal{X}$ and a
+witness $w \in \mathcal{W}$. Each section below names the
+statement before walking its clauses.
+
+### The NP relations the three Zcash circuits prove
+
+For reference and as the citation target for the failure-modes
+sections below, the three production circuits prove membership in
+the following NP languages. The Sapling Spend and Output relations
+are stated formally in
+[chapter 04 §2](./04-sprout-and-sapling.md#the-np-relations-proven-by-sapling).
+The Orchard Action relation is stated here because it is the unit
+the Orchard circuit module enforces atomically.
+
+**Definition 2.8 (Orchard Action relation $R_{\mathsf{Action}}$).**
+Let $\mathbb{F}_p$ be the Pallas base field, $\mathbb{F}_q$ the
+Pallas scalar field, $\mathbb{G}_P$ the Pallas curve group
+(cofactor $1$, so $\mathbb{G}_P$ is already prime-order). Define
+$$
+\mathcal{X}_{\mathsf{Action}} \;=\;
+\bigl(
+\mathsf{anchor},\,
+\mathsf{cv}^{\text{net}},\,
+\mathsf{nf},\,
+\mathsf{rk},\,
+\mathsf{cm}_x,\,
+\mathsf{epk},\,
+\mathsf{enableSpends},\,
+\mathsf{enableOutputs}
+\bigr).
+$$
+The witness $\mathcal{W}_{\mathsf{Action}}$ carries both an input
+note and an output note:
+$$
+\mathcal{W}_{\mathsf{Action}} \;=\;
+\bigl(
+\underbrace{d^{\text{old}}, \mathsf{pk}_d^{\text{old}}, v^{\text{old}},
+\rho^{\text{old}}, \psi^{\text{old}}, \mathsf{rcm}^{\text{old}},
+\mathsf{path}, \mathsf{pos}}_{\text{input}};\;
+\underbrace{d^{\text{new}}, \mathsf{pk}_d^{\text{new}}, v^{\text{new}},
+\rho^{\text{new}}, \psi^{\text{new}}, \mathsf{rcm}^{\text{new}}}_{\text{output}};\;
+\underbrace{\mathsf{rcv}, \mathsf{ak}, \mathsf{nk},
+\mathsf{rivk}, \alpha, \mathsf{esk}^{\text{new}}}_{\text{keys/rand}}
+\bigr).
+$$
+Then $(x, w) \in R_{\mathsf{Action}}$ iff every clause below holds.
+The notation $\mathsf{NoteCommit}^O$ refers to the Sinsemilla-based
+Orchard note commitment, distinct from the Sapling Pedersen one.
+
+1. **Input note well-formedness.** $g_d^{\text{old}} =
+   \mathsf{DiversifyHash}(d^{\text{old}}) \in \mathbb{G}_P$ and
+   $\mathsf{pk}_d^{\text{old}} \in \mathbb{G}_P$.
+2. **Output note well-formedness.** Same with the new diversifier
+   $d^{\text{new}}$.
+3. **Input commitment.** $\mathsf{cm}^{\text{old}} =
+   \mathsf{NoteCommit}^O(g_d^{\text{old}}, \mathsf{pk}_d^{\text{old}},
+   v^{\text{old}}, \rho^{\text{old}}, \psi^{\text{old}},
+   \mathsf{rcm}^{\text{old}})$.
+4. **Output commitment.** $\mathsf{cm}^{\text{new}} = \ldots$
+   and $\mathsf{cm}_x = \mathsf{ExtractP}(\mathsf{cm}^{\text{new}})$
+   (Pallas $x$-coordinate).
+5. **Merkle membership.** Either
+   $v^{\text{old}} = 0$, or
+   $\mathsf{MerklePath}_{\text{Sinsemilla}}(\mathsf{path},
+   \mathsf{pos}, \mathsf{ExtractP}(\mathsf{cm}^{\text{old}}))
+   = \mathsf{anchor}$.
+6. **Net value commitment.** $\mathsf{cv}^{\text{net}} =
+   [v^{\text{old}} - v^{\text{new}}] V_O +
+   [\mathsf{rcv}] R_O$, where $V_O, R_O$ are the Orchard value-
+   commitment generators.
+7. **Spend authority.** With $\mathsf{ak}$ derived from a
+   $\mathsf{rk}$-randomisable family,
+   $\mathsf{rk} = \mathsf{ak} + [\alpha] G_O^{\text{a}}$.
+8. **Nullifier integrity.** $\mathsf{nf} = \mathsf{ExtractP}(
+   [\mathsf{nk}^{-1} \cdot \mathsf{PRF}^O_{\mathsf{nk}}(\rho^{\text{old}}
+   + \psi^{\text{old}}) + \mathsf{cm}^{\text{old}}_x] G_O^{\text{n}})$.
+9. **Diversified address (input).** $\mathsf{pk}_d^{\text{old}} =
+   [\mathsf{ivk}] g_d^{\text{old}}$ where $\mathsf{ivk} =
+   \mathsf{CommitIvk}^O(\mathsf{ak}, \mathsf{nk},
+   \mathsf{rivk}) \bmod p_J$ (full-width to short-Pallas
+   conversion).
+10. **Output ephemeral key.** $\mathsf{epk} = [\mathsf{esk}^{\text{new}}]
+    g_d^{\text{new}}$.
+11. **Flag enforcement.** If $\mathsf{enableSpends} = 0$ then
+    $v^{\text{old}} = 0$ and the spend-authority clause is bypassed
+    by selector. If $\mathsf{enableOutputs} = 0$ then $v^{\text{new}}
+    = 0$.
+12. **Value range.** $v^{\text{old}}, v^{\text{new}} \in
+    [0, 2^{64})$.
+
+Soundness: under the discrete-log hardness assumption in the Pallas
+group plus the Fiat-Shamir security of the Halo 2 transcript. There
+is **no trusted setup**; the IPA polynomial commitment is
+unconditionally binding.
+
+The circuit module enforcing $R_{\mathsf{Action}}$ lives in
+[`orchard::circuit`](https://github.com/zcash/orchard/blob/main/src/circuit.rs);
+the constraint-by-constraint walkthrough belongs in the
+[orchard companion course](https://dannywillems.github.io/orchard/),
+not here.
 
 ## 3. The code
 
@@ -664,15 +781,32 @@ mistakes from audit findings and informal lore:
   forcing its value can be set arbitrarily by the prover. Verify
   every advice cell is used in at least one constraint with a
   selector on.
+  > Caught upstream by `orchard::circuit` synthesis tests (the
+  > `MockProver` from `halo2_proofs` exercises every cell). No
+  > automated test in this workspace; the Orchard circuit lives
+  > in the external `orchard` crate.
 - **Off-by-one selector**: a selector that is on at row $i$ but
   whose gate references row $i - 1$ can subtly misalign.
+  > No automated test in this workspace. Caught by audit only.
 - **Incomplete-addition coincidence**: as noted, both inputs
   must be provably distinct.
+  > Caught upstream by `orchard::circuit::gadget::ecc` unit tests
+  > in the external `orchard` crate. No automated test in this
+  > workspace.
 - **Lookup-table collision**: two distinct chunks mapping to the
   same point break the lookup soundness.
+  > Caught upstream by `orchard::circuit::gadget::sinsemilla`
+  > generator-table tests. No automated test in this workspace.
 - **Public-input ordering**: prover and verifier must agree on
   which public input maps to which constraint. A swap is
   invisible in tests until a real attack exploits it.
+  > Caught indirectly by:
+  > `zcash_proofs::prover` integration tests via parameter-hash
+  > verification (`verify_hash` against `SAPLING_SPEND_HASH` and
+  > `SAPLING_OUTPUT_HASH` in
+  > `zcash_proofs/src/lib.rs`). Any public-input reordering
+  > requires a circuit change, which would invalidate the pinned
+  > hashes.
 
 ## 5. Spec pointers
 

@@ -22,62 +22,149 @@ and explain why every BLAKE2b call site needs one.
 
 ## 2. Definitions
 
-**Definition (prime field).** $\mathbb{F}_p$ is the finite field of
-order $p$ for prime $p$; $\mathbb{F}_p^*$ is its multiplicative
-group of $p-1$ non-zero elements.
+**Definition 2.1 (prime field).** For a prime $p \in \mathbb{Z}_{>0}$,
+$\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$ is the finite field of order
+$p$, and $\mathbb{F}_p^{*} = \mathbb{F}_p \setminus \{0\}$ is its
+multiplicative group of order $p - 1$.
 
-**Definition (cyclic group, additive).** $\mathbb{G}$ is a cyclic
-group of prime order $q$ written additively with generator $G$;
-$|\mathbb{G}| = q$. For an integer $k$, $[k]G$ is $G$ added to
-itself $k$ times.
+**Definition 2.2 (cyclic group, additive notation).** A cyclic
+group $\mathbb{G}$ of prime order $q$ with generator $G$ is a set
+of $q$ elements with a binary operation $+$ such that every
+$P \in \mathbb{G}$ equals $[k]G$ for a unique
+$k \in \mathbb{F}_q$. For $k \in \mathbb{Z}_{\geq 0}$, $[k]G$
+denotes the $k$-fold sum
+$\underbrace{G + G + \cdots + G}_{k \text{ terms}}$ in
+$\mathbb{G}$, with $[0]G = \mathcal{O}$ the identity.
 
-**Definition (discrete logarithm problem, DLP).** Given
-$G, H \in \mathbb{G}$ with $H = [k]G$, find $k$. Zcash assumes DLP
-is hard in every group it uses.
+**Definition 2.3 (discrete logarithm problem, DLP).** Given
+$\mathbb{G}$ of prime order $q$ with generator $G$, the DLP is the
+problem: on input $(G, H) \in \mathbb{G}^2$ with $H = [k]G$ for an
+unknown $k \stackrel{\$}{\leftarrow} \mathbb{F}_q$, return $k$. The
+DLP assumption states that no probabilistic polynomial-time
+algorithm solves DLP with non-negligible advantage. Every group in
+this workspace is assumed to satisfy the DLP assumption with at
+least 128 bits of security.
 
-**Definition (pairing).** A non-degenerate bilinear map
-$e\colon \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T$ between
-three prime-order-$r$ groups, satisfying
-$e([a]P, [b]Q) = e(P, Q)^{ab}$ for all $a, b \in \mathbb{F}_r$,
-$P \in \mathbb{G}_1$, $Q \in \mathbb{G}_2$.
+**Definition 2.4 (pairing).** Let $\mathbb{G}_1, \mathbb{G}_2,
+\mathbb{G}_T$ be cyclic groups of prime order $r$. A pairing is a
+map
+$e\colon \mathbb{G}_1 \times \mathbb{G}_2 \to \mathbb{G}_T$
+such that
 
-**Definition (commitment scheme).** An algorithm
-$\mathsf{Com}(m; r) \to c$ that is
+1. **Bilinearity.** For all $a, b \in \mathbb{F}_r$,
+   $P \in \mathbb{G}_1$, $Q \in \mathbb{G}_2$,
+   $e([a]P, [b]Q) = e(P, Q)^{ab}$.
+2. **Non-degeneracy.** $e(G_1, G_2) \neq 1_{\mathbb{G}_T}$ for
+   generators $G_1 \in \mathbb{G}_1$, $G_2 \in \mathbb{G}_2$.
+3. **Efficient computability.** $e$ is computable in
+   polynomial time in the bit-length of $r$.
 
-- **binding**: hard to find $(m_1, r_1) \neq (m_2, r_2)$ with
-  $\mathsf{Com}(m_1; r_1) = \mathsf{Com}(m_2; r_2)$;
-- **hiding**: $c$ reveals nothing computational about $m$.
+**Definition 2.5 (commitment scheme).** A commitment scheme over a
+message space $\mathcal{M}$ and randomness space $\mathcal{R}$ is
+an algorithm
+$\mathsf{Com}\colon \mathcal{M} \times \mathcal{R} \to \mathcal{C}$
+satisfying
 
-**Definition (Pedersen commitment).** In $\mathbb{G}$ of prime
-order $q$ with two generators $G, H$ such that $\log_G H$ is
-unknown,
+1. **Binding.** For every probabilistic polynomial-time
+   $\mathcal{A}$, the probability that $\mathcal{A}$ outputs
+   $(m_1, r_1, m_2, r_2) \in (\mathcal{M} \times \mathcal{R})^2$
+   with $(m_1, r_1) \neq (m_2, r_2)$ and
+   $\mathsf{Com}(m_1; r_1) = \mathsf{Com}(m_2; r_2)$ is negligible.
+2. **Hiding.** For every $m_1, m_2 \in \mathcal{M}$, the
+   distributions
+   $\{\mathsf{Com}(m_1; r) : r \stackrel{\$}{\leftarrow}
+   \mathcal{R}\}$ and
+   $\{\mathsf{Com}(m_2; r) : r \stackrel{\$}{\leftarrow}
+   \mathcal{R}\}$ are (computationally or perfectly)
+   indistinguishable.
+
+**Definition 2.6 (Pedersen commitment).** Let $\mathbb{G}$ be a
+cyclic group of prime order $q$ with generators $G, H \in
+\mathbb{G}$ such that $\log_G H \in \mathbb{F}_q$ is unknown to
+all parties. For $m \in \mathbb{F}_q$ and
+$r \in \mathbb{F}_q$,
 $$
-\mathsf{Com}(m; r) \;=\; [m]G \;+\; [r]H.
+\mathsf{Com}(m; r) \;=\; [m]G \;+\; [r]H \;\in\; \mathbb{G}.
 $$
-Pedersen commitments are additively homomorphic, perfectly hiding,
-and computationally binding under DLP.
 
-**Definition (PRF from BLAKE2b).** Sapling defines
-$\mathsf{PRF}^{x}_{k}(m) = \mathsf{BLAKE2b}(\text{pers}_x;\,
-k \mathbin{\|} m)$, where $\text{pers}_x$ is a 16-byte
-personalisation string fixing the PRF instance. The construction is
-in
-[`zcash_spec`](https://github.com/zcash/zcash_spec) and reused by
-every workspace crate via the
+**Lemma 2.7 (Pedersen commitment security).** Pedersen commitments
+are additively homomorphic, perfectly hiding, and computationally
+binding under the DLP assumption in $\mathbb{G}$.
+
+*Proof sketch.* Homomorphism follows from the linearity of scalar
+multiplication in $\mathbb{G}$. Perfect hiding: for any $m$, the
+distribution of $[m]G + [r]H$ for $r \stackrel{\$}{\leftarrow}
+\mathbb{F}_q$ is uniform on $\mathbb{G}$. Binding: a collision
+$[m_1]G + [r_1]H = [m_2]G + [r_2]H$ with $(m_1, r_1) \neq
+(m_2, r_2)$ yields $\log_G H = (m_1 - m_2)/(r_2 - r_1) \bmod q$,
+contradicting DLP. See [Pedersen, CRYPTO 1991].
+
+**Definition 2.8 (pseudo-random function from BLAKE2b).** For a
+16-byte personalisation string
+$\mathrm{pers}_x \in \{0,1\}^{128}$, a key $k \in \{0,1\}^{*}$,
+and an input $m \in \{0,1\}^{*}$, define
+$$
+\mathsf{PRF}^{x}_{k}(m) \;=\;
+\mathsf{BLAKE2b}\bigl(\mathrm{pers}_x;\;
+k \mathbin{\|} m\bigr) \;\in\; \{0,1\}^{512}.
+$$
+This construction is the one implemented by the
 [`PrfExpand`](https://docs.rs/zcash_spec/latest/zcash_spec/struct.PrfExpand.html)
-helper.
+helper in the external
+[`zcash_spec`](https://github.com/zcash/zcash_spec) crate.
 
-**Definition (Fiat-Shamir transform).** A reduction from an
-interactive 3-move protocol to a non-interactive one: replace the
-verifier's challenge with $H(\text{transcript})$ for a public hash
-$H$ in the random-oracle model.
+**Definition 2.9 (Fiat-Shamir transform).** Let $\Pi$ be an
+interactive public-coin three-move protocol with prover messages
+$(a, z)$ and a verifier challenge $c \in \mathcal{C}$ sampled
+between them. Let
+$H\colon \{0,1\}^{*} \to \mathcal{C}$ be a hash function modelled
+as a random oracle. The Fiat-Shamir transform $\Pi'$ replaces $c$
+by $c = H(\text{pp} \mathbin{\|} a)$ for public parameters
+$\text{pp}$; the resulting non-interactive protocol has soundness
+loss bounded by $Q / |\mathcal{C}|$ for adversaries making $Q$
+queries to $H$.
 
-**Invariant (one personalisation per call site).** Every BLAKE2b
-invocation in Zcash uses a unique 16-byte personalisation. The
-reason: cross-protocol replay. If two protocols use the same
-BLAKE2b on similar inputs and one accepts a value as a hash output,
-the attacker should not be able to repurpose it elsewhere. Adding a
-hash invocation means adding a new personalisation tag.
+**Invariant 2.10 (one personalisation per call site).** For every
+BLAKE2b call site in the Zcash workspace, the 16-byte
+personalisation string $\mathrm{pers}_x \in \{0,1\}^{128}$ is
+unique. The injectivity of the map from call site to
+personalisation rules out cross-protocol replay: a string accepted
+as a hash output by one call site cannot be repurposed at any
+other call site, because the personalisation enters BLAKE2b's
+keyed parameter block and thus the input domain of every
+invocation is disjoint.
+
+### Threat model summary
+
+The cryptography in this workspace defends against the following
+adversary classes. Each row states the formal goal, the workspace
+code that enforces it, and the test (if any) that catches a
+regression. Rows marked **HEURISTIC** are not backed by a security
+reduction; they rest on best-effort engineering.
+
+| Adversary capability | Formal goal | Defence in workspace | Test that catches a regression |
+| --- | --- | --- | --- |
+| Forge a Sapling Spend without knowing $\mathsf{ask}$ | Knowledge-soundness of Groth16 under q-PKE in BLS12-381 | `zcash_proofs::sapling::SaplingVerificationContext::check_spend` | `zcash_primitives::transaction::tests::tx_read_write` (round-trip) + `sapling-crypto::circuit::spend::tests::valid_proof` |
+| Forge an Orchard Action without knowing $\mathsf{ask}$ | Knowledge-soundness of Halo 2 + DLP in Pallas | `orchard::bundle::Bundle::verify_proof` | `orchard::tests::vectors` |
+| Double-spend by replaying a nullifier | Nullifier collision-freedom under PRF security of BLAKE2b ($\mathsf{PRF}^{\mathsf{nfSapling}}$) | Nullifier set check in the consumer (not in this workspace; consensus node responsibility) | not enforced here; consumers must |
+| Inflate the value pool | Pedersen-binding under DLP in Jubjub / Pallas, plus the binding-signature equation | Binding signature verification on a Sapling/Orchard bundle | `sapling-crypto::bundle::tests::value_balance` |
+| IND-CPA against a shielded note's plaintext | IND-CPA of ChaCha20-Poly1305 with per-note ephemeral keys | `zcash_note_encryption::try_note_decryption` | `zcash_note_encryption::tests::test_decryption` |
+| Recover a spending key from ciphertext | Authenticated encryption + uniqueness of ephemeral keys | same | same |
+| Inject an 8-torsion Jubjub point as a public input | Subgroup-check on every `read_*` deserialiser | `sapling-crypto::primitives::value::read_value_commitment` (and analogous `read_cmu`, `read_rk`) | `sapling-crypto::tests::canonical_encoding` |
+| Inject a non-canonical $\mathbb{F}_r$ encoding | Canonical-encoding enforcement via `ff::PrimeField::from_repr` returning `CtOption` | call sites in `zcash_primitives::transaction::components::sapling` | `zcash_primitives::transaction::tests::non_canonical_field_element` |
+| Time the prover to learn the witness scalar | Constant-time scalar multiplication in `subtle`-using crates | `bls12_381`, `jubjub`, `pasta_curves` (see chapter 14) | no automated test; relies on crate-level CT discipline |
+| Read residual key bytes from freed memory | `zeroize` on Drop for secret types | `SaplingIvk`, `SpendingKey`, etc. all implement `Zeroize` | not unit-tested; verified by audit |
+| **HEURISTIC** Replay a tx across network upgrades | Personalisation strings differ per NU; consensus rule | Branch-ID routing in `zcash_protocol::consensus` | `zcash_primitives::transaction::sighash::tests::v5_sighash_branchid` |
+| **HEURISTIC** Sapling MPC participant retained toxic waste | $n$-out-of-$n$ ceremony with one honest participant | Out of scope for code; relies on 2018 ceremony | see chapter 15 |
+| **HEURISTIC** Timing of vartime APIs leaks Merkle path index | `pow_vartime` and friends documented as vartime | enforced by manual API audit | see chapter 14 §3 |
+| Out of scope: side-channel on prover machine | not addressed beyond constant-time crates | n/a | n/a |
+| Out of scope: deanonymisation via wallet metadata or network behaviour | see chapter 18 | n/a (out of workspace cryptography) | n/a |
+
+Read this table before reading any specific chapter. A claim like
+"Sapling binding signature prevents inflation" is a defended row
+above; a claim like "Zcash hides the sender's IP" is **not** in the
+table because it is not a cryptographic defence inside this
+workspace.
 
 ## 3. The code
 
@@ -415,23 +502,44 @@ errors that pass unit tests but break interoperability:
   base and scalar. Calling `Fr::from_bytes` on a $\mathbb{F}_p$
   representation looks plausible and compiles, but produces wrong
   curve points downstream.
+  > Caught by: `zcash_primitives::transaction::tests::tx_read_write`
+  > in `zcash_primitives/src/transaction/tests.rs` (verifies the
+  > full v4 transaction round-trip against a fixed txid, which
+  > requires every Jubjub/BLS12-381 deserialiser to interpret bytes
+  > in the correct field).
 - **Endianness drift.** Zcash standardises on little-endian for
   most field serializations, but a handful of legacy
   Bitcoin-derived contexts use big-endian. The ZIPs spell out the
   order. Mixing the two has caused real production bugs across
   multiple wallets.
+  > Caught by: `zcash_primitives::transaction::tests::zip_0244`
+  > in `zcash_primitives/src/transaction/tests.rs` (matches
+  > computed sighash and txid against ZIP 244 test vectors that
+  > pin every byte order).
 - **Pedersen-window off-by-one.** Each Pedersen window has its own
   generator, derived deterministically from a hash of an index.
   Reusing a generator across windows breaks collision resistance.
+  > No automated test in this workspace. The windowed Pedersen
+  > generators are defined and tested in the external
+  > `sapling-crypto` crate; this workspace consumes them via the
+  > Sapling commitment readers. Caught by audit only.
 - **Personalisation reuse.** As stated above, every new BLAKE2b
   call site must add a new 16-byte personalisation. Two recent
   changes to the protocol added new sighash sub-trees, each with
   its own tag; do the same.
+  > Caught by: `zcash_primitives::transaction::tests::zip_0244`
+  > in `zcash_primitives/src/transaction/tests.rs` (the ZIP 244
+  > test vectors fix every per-sub-tree personalisation; any reuse
+  > changes the resulting digest and the assertion fails).
 - **Nonce / randomness reuse.** Every RedDSA signature, every note
   randomness, every diversifier randomness must be sampled
   uniformly and independently. The Sprout counterfeiting CVE
   (chapter 12) is the canonical example of what a flaw at this
   layer can cost.
+  > No automated test in this workspace. Randomness sampling is
+  > the caller's responsibility; the builder consumes
+  > `rand_core::CryptoRng` and the workspace cannot detect
+  > non-uniform sources. Caught by audit only.
 
 ## 5. Spec pointers
 

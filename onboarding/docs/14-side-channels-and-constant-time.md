@@ -26,42 +26,58 @@ crates expose.
 
 ## 2. Definitions
 
-### Definition (constant-time with respect to a secret)
+**Definition 2.1 (constant-time with respect to a secret).** Let
+$f\colon \mathcal{S} \times \mathcal{X} \to \mathcal{Y}$ be a
+function whose first argument $s \in \mathcal{S}$ is a secret and
+whose second argument $x \in \mathcal{X}$ is public. Let
+$\mathcal{O}_f(s, x)$ denote the observable trace of evaluating
+$f$ on inputs $(s, x)$ on the target machine, where the
+observable channel includes wall-clock time, cache-line access
+pattern, branch-prediction history, and allocation pattern. The
+implementation of $f$ is **constant-time with respect to $s$** if
+$\mathcal{O}_f(s_1, x) = \mathcal{O}_f(s_2, x)$ for all
+$s_1, s_2 \in \mathcal{S}$ and all $x \in \mathcal{X}$. In a
+wallet, $\mathsf{ivk} \in \mathbb{F}_r$ is secret but the number
+of outputs to scan is public; scan runtime must depend only on
+the latter.
 
-A piece of code is **constant-time with respect to secret $s$** if
-its observable behaviour (wall-clock time, memory-access pattern,
-branch pattern) is independent of $s$ given fixed non-secret
-inputs. Constant-time is about secrets; non-secret inputs can
-influence behaviour freely. In a wallet, $\mathsf{ivk}$ is secret
-but the number of outputs to scan is public; the scan runtime
-should depend on the latter, not the former.
+**Definition 2.2 (vartime API).** A function whose name ends in
+`_vartime` or `_vt` (e.g. `pow_vartime`, `mul_vartime`,
+`invert_vartime`) is documented as **variable-time**: its trace
+$\mathcal{O}$ on inputs $(s, x)$ may depend on $s$. The contract
+is that such functions are permitted to leak their inputs via the
+observable channel and must never be invoked on a secret. The
+suffix exists because the constant-time counterpart is slower and
+the variable-time function is the default for public inputs.
 
-### Definition (vartime API)
-
-A function explicitly named `*_vartime` or `*_vt` is permitted to
-leak its inputs via timing. Examples: `pow_vartime`,
-`mul_vartime`, `invert_vartime`. These exist because the
-constant-time versions are slower; the rule is that vartime
-functions must never be called on a secret.
-
-### Definition (Montgomery ladder)
-
-A scalar-multiplication algorithm $[k] P$ that, for each bit of
-$k$ from high to low, maintains a pair $(R_0, R_1) = ([m] P,
-[m+1] P)$ and unconditionally executes one addition and one
-doubling per bit. The number of group operations is exactly
-$\lceil \log_2 \ell \rceil$ regardless of $k$. Both `jubjub` and
+**Definition 2.3 (Montgomery ladder).** Let $\mathbb{G}$ be a
+cyclic group of prime order $\ell$ with generator $G$. Fix a
+scalar $k = \sum_{i=0}^{n-1} k_i 2^i \in \mathbb{F}_\ell$ with
+$n = \lceil \log_2 \ell \rceil$. The Montgomery ladder computes
+$[k] G$ by initialising
+$(R_0, R_1) = (\mathcal{O}, G)$
+and, for $i = n-1, n-2, \ldots, 0$, applying
+$$
+(R_0, R_1) \;\leftarrow\;
+\begin{cases}
+(2 R_0, R_0 + R_1) & \text{if } k_i = 0,\\
+(R_0 + R_1, 2 R_1) & \text{if } k_i = 1.
+\end{cases}
+$$
+The number of group operations is exactly $2n$, independent of
+$k$. Both `jubjub` and
 [`pasta_curves`](https://github.com/zcash/pasta_curves) implement
-scalar-mul on secret-keyed paths via a windowed constant-time
-variant of this skeleton.
+scalar multiplication on secret-keyed paths via a windowed
+constant-time variant of this skeleton.
 
-### Threat-model boundary
-
-In scope: timing, cache, branch-prediction, memory-allocation
-side channels. Out of scope (typically): power analysis,
-electromagnetic emanation. The latter are hardware-wallet
-concerns; the firmware running on the wallet is the relevant
-codebase, not `librustzcash`.
+**Definition 2.4 (threat-model boundary).** The side-channel
+threat model considered in this chapter consists of: wall-clock
+timing, cache-line access pattern, branch-prediction state, and
+memory-allocation pattern observable to a co-resident process or
+network observer. Out of scope: power-trace analysis,
+electromagnetic emanation, and laser fault injection, which are
+hardware-wallet concerns addressed by the firmware running on the
+device, not by `librustzcash`.
 
 ## 3. The code
 
@@ -376,24 +392,63 @@ for privacy.
   Use the non-vartime `pow` / `exp` API in
   [`pasta_curves`](https://github.com/zcash/pasta_curves) and
   `bls12_381`.
+  > No automated test in this workspace. The vartime/constant-time
+  > split is enforced by naming convention in the external
+  > `bls12_381`, `jubjub`, and `pasta_curves` crates; this
+  > workspace contains no `_vartime` calls on secret data.
+  > Caught by audit only.
 - **`if secret_byte == 0 { ... }` early exit.** Leaks zero-ness
   via timing. Use `ct_eq` and `conditional_select`.
+  > No automated test in this workspace. The `subtle::ConstantTimeEq`
+  > discipline is enforced by review on every code path that
+  > consumes secret bytes. Caught by audit only.
 - **Naive `for bit in scalar.bits() { ... }` scalar mul.** Leaks
   $\mathsf{popcount}$ and bit positions. Use the curve crates'
   built-in scalar mul.
+  > No automated test in this workspace. Scalar multiplication
+  > on secret scalars is delegated to `jubjub::SubgroupPoint::mul`
+  > and `pallas::Point::mul`, both implemented constant-time in
+  > their respective crates. Caught by audit only.
 - **`Option::unwrap()` on a `CtOption` from attacker bytes.**
   Re-introduces a branch on a secret-derived boolean and can
   panic on adversarial input. Use `into_option().ok_or(...)`.
+  > Caught by:
+  > `zcash_primitives::transaction::tests::tx_read_write` in
+  > `zcash_primitives/src/transaction/tests.rs` (parses an
+  > adversarially crafted-but-valid v4 transaction; if a reader
+  > replaces `into_option().ok_or(...)` with `unwrap()`, the
+  > behaviour on the existing test corpus is unchanged but a
+  > companion fuzzed input would panic; no fuzz harness exists
+  > in this workspace today, so this regression is only partially
+  > covered by the round-trip test).
 - **Allocating a `Vec<u8>` whose length depends on a secret.**
   The allocation path leaks the size. Use a fixed-size buffer.
+  > No automated test in this workspace. Allocation-pattern
+  > analysis requires tools such as `ctgrind` or `dudect`, which
+  > are not integrated into the workspace test suite. Caught by
+  > audit only.
 - **Forgetting `zeroize::Zeroize`** on a long-lived secret
   struct. The bytes persist in memory until overwritten by
   later allocations; a coredump or swap file exposes them.
+  > Caught by: the `Zeroize` and `ZeroizeOnDrop` `impl` blocks
+  > on `zcash_keys::keys::transparent::Key` in
+  > `zcash_keys/src/keys/transparent.rs` are compile-time
+  > requirements for callers that wrap the type in `SecretVec`.
+  > No runtime test asserts post-drop zeroing on this workspace.
+  > Caught by audit only.
 - **Calling `format!` / `Debug::fmt` on a secret.** Formatting
   invokes allocator paths; the resulting string is also a
   liability. Implement `Debug` to redact for secret types.
+  > Caught by: `zcash_keys::keys::transparent::tests::key_debug_redaction`
+  > in `zcash_keys/src/keys/transparent.rs` (constructs a
+  > transparent `Key`, formats it via `Debug`, and asserts the
+  > rendered string contains `secret: "..."` rather than the raw
+  > bytes).
 - **Using `match` directly on a secret enum.** Convert to a
   bit-mask + `conditional_select` for each arm.
+  > No automated test in this workspace. The pattern is enforced
+  > by review; there are no secret-enum match patterns in the
+  > workspace today. Caught by audit only.
 
 ## 5. Spec pointers
 

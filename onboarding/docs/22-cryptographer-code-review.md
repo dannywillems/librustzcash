@@ -19,46 +19,70 @@ diff. Print it and keep it next to the PR review window.
 
 ## 2. Definitions
 
-**Definition (Subgroup membership).** A curve point $P$ lies in
-the prime-order subgroup of order $\ell$ iff $[\ell]P = \mathcal{O}$.
-For Jubjub and BLS12-381 $\mathbb{G}_2$, this check is required
-on points read from the wire; for Pallas and Vesta the cofactor is
-$1$ so the check is implicit. See chapter 13.
+**Definition 2.1 (Subgroup membership).** Let $E$ be an elliptic
+curve over a prime field, $\mathbb{G} \subset E$ the prime-order
+subgroup of order $\ell$. A point $P \in E$ is subgroup-valid iff
+$[\ell] P = \mathcal{O}_E$. The check is mandatory on points read
+from the wire whenever the cofactor $h \neq 1$. For Jubjub
+($h = 8$) and BLS12-381 $\mathbb{G}_2$ ($h$ large) the check is
+explicit; for Pallas and Vesta, $h = 1$ and the check is implicit
+(every encodable point already lies in $\mathbb{G}$). See
+chapter 13.
 
-**Definition (Canonical encoding).** A byte representation is
-canonical iff exactly one byte string corresponds to each group or
-field element. Non-canonical decoders accept multiple encodings of
-the same element; this is a malleability source. `PrimeField::from_repr`
-is the canonical decoder in `pasta_curves` and `bls12_381`.
+**Definition 2.2 (Canonical encoding).** Let $T$ be a finite set
+(field or group). An encoding map
+$\mathsf{enc} : T \rightarrow \{0,1\}^{\ast}$ is canonical iff
+$\mathsf{enc}$ is injective and the corresponding decoder
+$\mathsf{dec}$ satisfies $\mathsf{dec}(s) \in T$ for exactly one
+preimage $s$ per element. A non-canonical decoder accepts
+multiple $s$ for a single $t \in T$, which is a malleability
+source. In `pasta_curves` and `bls12_381`,
+`PrimeField::from_repr` is the canonical decoder.
 
-**Definition (Constant-time).** A function is constant-time iff
-its execution time and memory access pattern depend only on the
-length of its inputs, not on their values. Required for any code
-handling secret material. See chapter 14.
+**Definition 2.3 (Constant-time function).** Let
+$f : \{0,1\}^{\ast} \rightarrow \{0,1\}^{\ast}$ be a function
+implemented by a program $P$. $P$ executes $f$ in constant time
+iff the trace of operations (branch outcomes, memory addresses,
+instruction count) on input $x$ is a function only of $|x|$ and
+not of the bits of $x$. Required for any code handling secret
+material; see chapter 14.
 
-**Definition (Domain separation).** A scheme uses domain
-separation iff each distinct hash invocation supplies a unique
-personalisation string. For BLAKE2b, the personalisation is
-exactly $16$ bytes; for BLAKE2s, $8$ bytes. See chapter 16.
+**Definition 2.4 (Domain separation).** Let $\mathcal{H}$ be a
+keyed hash family. A scheme uses domain separation iff each
+distinct invocation of $\mathcal{H}$ is keyed by a unique
+personalisation string $D \in \{0,1\}^{\kappa}$. For BLAKE2b,
+$\kappa = 128$ ($16$ bytes); for BLAKE2s, $\kappa = 64$
+($8$ bytes). See chapter 16.
 
-**Definition (Authorization typestate).** A bundle parameter
-`A: Authorization` that encodes whether the bundle has been signed
-and proved. The typestate prevents semantic bugs where a partially-
-constructed bundle is treated as fully authorised. Sapling and
-Orchard both use this pattern.
+**Definition 2.5 (Authorisation typestate).** Let $\mathsf{B}$ be
+a bundle type indexed by a phantom-typed parameter
+$A : \mathsf{Authorization}$ that ranges over a finite set of
+authorisation states (e.g. $\mathsf{Unauthorized}$,
+$\mathsf{Authorized}$). The typestate discipline enforces, at
+compile time, that operations $\mathsf{B}\langle A \rangle
+\rightarrow \mathsf{B}\langle A' \rangle$ are admissible only for
+permitted transitions $A \rightsquigarrow A'$. Sapling and
+Orchard both instantiate the pattern.
 
-**Definition (Underconstrained witness).** An advice cell in a
-Halo 2 circuit that is not constrained by any selector-gated
-gate. A malicious prover can set such a cell to any value,
-breaking soundness. The Trail of Bits audit of Orchard turned
-this into a recurring finding category.
+**Definition 2.6 (Underconstrained advice cell).** In a Halo 2
+circuit with advice columns $\mathbf{a}_1, \ldots, \mathbf{a}_m$,
+an advice cell $\mathbf{a}_i(\omega^j)$ is underconstrained iff
+no selector-gated gate $G \cdot q_{\mathrm{sel}} = 0$ references
+it with a non-trivial coefficient. A malicious prover can assign
+the cell arbitrarily without violating any constraint, breaking
+soundness. Trail of Bits codified this as a recurring finding
+class in the Orchard audit; see
+[Trail of Bits publications](https://github.com/trailofbits/publications).
 
-**Definition (Trusted setup).** A pre-computed common reference
-string consumed by Groth16 verification. For Sapling, two
-ceremonies (Powers of Tau and per-circuit) produced the parameters
-hashed in
-[`zcash_proofs/src/lib.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs).
-A modified circuit invalidates the setup; see chapter 15.
+**Definition 2.7 (Trusted setup).** Let $C$ be a Groth16 circuit
+of size $n$. A trusted setup is a pair of probabilistic
+ceremonies (Powers of Tau plus a per-circuit phase) producing a
+common reference string $\mathsf{CRS} \in \mathbb{G}_1^a \times
+\mathbb{G}_2^b$ consumed by the verifier. Modifying $C$
+invalidates the existing $\mathsf{CRS}$. For Sapling, the
+ceremony outputs are pinned by their SHA-256 hashes in
+[`zcash_proofs/src/lib.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_proofs/src/lib.rs);
+see chapter 15.
 
 ## 3. The code: the checklist
 

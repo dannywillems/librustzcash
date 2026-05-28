@@ -27,22 +27,26 @@ Read this chapter, then re-read
 
 ## 2. Definitions
 
-### Group order, prime-order subgroup, cofactor
-
-Let $E(\mathbb{F}_p)$ be an elliptic curve over a prime field. Its
-order (number of points including the identity) is
-
+**Definition 2.1 (group order, prime-order subgroup, cofactor).**
+Let $E(\mathbb{F}_p)$ be the group of points of an elliptic curve
+over the prime field $\mathbb{F}_p$, including the identity
+$\mathcal{O}$. Its order factors uniquely as
 $$
 \#E(\mathbb{F}_p) \;=\; h \cdot \ell,
 $$
+where $\ell$ is a large prime (the **subgroup order**) and
+$h \in \mathbb{Z}_{>0}$ is a small integer (the **cofactor**). The
+unique subgroup of $E(\mathbb{F}_p)$ of order $\ell$ is the
+**prime-order subgroup**, denoted $E^{\circ} \subseteq
+E(\mathbb{F}_p)$. All cryptographic operations in this workspace
+are performed in $E^{\circ}$.
 
-where $\ell$ is a large prime and $h$ is a small integer called the
-**cofactor**. The unique subgroup of order $\ell$ is the
-**prime-order subgroup**, denoted $E^{\circ}$. We work
-cryptographically in $E^{\circ}$.
-
-**Definition (torsion).** Points in $E \setminus E^{\circ}$ are
-$h$-torsion: small-order points whose orders divide $h$.
+**Definition 2.2 (torsion subgroup).** For an integer
+$m \in \mathbb{Z}_{>0}$, the **$m$-torsion** of $E$ is
+$E[m] = \{P \in E(\overline{\mathbb{F}_p}) : [m]P = \mathcal{O}\}$.
+The **non-trivial torsion** of $E(\mathbb{F}_p)$ relative to
+$E^{\circ}$ is $E(\mathbb{F}_p) \setminus E^{\circ} \subseteq
+E[h]$.
 
 | Curve                       | Field                                    | Order              | Cofactor $h$ | Prime $\ell$ size |
 | --------------------------- | ---------------------------------------- | ------------------ | ------------ | ----------------- |
@@ -58,45 +62,49 @@ BLS12-381 $\mathbb{G}_1, \mathbb{G}_2$ have non-trivial
 subgroup-membership concerns even though they are pairing groups;
 specific checks are required.
 
-### Definition (canonical encoding)
+**Definition 2.3 (canonical encoding of a field element).** For
+$x \in \mathbb{F}_p$, the **canonical encoding** of $x$ is the
+little-endian byte string of the unique integer
+$\tilde{x} \in [0, p)$ with $\tilde{x} \equiv x \pmod p$. A
+byte string $b$ is **non-canonical** for $\mathbb{F}_p$ if
+$b$ represents an integer $n \geq p$ with $n \equiv x \pmod p$
+for some $x \in \mathbb{F}_p$.
 
-A field element $x \in \mathbb{F}_p$ is **canonically encoded** as
-the little-endian byte string of the unique integer in $[0, p)$
-representing $x$. A non-canonical encoding is any byte string
-representing an integer $\geq p$ but congruent to $x$ modulo $p$.
-
-### Definition (small-subgroup attack)
-
-Let Alice hold a secret $a \in \mathbb{F}_\ell$ and compute
-$\mathsf{shared} = [a] B$ for an adversarial $B = B^{\circ} + T$
-with $T$ of small order $h_T \mid h$. Then
-
+**Definition 2.4 (small-subgroup attack).** Let
+$a \in \mathbb{F}_\ell$ be Alice's secret scalar and
+$B \in E(\mathbb{F}_p)$ be an adversarially chosen point. Write
+$B = B^{\circ} + T$ with $B^{\circ} \in E^{\circ}$ and $T \in
+E[h_T]$ for some $h_T \mid h$. Then
 $$
-[a] B \;=\; [a] B^{\circ} \;+\; [a] T \;=\; [a] B^{\circ} \;+\; [a
-\bmod h_T] T.
+[a] B \;=\; [a] B^{\circ} \;+\; [a] T \;=\;
+[a] B^{\circ} \;+\; [a \bmod h_T]\, T.
 $$
+If any bit of $\mathsf{shared} = [a]B$ leaks (e.g. via a KDF
+output observable to the attacker), the attacker recovers
+$a \bmod h_T$. Repeating with $T$ of order each prime power
+dividing $h$ recovers $a \bmod h$ by CRT. For Jubjub,
+$h = 8 = 2^3$, so each successful query of this form leaks up to
+3 bits of $a$.
 
-If anything derived deterministically from $\mathsf{shared}$ leaks,
-the adversary recovers $a \bmod h_T$. Repeating with different
-small-order $T$ for each prime factor of $h$ recovers $a \bmod h$.
-For Jubjub, $h = 8 = 2^3$, so each call leaks 3 bits of $a$.
-
-### Invariant (ZIP 216, canonical Jubjub element)
-
-A 32-byte sequence $\tilde{P}_{\text{enc}}$ is a valid encoding of a
-Jubjub point if and only if:
+**Invariant 2.5 (ZIP 216, canonical Jubjub element).** A 32-byte
+sequence $\tilde{P}_{\text{enc}} \in \{0,1\}^{256}$ is a valid
+encoding of a Jubjub point $P \in E^{\circ}_{\text{Jubjub}}$ if
+and only if all of the following hold:
 
 1. Strip the high bit of byte 31 as parity $s \in \{0, 1\}$; the
-   remaining 255 bits encode $v \in \mathbb{F}_r$ canonically with
-   $v < r$.
-2. Solve $u^2 = (v^2 - 1) / (d v^2 + 1)$. If $d v^2 + 1 = 0$ or no
-   solution exists, reject.
-3. Choose $u = u_0$ if $\text{lsb}(u_0) = s$, else $u = -u_0$. If
-   $u_0 = 0$, the parity bit must be $0$ for canonical encoding.
-4. The point $(u, v)$ must lie in $E^{\circ}_{\text{Jubjub}}$.
+   remaining 255 bits encode $v \in \mathbb{F}_r$ canonically in
+   the sense of Definition 2.3, with $v < r$.
+2. Solve $u^2 = (v^2 - 1) / (d v^2 + 1) \in \mathbb{F}_r$. If
+   $d v^2 + 1 = 0$ in $\mathbb{F}_r$, or no solution $u \in
+   \mathbb{F}_r$ exists, reject.
+3. Among the two solutions $\pm u_0$, choose $u = u_0$ if
+   $\mathrm{lsb}(u_0) = s$, else $u = -u_0$. If $u_0 = 0$, the
+   parity bit must be $0$ for canonical encoding.
+4. The point $(u, v) \in E(\mathbb{F}_r)$ must lie in
+   $E^{\circ}_{\text{Jubjub}}$.
 
-Pre-NU5 code accepted some non-canonical encodings; ZIP 216 codifies
-the strict consensus rule.
+Pre-NU5 code accepted some non-canonical encodings; ZIP 216
+codifies the strict consensus rule.
 
 ## 3. The code
 
@@ -308,33 +316,69 @@ encoding.
   $\mathsf{epk}$ during note encryption lets the sender exfiltrate
   $\mathsf{ivk} \bmod 8$ per output. See chapter 12 section 5 and
   ZIP 216.
+  > Caught by:
+  > `zcash_primitives::transaction::tests::tx_read_write` in
+  > `zcash_primitives/src/transaction/tests.rs` (parses a Canopy
+  > v4 transaction whose Sapling OutputDescription contains a
+  > canonical, subgroup-valid `epk`; the `read_output_v4` path
+  > calls `jubjub::ExtendedPoint::from_bytes` and rejects
+  > non-canonical or off-curve encodings). The deeper algebraic
+  > assertion ($\mathsf{epk} \in E^{\circ}$) is enforced by the
+  > Sapling verifier in the external `sapling-crypto` crate; no
+  > workspace test exercises that path directly.
 - **Missing canonical-encoding check.** Two distinct byte sequences
   representing the same group element will hash differently under
   any wire-byte-keyed hash, breaking transaction IDs and
   Fiat-Shamir transcripts.
+  > Caught by: `zcash_encoding::tests::compact_size` in
+  > `components/zcash_encoding/src/lib.rs` (the test asserts that
+  > `CompactSize::read` returns `non-canonical CompactSize` on
+  > inputs whose serialized form is shorter than the
+  > non-canonical encoding presented), plus
+  > `zcash_primitives::transaction::tests::tx_read_write` for the
+  > full v4 round-trip.
 - **`unwrap()` on `CtOption` over attacker bytes.** Even if the
   failure mode is "return None", calling `unwrap()` re-introduces
   a branch on a secret-derived boolean and can panic on
   adversarial input. Use `into_option().ok_or(...)`.
+  > No automated test in this workspace. The pattern is enforced
+  > by clippy and review on every reader function; there is no
+  > regression test that fuzzes attacker bytes against every
+  > deserialiser. Caught by audit only.
 - **Conflating cofactor clearing with subgroup checking.**
   Multiplying by $h$ moves a point into $E^{\circ}$ but does not
   reject the original input; for consensus parsing both the
   validity of the source bytes and the resulting subgroup
   membership matter. Use the explicit `SubgroupPoint::try_from`
   pattern.
+  > No automated test in this workspace. The type-level
+  > separation between `jubjub::ExtendedPoint` and
+  > `jubjub::SubgroupPoint` is enforced by the external `jubjub`
+  > crate; this workspace inherits the discipline through type
+  > signatures. Caught by audit only.
 - **Reading a 2-torsion point as a public key.** Decoding $(0,
   -1)$ on Jubjub passes the curve-equation check and is a valid
   group element but has order 2. Any KDF derived from
   $[\mathsf{ivk}] (0, -1) = (0, -1)^{[\mathsf{ivk} \bmod 2]}$
   leaks the LSB of $\mathsf{ivk}$.
+  > No automated test in this workspace. The small-order check
+  > on `cv` and the deferred check on `rk` are exercised
+  > end-to-end by Sapling verification in the external
+  > `sapling-crypto` crate, not in this workspace. Caught by
+  > audit only.
 - **Variable-time inversion or doubling formulas.** Implementing
   the curve operations with non-constant-time inversion (e.g.
   Euclidean) leaks scalar bits via timing; chapter 14 covers this.
+  > No automated test in this workspace. Constant-time field
+  > inversion is the responsibility of the external `bls12_381`,
+  > `jubjub`, and `pasta_curves` crates, which ship their own
+  > `dudect`-style and `ctgrind`-style audits. Caught by audit
+  > only.
 
 ## 5. Spec pointers
 
 - [ZIP 216 (Require Canonical Jubjub Point Encodings)](https://zips.z.cash/zip-0216):
-  the formal consensus rule cited in Definition 2.4 above; clause
+  the formal consensus rule cited in Invariant 2.5 above; clause
   4 (subgroup membership) is the load-bearing part.
 - [ZIP 215 (Explicitly Defining and Modifying Ed25519 Validation
   Rules)](https://zips.z.cash/zip-0215): the analogous rules for

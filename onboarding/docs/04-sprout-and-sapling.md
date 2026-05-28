@@ -37,107 +37,250 @@ constraint counts, see
 
 ### Sprout
 
-**Definition (Sprout note).** The tuple
-
+**Definition 2.1 (Sprout note).** A Sprout note is a tuple
 $$
-\mathsf{note} \;=\; (a_{\mathsf{pk}}, v, \rho, r),
+\mathsf{note} \;=\;
+(a_{\mathsf{pk}}, v, \rho, r) \;\in\;
+\{0,1\}^{256} \times [0, 2^{64}) \times \{0,1\}^{256} \times
+\{0,1\}^{256},
 $$
-
 where $a_{\mathsf{pk}}$ is the recipient paying key, $v$ is the
-value in zatoshis, $\rho$ is a uniqueness nonce, and $r$ is
-commitment randomness. The commitment is
-
+value in zatoshis, $\rho \in \{0,1\}^{256}$ is a uniqueness nonce,
+and $r \in \{0,1\}^{256}$ is commitment randomness. Its commitment
+is the 32-byte string
 $$
-\mathsf{cm} \;=\; \mathsf{SHA256}\!\bigl(
-0\text{xb0} \,\|\, a_{\mathsf{pk}} \,\|\, v \,\|\, \rho \,\|\, r
-\bigr).
+\mathsf{cm} \;=\; \mathsf{SHA256}\bigl(
+\mathrm{0xb0} \mathbin{\|} a_{\mathsf{pk}}
+\mathbin{\|} v \mathbin{\|} \rho \mathbin{\|} r
+\bigr) \;\in\; \{0,1\}^{256}.
 $$
 
-**Definition (JoinSplit).** A constant-shape gadget with 2 inputs,
-2 outputs, a public scalar $v_{\text{pub}}^{\text{old}}$ moving
-from transparent into the shielded side, a public scalar
-$v_{\text{pub}}^{\text{new}}$ moving the other way, a public
-Merkle root $\mathsf{rt}$ (anchor), and a public per-JoinSplit
-signature digest $h_{\mathsf{sig}}$.
+**Definition 2.2 (JoinSplit description).** A JoinSplit description
+is a constant-shape gadget consuming 2 input notes and producing 2
+output notes, together with public scalars
+$v_{\text{pub}}^{\text{old}}, v_{\text{pub}}^{\text{new}} \in
+[0, 2^{64})$ encoding transparent inflow and outflow, a public
+Merkle root $\mathsf{rt} \in \{0,1\}^{256}$ (anchor), and a public
+per-JoinSplit signature digest $h_{\mathsf{sig}} \in \{0,1\}^{256}$
+binding the JoinSplit to a fixed transaction context.
 
 ### Sapling
 
-**Definition (Pedersen hash, $\mathsf{PH}$).** Algebraic hash on
-Jubjub: pad input bits to a multiple of three, group bits in chunks
-of 3 then segments of $c = 63$ chunks (189 bits per segment),
-encode each segment as a signed integer via the windowed encoding
-$\text{enc}_3(b_0, b_1, b_2) = (1 + b_0 + 2 b_1)(1 - 2 b_2) \in
-\{-4, \ldots, -1, 1, \ldots, 4\}$, multiply each segment by an
-independent generator $G_j$ derived deterministically from a
-domain-separation string, and sum.
+**Definition 2.3 (Pedersen hash, $\mathsf{PH}$).** Let
+$\mathbb{G}_J$ denote the Jubjub prime-order subgroup. The
+Sapling Pedersen hash
+$\mathsf{PH}\colon \{0,1\}^{*} \to \mathbb{G}_J$
+is defined as follows. Pad the input bit string to a length that is
+a multiple of $3$, group bits into chunks of $3$ and segments of
+$c = 63$ chunks ($189$ bits per segment), encode each chunk
+$(b_0, b_1, b_2) \in \{0,1\}^3$ as the signed integer
+$$
+\mathrm{enc}_3(b_0, b_1, b_2) \;=\; (1 + b_0 + 2 b_1)(1 - 2 b_2)
+\;\in\; \{-4, \ldots, -1, 1, \ldots, 4\} \subseteq \mathbb{F}_r,
+$$
+multiply each segment $s_j \in \mathbb{F}_r$ by an independent
+generator $G_j \in \mathbb{G}_J$ derived deterministically from a
+domain-separation string, and return $\sum_j [s_j] G_j$.
 
-**Definition (Sapling note commitment).**
-
+**Definition 2.4 (Sapling note commitment).** For
+$\mathsf{rcm} \in \mathbb{F}_r$, $v \in [0, 2^{64})$, and
+$g_d, \mathsf{pk}_d \in \mathbb{G}_J$,
 $$
 \mathsf{NoteCommit}(\mathsf{rcm}, v, g_d, \mathsf{pk}_d)
 \;=\;
-\mathsf{PH}\bigl(D_{\text{nc}},\, \text{repr}(v)
-\mathbin{\|} \text{repr}(g_d) \mathbin{\|} \text{repr}(\mathsf{pk}_d)\bigr)
-\;+\; [\mathsf{rcm}]\, R_{\text{nc}}.
+\mathsf{PH}\bigl(D_{\text{nc}},\, \mathrm{repr}(v)
+\mathbin{\|} \mathrm{repr}(g_d) \mathbin{\|}
+\mathrm{repr}(\mathsf{pk}_d)\bigr)
+\;+\; [\mathsf{rcm}]\, R_{\text{nc}} \;\in\; \mathbb{G}_J,
 $$
+where $R_{\text{nc}} \in \mathbb{G}_J$ is a fixed generator with
+$\log_{G_{\text{Jubjub}}} R_{\text{nc}}$ unknown.
 
-The randomness term $[\mathsf{rcm}] R_{\text{nc}}$ makes the
-commitment perfectly hiding.
+**Lemma 2.5 (Sapling note commitment is perfectly hiding and
+computationally binding).** $\mathsf{NoteCommit}$ is perfectly
+hiding over the randomness $\mathsf{rcm}
+\stackrel{\$}{\leftarrow} \mathbb{F}_r$ and computationally
+binding under DLP in $\mathbb{G}_J$.
 
-**Definition (Sapling Merkle hash).**
+*Proof sketch.* The map
+$\mathsf{rcm} \mapsto [\mathsf{rcm}] R_{\text{nc}}$ is a bijection
+on $\mathbb{G}_J$, so the distribution of
+$\mathsf{NoteCommit}(\mathsf{rcm}, v, g_d, \mathsf{pk}_d)$ for
+uniform $\mathsf{rcm}$ is uniform on $\mathbb{G}_J$, independent
+of $(v, g_d, \mathsf{pk}_d)$. Binding reduces to collision
+resistance of $\mathsf{PH}$ plus knowledge of $\log R_{\text{nc}}$
+in the base $G_{\text{Jubjub}}$, both following from DLP in
+$\mathbb{G}_J$. See [Zcash Protocol Specification, section 5.4.7].
 
+**Definition 2.6 (Sapling Merkle hash).** Let
+$\ell \in \{0, \ldots, 31\}$ denote the Merkle layer index. Define
 $$
-\mathsf{MerkleHash}(\ell, x_{\text{left}}, x_{\text{right}}) \;=\;
-\mathsf{ExtractJubjub}\!\bigl(
-\mathsf{PH}(D_{\text{MH}, \ell}, x_{\text{left}} \mathbin{\|}
-x_{\text{right}})
-\bigr),
+\mathsf{MerkleHash}(\ell, x_{\text{left}}, x_{\text{right}})
+\;=\;
+\mathsf{ExtractJubjub}\bigl(
+\mathsf{PH}(D_{\text{MH}, \ell},\;
+x_{\text{left}} \mathbin{\|} x_{\text{right}})
+\bigr) \;\in\; \mathbb{F}_r,
 $$
+where
+$\mathsf{ExtractJubjub}\colon \mathbb{G}_J \to \mathbb{F}_r$
+returns the $u$-coordinate of its argument. The layer-indexed
+domain separation string $D_{\text{MH}, \ell}$ prevents
+tree-rotation attacks because the same byte string used at two
+distinct layers hashes to two distinct outputs.
 
-where $\ell$ is the layer index and $\mathsf{ExtractJubjub}$ takes
-the $u$-coordinate of the resulting Jubjub point modulo the field.
-The layer-indexed domain separation prevents tree-rotation attacks.
-
-**Definition (Sapling key tree).**
-
+**Definition 2.7 (Sapling key tree).** From a spending key
+$\mathsf{sk} \in \{0,1\}^{256}$, the Sapling key tree is the
+sequence of derivations
 $$
 \mathsf{sk}
 \;\xrightarrow{\;\mathsf{PRF}^{\text{expand}}\;}\;
-(\mathsf{ask}, \mathsf{nsk}, \mathsf{ovk})
+(\mathsf{ask}, \mathsf{nsk}, \mathsf{ovk}) \in
+\mathbb{F}_r \times \mathbb{F}_r \times \{0,1\}^{256}
 \;\xrightarrow{\;\;\;}\;
-(\mathsf{ak}, \mathsf{nk}, \mathsf{ovk})
+(\mathsf{ak}, \mathsf{nk}, \mathsf{ovk}) \in
+\mathbb{G}_J \times \mathbb{G}_J \times \{0,1\}^{256}
 \;\xrightarrow{\;\;\;}\;
-\mathsf{ivk}
+\mathsf{ivk} \in \mathbb{F}_r
 \;\xrightarrow{\;\;\;}\;
-(\mathsf{pk}_d, g_d).
+(\mathsf{pk}_d, g_d) \in \mathbb{G}_J \times \mathbb{G}_J.
 $$
+The full viewing key
+$\mathsf{fvk} = (\mathsf{ak}, \mathsf{nk}, \mathsf{ovk}) \in
+\mathbb{G}_J \times \mathbb{G}_J \times \{0,1\}^{256}$
+is sufficient to decrypt every incoming and outgoing-tagged note
+spendable under $\mathsf{sk}$.
 
-The full viewing key $\mathsf{fvk} = (\mathsf{ak}, \mathsf{nk},
-\mathsf{ovk})$ is sufficient to decrypt any incoming or
-outgoing-tagged note.
-
-**Definition (Sapling nullifier).** For a note with commitment
-$\mathsf{cm}$, position $\mathsf{pos}$ in the tree, and
-$\rho = \mathsf{MixingPedersenHash}(\mathsf{cm}, \mathsf{pos})$,
-
+**Definition 2.8 (Sapling nullifier).** For a Sapling note with
+commitment $\mathsf{cm} \in \mathbb{G}_J$, tree position
+$\mathsf{pos} \in [0, 2^{32})$, mixing input
+$\rho = \mathsf{MixingPedersenHash}(\mathsf{cm}, \mathsf{pos}) \in
+\mathbb{G}_J$, and key
+$\mathsf{nk} \in \mathbb{G}_J$, the nullifier is
 $$
 \mathsf{nf} \;=\;
-\mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}(\rho).
+\mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}(\rho)
+\;\in\; \{0,1\}^{256}.
 $$
 
-**Invariant (Sapling binding equation).** For any valid Sapling
-bundle,
-
+**Invariant 2.9 (Sapling binding equation).** Let
+$\mathcal{B}$ be a Sapling bundle with input value commitments
+$\{\mathsf{cv}_i^{\text{in}}\}_i$, output value commitments
+$\{\mathsf{cv}_j^{\text{out}}\}_j$, and value balance
+$v_{\text{bal}} \in [-(2^{63}-1), 2^{63})$. For $V, R \in
+\mathbb{G}_J$ fixed value-commitment generators and
+$r_{\text{bal}} = \sum_i \mathsf{rcv}_i^{\text{in}}
+- \sum_j \mathsf{rcv}_j^{\text{out}} \in \mathbb{F}_r$,
+$\mathcal{B}$ satisfies
 $$
 \sum_i \mathsf{cv}_i^{\text{in}}
 \;-\; \sum_j \mathsf{cv}_j^{\text{out}}
-\;=\; [v_{\text{bal}}]V \;+\; [r_{\text{bal}}]R,
+\;=\; [v_{\text{bal}}]V \;+\; [r_{\text{bal}}]R
+\;\in\; \mathbb{G}_J.
 $$
+The binding signature certifies knowledge of $r_{\text{bal}}$,
+which is feasible (under DLP in $\mathbb{G}_J$) only when the
+equation holds.
 
-with $r_{\text{bal}} = \sum \mathsf{rcv}_i^{\text{in}} -
-\sum \mathsf{rcv}_j^{\text{out}}$. The binding signature certifies
-that the spender knows $r_{\text{bal}}$, which is feasible only
-when the equation holds.
+### The NP relations proven by Sapling
+
+The Sapling proving system produces one Groth16 proof per Spend and
+one per Output. Each proof attests membership in an NP language
+defined by an explicit relation $R \subseteq \mathcal{X} \times
+\mathcal{W}$.
+
+**Definition 2.10 (Sapling Spend relation $R_{\mathsf{Spend}}$).**
+Let
+$\mathbb{F}_r$ be the BLS12-381 scalar field, $\mathbb{G}_J$ the
+Jubjub prime-order subgroup, and $\mathcal{T}$ the Merkle-tree
+domain. Define
+$$
+\mathcal{X}_{\mathsf{Spend}} \;=\;
+\bigl(\mathsf{rt}, \mathsf{cv}, \mathsf{nf}, \mathsf{rk}\bigr)
+\;\in\;
+\mathcal{T} \times \mathbb{G}_J \times \{0,1\}^{256} \times
+\mathbb{G}_J,
+$$
+$$
+\mathcal{W}_{\mathsf{Spend}} \;=\;
+\bigl(d, \mathsf{pk}_d, v, \mathsf{rcm}, \mathsf{rcv}, \alpha,
+\mathsf{ak}, \mathsf{nsk}, \mathsf{pos}, \mathsf{path}\bigr).
+$$
+Then $(x, w) \in R_{\mathsf{Spend}}$ iff **all** of the following
+hold:
+
+1. **Note well-formedness.** With $g_d = \mathsf{GroupHash}(d)$,
+   $g_d \neq \mathcal{O}$, $g_d \in \mathbb{G}_J$, and
+   $\mathsf{pk}_d \in \mathbb{G}_J$.
+2. **Commitment.** Let $\mathsf{cm} =
+   \mathsf{NoteCommit}(\mathsf{rcm}, v, g_d, \mathsf{pk}_d)$.
+3. **Merkle membership.**
+   $\mathsf{MerklePath}(\mathsf{path}, \mathsf{pos},
+   \mathsf{ExtractJubjub}(\mathsf{cm})) = \mathsf{rt}$.
+4. **Value commitment.**
+   $\mathsf{cv} = [v]V + [\mathsf{rcv}]R$.
+5. **Spend authority.** $\mathsf{ak} = [\mathsf{ask}]G_{\text{a}}$
+   for some $\mathsf{ask}$ known to the prover, and
+   $\mathsf{rk} = \mathsf{ak} + [\alpha]G_{\text{a}}$ where
+   $\alpha$ is the re-randomiser.
+6. **Nullifier integrity.** With $\mathsf{nk} =
+   [\mathsf{nsk}]G_{\text{n}}$ and $\rho =
+   \mathsf{MixingPedersenHash}(\mathsf{cm}, \mathsf{pos})$,
+   $\mathsf{nf} = \mathsf{PRF}^{\mathsf{nfSapling}}_{\mathsf{nk}}
+   (\rho)$.
+7. **Diversified address.** $\mathsf{pk}_d = [\mathsf{ivk}] g_d$
+   where $\mathsf{ivk} = \mathsf{CRH}^{\mathsf{ivk}}(\mathsf{ak},
+   \mathsf{nk})$.
+8. **Value range.** $v \in [0, 2^{64})$ and $v$ admits a 64-bit
+   little-endian binary expansion as part of the witness.
+
+The circuit module enforcing these clauses lives in
+[`sapling-crypto::circuit::spend`](https://github.com/zcash/sapling-crypto/blob/main/src/circuit/spend.rs).
+Soundness: under the q-PKE and q-power-DH assumptions in the
+BLS12-381 bilinear group ([Groth 2016, Theorem 2]).
+
+**Definition 2.11 (Sapling Output relation $R_{\mathsf{Output}}$).**
+Let
+$$
+\mathcal{X}_{\mathsf{Output}} \;=\;
+\bigl(\mathsf{cv}, \mathsf{cm}_u, \mathsf{epk}\bigr)
+\;\in\;
+\mathbb{G}_J \times \mathbb{F}_r \times \mathbb{G}_J,
+$$
+$$
+\mathcal{W}_{\mathsf{Output}} \;=\;
+\bigl(d, \mathsf{pk}_d, v, \mathsf{rcm}, \mathsf{rcv},
+\mathsf{esk}\bigr).
+$$
+Then $(x, w) \in R_{\mathsf{Output}}$ iff:
+
+1. $g_d = \mathsf{GroupHash}(d)$, $g_d \neq \mathcal{O}$, and
+   $\mathsf{pk}_d \in \mathbb{G}_J$.
+2. $\mathsf{cv} = [v]V + [\mathsf{rcv}]R$.
+3. $\mathsf{cm}_u = \mathsf{ExtractJubjub}(
+   \mathsf{NoteCommit}(\mathsf{rcm}, v, g_d, \mathsf{pk}_d))$.
+4. $\mathsf{epk} = [\mathsf{esk}]\, g_d$.
+5. $v \in [0, 2^{64})$.
+
+The circuit module is
+[`sapling-crypto::circuit::output`](https://github.com/zcash/sapling-crypto/blob/main/src/circuit/output.rs).
+
+**Lemma 2.12 (extraction injectivity).** For
+$P, Q \in \mathbb{G}_J$,
+$\mathsf{ExtractJubjub}(P) = \mathsf{ExtractJubjub}(Q)$ implies
+$P = Q$ or $P = -Q$. In particular, for inputs constrained to
+$\mathbb{G}_J$ together with the parity bit, the $u$-coordinate
+uniquely identifies a Jubjub point.
+
+*Proof sketch.* For a twisted Edwards curve $-u^2 + v^2 = 1 + d u^2
+v^2$ over $\mathbb{F}_r$, the substitution $u \mapsto -u$ leaves
+the equation invariant, so points with a given $u$-coordinate
+differ only in the sign of $u$ (equivalently, by negation in the
+group law). Two distinct points sharing both $u$ and the parity of
+$v$ would coincide. The clauses of $R_{\mathsf{Spend}}$ and
+$R_{\mathsf{Output}}$ enforce membership in $\mathbb{G}_J$, which
+excludes 2-torsion outside the prime-order subgroup. See [Zcash
+Protocol Specification, section 5.4.9.1].
 
 ## 3. The code
 
@@ -488,23 +631,48 @@ What remains here:
   Any change to the Sprout circuit must preserve the boolean
   range constraints; removing them silently restores the BCTV14
   failure mode at the application layer.
+  > Caught by:
+  > `zcash_proofs::circuit::sprout::test_sprout_constraints` in
+  > `zcash_proofs/src/circuit/sprout/mod.rs` (the test feeds the
+  > Groth16-shaped Sprout circuit a fixed test-vector corpus and
+  > asserts the constraint system is satisfied exactly when the
+  > inputs are valid; gated on the `expensive-tests` feature).
 - **Sapling `InternalH` issue and `cm`-vs-`cm^u` confusion.** Early
   Sapling implementations conflated the full commitment with its
   extracted $u$-coordinate. Any code change that publishes a full
   $\mathsf{cm}$ where the spec asks for $\mathsf{cm}^u$ (or the
   reverse) leaks information and breaks downstream wallets.
+  > Caught by:
+  > `zcash_primitives::transaction::tests::tx_read_write` in
+  > `zcash_primitives/src/transaction/tests.rs` (the test parses a
+  > fixed v4 transaction and checks the txid against a pinned
+  > value; any reversal of $\mathsf{cm}$ versus $\mathsf{cm}^u$ in
+  > the OutputDescription reader changes the digest).
 - **Dummy-spend value drift.** A Sapling bundle may include dummy
   spends with $v = 0$ to mask the input count. Builders must
   enforce $v = 0$ for dummies; non-zero dummies silently corrupt
   $v_{\text{bal}}$ and break the binding signature.
+  > No automated test in this workspace. Dummy-spend construction
+  > and the binding-signature check live in the external
+  > `sapling-crypto` crate; this workspace only round-trips the
+  > serialized bundle. Caught by audit only.
 - **Wrong $\mathsf{ToScalar}$ reduction.** $\mathsf{ToScalar}$
   reduces a 64-byte string modulo $\ell$. Substituting a 32-byte
   truncation biases the key distribution and silently breaks
   unlinkability proofs.
+  > Caught by: `zcash_keys::keys::tests::ufvk_round_trip` in
+  > `zcash_keys/src/keys.rs` (derives Sapling and Orchard FVKs
+  > from a fixed seed and asserts the resulting UFVK encoding
+  > against a pinned bech32 string; any change in
+  > $\mathsf{ToScalar}$ rotates every derived key and the
+  > comparison fails).
 - **Re-randomisation reuse.** Each spend must sample a fresh
   $\alpha$. Reusing $\alpha$ across two spends links their
   $\mathsf{rk}$ to the same underlying $\mathsf{ak}$, defeating
   the entire point of RedJubjub re-randomisation.
+  > No automated test in this workspace. Sampling of $\alpha$
+  > happens inside the external `sapling-crypto` builder; this
+  > workspace consumes its output. Caught by audit only.
 
 Tests under
 [`zcash_primitives/src/transaction/tests.rs`](https://github.com/zcash/librustzcash/blob/7c9f63f16f76994432aec5402fb196784f7dd6e2/zcash_primitives/src/transaction/tests.rs)

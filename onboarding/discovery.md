@@ -15,9 +15,45 @@ of editing touches more than a few chapters.
 - Pinned SHA at last discovery: `7c9f63f16f76994432aec5402fb196784f7dd6e2`
 - Nearest tag: `zcash_client_sqlite-0.20.2` + 63 commits
 
-All `github.com/zcash/librustzcash/blob/<SHA>/...` links in chapters
-should resolve against this SHA. The fork's `onboarding` branch is
-where chapter Markdown lives.
+### Two-tier pinning convention
+
+The pin choice depends on what the citation is anchoring.
+
+**Tactical pin (use the SHA above).** Use the discovery-tip SHA for
+content whose lifetime is the lifetime of the workspace state at
+discovery: build commands, file paths in the contribution loop,
+hot-files lists, CI workflow excerpts, fixtures. These citations
+must survive upstream renames; a SHA pin does that for a few months
+until the next discovery refresh.
+
+**Protocol-version pin.** Use a release tag that corresponds to the
+network upgrade the math statement describes, when one exists.
+Cryptographic statements are stable under the protocol they document
+but not under refactors of the implementation. Pinning a Sapling
+spend-circuit relation to a `main` SHA is mathematically meaningless:
+a renaming refactor moves the SHA without changing the statement,
+and a protocol-level upgrade may leave the SHA stale even when the
+relation has changed.
+
+Convention:
+
+- Sapling math (chapters 04, 13, 14, 16) pins to the upstream tag
+  corresponding to the network upgrade the prose describes
+  (Heartwood, Canopy, NU5 for the post-ZIP-212 form), or to the
+  `main` of `sapling-crypto` when the statement transcends NU
+  versions.
+- Orchard math (chapter 24 R_Action, the redirect-stub on chapter
+  05) pins to the upstream `orchard` tag for NU5; later NUs that
+  modify Orchard (e.g. NU7 ZSA) get their own pinned tag.
+- Halo 2 math (redirect-stub on chapter 17) pins to a frozen
+  `zcash/halo2` release rather than the workspace SHA.
+- ZIPs are cited by ZIP number; the ZIPs repository is the
+  authoritative source of versioning.
+
+When in doubt, prefer two citations: one tactical (current SHA) and
+one protocol (release tag). The tactical link shows the reader what
+the code looks like today; the protocol link is the stable anchor
+for future-proof verification.
 
 ## 2. Top-level workspace
 

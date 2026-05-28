@@ -24,110 +24,123 @@ crate (`sapling_crypto::pedersen_hash` and
 
 ## 2. Definitions
 
-### The setting
+**Definition 2.1 (The Jubjub setting).** Let
+$\mathbb{G}_J \subset E_{\text{Jubjub}}(\mathbb{F}_r)$ denote the
+prime-order subgroup of the twisted Edwards curve Jubjub over the
+BLS12-381 scalar field $\mathbb{F}_r$. Its order is
+$\ell_J$ with $\ell_J \approx 2^{252}$ and the cofactor is
+$h_J = 8$. Throughout the chapter the Pedersen hash takes a bit
+string $m \in \{0,1\}^k$ and a domain-separation tag
+$D \in \{0,1\}^{64}$ and outputs a point of $\mathbb{G}_J$. We
+write $G_j^{(D)} \in \mathbb{G}_J$ for the $j$-th generator
+associated with domain $D$.
 
-We work in the prime-order subgroup $E^{\circ}_{\text{Jubjub}}$ of
-order $\ell_{\text{J}} \approx 2^{252}$. A Pedersen hash takes a
-bit string $m \in \{0, 1\}^k$ and a domain-separation tag $D$ and
-outputs a curve point. We write $G_j^{(D)}$ for the $j$-th
-generator associated with domain $D$.
-
-### Definition ($\text{enc}_3$, the windowed encoding)
-
-Group $m$ into 3-bit chunks $c_0, c_1, c_2, \ldots$ Each chunk
-$c = (b_0, b_1, b_2) \in \{0, 1\}^3$ is mapped to a signed
-integer
-
+**Definition 2.2 (Windowed encoding $\mathsf{enc}_3$).** Given a
+3-bit chunk $c = (b_0, b_1, b_2) \in \{0,1\}^3$, define
 $$
-\text{enc}_3(c) \;=\; (1 + b_0 + 2 b_1)(1 - 2 b_2) \;\in\;
-\{-4, -3, -2, -1, 1, 2, 3, 4\}.
+\mathsf{enc}_3 : \{0,1\}^3 \rightarrow
+\{-4, -3, -2, -1, 1, 2, 3, 4\},
+\qquad
+\mathsf{enc}_3(c) \;=\; (1 + b_0 + 2 b_1)(1 - 2 b_2).
 $$
 
 Explicitly:
 
-| $c = (b_0, b_1, b_2)$ | $\text{enc}_3(c)$ |
-| --------------------- | ----------------- |
-| $(0, 0, 0)$           | $1$               |
-| $(1, 0, 0)$           | $2$               |
-| $(0, 1, 0)$           | $3$               |
-| $(1, 1, 0)$           | $4$               |
-| $(0, 0, 1)$           | $-1$              |
-| $(1, 0, 1)$           | $-2$              |
-| $(0, 1, 1)$           | $-3$              |
-| $(1, 1, 1)$           | $-4$              |
+| $c = (b_0, b_1, b_2)$ | $\mathsf{enc}_3(c)$ |
+| --------------------- | ------------------- |
+| $(0, 0, 0)$           | $1$                 |
+| $(1, 0, 0)$           | $2$                 |
+| $(0, 1, 0)$           | $3$                 |
+| $(1, 1, 0)$           | $4$                 |
+| $(0, 0, 1)$           | $-1$                |
+| $(1, 0, 1)$           | $-2$                |
+| $(0, 1, 1)$           | $-3$                |
+| $(1, 1, 1)$           | $-4$                |
 
-This is the booth-encoded representation of a 3-bit window with
-a sign bit. In-circuit, doubling the partial sum costs the same
-as adding it; the encoding minimises the number of base
-doublings needed.
+This is the Booth-encoded representation of a 3-bit window with a
+sign bit. In-circuit, doubling the partial sum costs the same as
+adding it; the encoding minimises the number of base doublings
+needed.
 
-### Definition (segment)
-
-Combine 63 consecutive chunks into one **segment** of $3 \times
-63 = 189$ bits. The segment scalar is
-
+**Definition 2.3 (Segment scalar).** Fix a segment length of $63$
+chunks ($3 \times 63 = 189$ input bits). For chunks
+$c_0, \ldots, c_{62} \in \{0,1\}^3$, the segment scalar is the
+integer
 $$
 \langle\!\langle c_0, \ldots, c_{62} \rangle\!\rangle
 \;=\;
-\sum_{i=0}^{62} \text{enc}_3(c_i) \cdot 2^{4i}.
+\sum_{i=0}^{62} \mathsf{enc}_3(c_i) \cdot 2^{4i} \in \mathbb{Z}.
 $$
-
-The spacing $2^{4i}$ (not $2^{3i}$) is chosen because each window
-contributes a value in $\{-4, \ldots, 4\}$ which needs 4 bits to
-encode unambiguously. A segment scalar lies in approximately
-
+The spacing $2^{4i}$, rather than $2^{3i}$, is forced because
+each window contributes a value in $\{-4,\ldots,-1,1,\ldots,4\}$
+which needs four bits to encode unambiguously. The segment
+scalar lies in the interval
 $$
-\Bigl(-\tfrac{4}{15} \cdot 2^{252},\; \tfrac{4}{15} \cdot
-2^{252}\Bigr),
+\Bigl(-\tfrac{4}{15} \cdot 2^{252},\;
+\tfrac{4}{15} \cdot 2^{252}\Bigr) \subset \mathbb{Z},
 $$
+which is comfortably contained in the residue system modulo
+$\ell_J$.
 
-comfortably less than $\ell_{\text{J}}$.
-
-### Definition (per-segment generator)
-
-Each segment $j$ has its own generator $G_j^{(D)}$ derived
-deterministically from $D$ and $j$:
-
+**Definition 2.4 (Per-segment generator).** For domain
+$D \in \{0,1\}^{64}$ and segment index $j \in \mathbb{N}$, the
+generator
+$G_j^{(D)} \in \mathbb{G}_J$ is defined by the try-and-increment
+hash-to-curve construction
 $$
-G_j^{(D)} \;=\; \mathsf{HashToCurve}_{\text{Jubjub}}\!\bigl(
-D \,\|\, j_{\text{LE}}\bigr).
+G_j^{(D)} \;=\;
+\mathsf{HashToCurve}_{\text{Jubjub}}\!\bigl(D \,\mathbin{\|}\,
+j_{\text{LE}}\bigr),
 $$
-
-The construction is try-and-increment:
-
-1. Compute $h = \mathsf{BLAKE2s\text{-}256}(\text{"Zcash\_PH"}
-   \,\|\, D \,\|\, j_{\text{LE}} \,\|\, \text{counter})$.
-2. Interpret $h$ as a candidate $v$-coordinate. Recover $u$
-   from the curve equation; if no valid $u$ exists, increment
-   the counter and retry.
-3. Multiply by the cofactor $h_{\text{J}} = 8$ to land in
-   $E^{\circ}_{\text{Jubjub}}$.
-
-Deterministic, so anyone can recompute the generator set;
-uniform in $E^{\circ}_{\text{Jubjub}}$ modulo a negligible bias.
-The discrete log of any $G_j^{(D)}$ relative to any other is
-**unknown** modulo DLP on Jubjub.
-
-### Definition (Pedersen hash)
-
-Let $S(m)$ be the number of segments after padding $m$ to a
-multiple of 189 bits. Then
-
+where on each attempt $t \in \mathbb{N}$ the candidate
 $$
+h_t \;=\; \mathsf{BLAKE2s\text{-}256}\!\bigl(
+\text{``Zcash\_PH''},\; D \,\mathbin{\|}\, j_{\text{LE}}
+\,\mathbin{\|}\, t_{\text{LE}}\bigr)
+$$
+is interpreted as a candidate $v$-coordinate. If a valid
+$u$ exists with $(u, h_t)$ on the curve, the resulting point is
+multiplied by the cofactor $h_J = 8$ to land in $\mathbb{G}_J$;
+otherwise $t$ is incremented. The construction is deterministic
+and yields a point of $\mathbb{G}_J$ uniform up to a negligible
+bias.
+
+**Definition 2.5 (Pedersen hash).** Let $D$ be a domain tag and
+let $m \in \{0,1\}^{\ast}$ be a bit string padded by zeros to a
+multiple of $189$ bits. Write
+$S(m) = \lceil |m| / 189 \rceil$ and let $c_{j,i}$ denote the
+$i$-th 3-bit chunk of the $j$-th segment. The Pedersen hash is
+$$
+\mathsf{PH}_D : \{0,1\}^{\ast} \rightarrow \mathbb{G}_J,
+\qquad
 \mathsf{PH}_D(m) \;=\; \sum_{j=0}^{S(m)-1}
 \bigl[\,\langle\!\langle c_{j,0}, \ldots, c_{j, 62}
-\rangle\!\rangle\,\bigr] G_j^{(D)} \;\in\;
-E^{\circ}_{\text{Jubjub}}.
+\rangle\!\rangle\,\bigr] G_j^{(D)}.
 $$
 
-### Invariant (collision resistance reduces to DLP)
+**Theorem 2.6 (Collision resistance reduces to DLP on
+$\mathbb{G}_J$).** Let $D \in \{0,1\}^{64}$ be fixed and let
+the generators $\{G_j^{(D)}\}_{j \geq 0}$ be sampled by
+Definition 2.4. Any algorithm $\mathcal{A}$ that finds
+$m_1, m_2 \in \{0,1\}^{\ast}$ with $m_1 \neq m_2$ and
+$\mathsf{PH}_D(m_1) = \mathsf{PH}_D(m_2)$ can be converted, with
+the same advantage and a polynomial overhead, into an algorithm
+that computes a non-trivial discrete-log relation among
+$\{G_j^{(D)}\}$ in $\mathbb{G}_J$.
 
-Finding $m_1 \neq m_2$ with $\mathsf{PH}_D(m_1) =
-\mathsf{PH}_D(m_2)$ is at least as hard as solving DLP on
-Jubjub. A collision gives
-$\sum_j [\Delta_j] G_j = \mathcal{O}$ for a non-zero integer
-vector $\{\Delta_j\}$, which is a non-trivial linear relation
-among generators whose pairwise discrete logs are unknown.
+*Proof sketch.* A collision yields integer differences
+$\Delta_j = \langle\!\langle c_{j,\bullet}^{(1)} \rangle\!\rangle
+- \langle\!\langle c_{j,\bullet}^{(2)} \rangle\!\rangle$ with
+$|\Delta_j| < \ell_J$, not all zero, satisfying
+$\sum_j [\Delta_j] G_j^{(D)} = \mathcal{O}$. The chunk-encoding
+bound on segment scalars (Definition 2.3) ensures
+$|\Delta_j| < \ell_J$, so the relation is non-trivial modulo
+$\ell_J$. Solving discrete log on $\mathbb{G}_J$ recovers the
+relation; conversely the relation gives a non-trivial linear
+dependence among generators whose pairwise discrete logs are
+secret. See [Hopwood et al., Sapling design notes,
+§5.4.1.7](https://github.com/zcash/zips/blob/main/protocol/sapling.pdf)
+for the full reduction.
 
 ## 3. The code
 
@@ -305,35 +318,53 @@ mismatched hash.
 
 ## 4. Failure modes
 
-- **Reversed window bit ordering.** $\text{enc}_3$ assumes
+- **Reversed window bit ordering.** $\mathsf{enc}_3$ assumes
   $(b_0, b_1, b_2)$ in little-endian. Reversing endianness
   silently produces wrong hashes whose only symptom is a
   mismatch against the test vectors.
+  > Caught by: vector-based tests in the external `sapling-crypto`
+  > crate (`sapling_crypto::pedersen_hash` against
+  > `sapling-crypto/src/test_vectors/pedersen_hash_vectors.rs`).
+  > No automated test in this workspace; the Sapling Pedersen
+  > implementation is upstream of `librustzcash`.
 - **Reused personalisation tag.** Every distinct use of
   Pedersen hash has its own personalisation. Adding a new use
   and reusing an existing tag (e.g. recycling the
   `NoteCommitment` tag for a `MerkleTree` use) lets an
   adversary produce two pre-images of the same hash from
   different domains.
+  > No automated test in this workspace. Caught by audit only.
 - **BLAKE2b vs BLAKE2s for generator hashing.** The generator
   construction uses BLAKE2s with personalisation `"Zcash_PH"`.
   Substituting BLAKE2b changes every generator; the bug only
   manifests when the test vectors mismatch.
+  > Caught upstream by the generator-vector tests in
+  > `sapling-crypto::constants`. No automated test in this
+  > workspace.
 - **Cofactor not multiplied in `HashToCurve`.** Omitting the
-  final $[h_{\text{J}}] \cdot$ step puts the generator outside
-  $E^{\circ}$; chapter 13 covers the small-subgroup
+  final $[h_J] \cdot$ step puts the generator outside
+  $\mathbb{G}_J$; chapter 13 covers the small-subgroup
   consequences.
+  > No automated test in this workspace. Caught by audit only.
 - **Layer index width.** 6 bits is enough for depth-32 trees;
   a future protocol with depth-64 trees would need a wider
   encoding.
-- **Missing range constraint on `enc_3`.** If the prover can
-  insert a window value outside $\{-4, \ldots, -1, 1, \ldots,
-  4\}$, the segment-scalar bound argument breaks. Range
-  constraints are enforced via boolean checks in the circuit;
-  removing them silently weakens collision resistance.
+  > Caught by: `zcash_primitives::merkle_tree` round-trip tests
+  > in `zcash_primitives/src/merkle_tree.rs`, which fix tree
+  > depth at $32$ at the type level.
+- **Missing range constraint on $\mathsf{enc}_3$.** If the
+  prover can insert a window value outside
+  $\{-4, \ldots, -1, 1, \ldots, 4\}$, the segment-scalar bound
+  argument breaks. Range constraints are enforced via boolean
+  checks in the circuit; removing them silently weakens
+  collision resistance.
+  > Caught upstream by `sapling-crypto::circuit::pedersen_hash`
+  > constraint-system tests using `bellman`'s
+  > `TestConstraintSystem`. No automated test in this workspace.
 - **Non-constant-time scalar mul in `pedersen_hash`.** Leaks
   $\mathsf{rcm}$ or $v$ to a timing observer. Use the
   `jubjub::SubgroupPoint::mul` API, not a hand-rolled loop.
+  > No automated test in this workspace. Caught by audit only.
 
 ## 5. Spec pointers
 
