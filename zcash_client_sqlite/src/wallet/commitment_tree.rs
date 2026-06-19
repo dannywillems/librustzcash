@@ -1428,6 +1428,17 @@ mod tests {
         fn put_shard_roots() {
             super::put_shard_roots::<OrchardPoolTester>()
         }
+
+        // This test currently reproduces issue #1365: scanning the post-fork chain
+        // after an insufficient reorg rewind raises a note-commitment-tree
+        // `InsertionError::Conflict`. `#[should_panic]` asserts that error is
+        // raised; once the reorg-rewind fix lands the panic will no longer occur
+        // and this annotation should be removed.
+        #[test]
+        #[should_panic(expected = "conflicts with stale note commitment tree data")]
+        fn reorg_without_full_rewind_conflicts() {
+            super::reorg_without_full_rewind_conflicts::<OrchardPoolTester>()
+        }
     }
 
     #[test]
@@ -1539,6 +1550,94 @@ mod tests {
                 "________________________________"
             ]
         );
+    }
+
+    /// Regression test for the note-commitment-tree conflict observed during a
+    /// chain reorg that crossed a network hardfork (issue #1365).
+    ///
+    /// The error seen in the field is:
+    ///
+    /// ```text
+    /// An error occurred accessing or updating note commitment tree data:
+    /// Inserted root conflicts with existing root at address
+    /// Address { level: Level(7), index: ... }.
+    /// ```
+    ///
+    /// Mechanism: a reorg abandons the chain from a fork point onward. Before the
+    /// replacement ("post-fork") chain can be scanned, the note commitment tree
+    /// must be rewound to (or below) the fork point so that the abandoned chain's
+    /// commitments are removed. If the reorg rewind does not reach the fork point,
+    /// the abandoned commitments remain live in the tree, and scanning the
+    /// post-fork chain re-inserts different commitments at the same positions,
+    /// failing with `InsertionError::Conflict`. That error is surfaced to the
+    /// caller as a fatal `scanBlocks` error rather than being recovered from.
+    ///
+    /// This reproduces the failure mode at the commitment-tree level. The reorg
+    /// rewind here only rolls back to a height above the fork point (modelling the
+    /// insufficient rewind observed in the field on the legacy `rewind_to_height`
+    /// path), leaving the diverging commitments live; the subsequent post-fork scan
+    /// then conflicts.
+    ///
+    /// NOTE: the actual fix belongs at the `WalletDb` reorg-rewind orchestration
+    /// layer (it must rewind the commitment tree to, or below, the fork point —
+    /// e.g. via a frontier-based `rewind_to_chain_state`). This tree-level test
+    /// pins the observable failure; it currently FAILS (the post-fork scan
+    /// conflicts) and should pass once the rewind reaches the fork point.
+    #[cfg(feature = "orchard")]
+    fn reorg_without_full_rewind_conflicts<T: ShieldedPoolTester + ShieldedPoolPersistence>() {
+        use shardtree::error::{InsertionError, ShardTreeError};
+
+        // Ample checkpoint headroom: this test is not about checkpoint pruning, so
+        // every scanned block's checkpoint (and its commitment) stays live.
+        let mut tree = new_tree::<T>(100);
+
+        // Scan the pre-fork ("old") chain: one note commitment per block, each
+        // block recorded as a checkpoint. All of these commitments are live.
+        let old_chain_len = 7u32;
+        for i in 0..old_chain_len {
+            tree.append(
+                format!("old-{i}"),
+                Retention::Checkpoint {
+                    id: BlockHeight::from(i + 1),
+                    marking: Marking::None,
+                },
+            )
+            .unwrap();
+        }
+
+        // The reorg forks at block height 3 (note commitment position 2): every
+        // commitment at position >= 2 belongs to the abandoned chain and must be
+        // removed before the post-fork chain is scanned.
+        let fork_position = Position::from(2);
+
+        // BUG (#1365): the reorg rewind does not reach the fork point. Here it only
+        // rolls back to block height 5 (position 4), leaving the diverging
+        // commitments at positions 2..=4 ("old-2".."old-4") live in the tree.
+        let insufficient_rewind_height = BlockHeight::from(5);
+        assert!(
+            tree.truncate_to_checkpoint(&insufficient_rewind_height)
+                .unwrap(),
+            "test invariant: a checkpoint must exist at the (insufficient) rewind height",
+        );
+
+        // Scan the post-fork ("new") chain starting at the fork position; its
+        // commitments differ from the abandoned chain's. Because the rewind left
+        // "old-2".."old-4" in place, this re-inserts over live stale data.
+        let result = tree.batch_insert(
+            fork_position,
+            (2..old_chain_len).map(|i| (format!("new-{i}"), Retention::Ephemeral)),
+        );
+
+        // Desired (post-fix) behavior: re-scanning the post-fork chain succeeds
+        // because the reorg rewound the tree to/below the fork point. Currently it
+        // fails with `InsertionError::Conflict` (the field error).
+        if let Err(ShardTreeError::Insert(InsertionError::Conflict(addr))) = &result {
+            panic!(
+                "reorg rewind did not reach the fork point: scanning the post-fork \
+                 chain conflicts with stale note commitment tree data at {addr:?} (#1365)",
+            );
+        }
+        result.expect("re-scanning the post-fork chain after a reorg should not conflict");
     }
 
     /// Test that `generate_orchard_witnesses_at_historical_height` produces valid
