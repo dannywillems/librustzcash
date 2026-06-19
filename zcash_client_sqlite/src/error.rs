@@ -3,12 +3,11 @@
 use std::error;
 use std::fmt;
 
+use incrementalmerkletree::Address;
 #[cfg(feature = "orchard")]
 use incrementalmerkletree::Position;
 use nonempty::NonEmpty;
-#[cfg(feature = "orchard")]
-use shardtree::error::InsertionError;
-use shardtree::error::ShardTreeError;
+use shardtree::error::{InsertionError, ShardTreeError};
 
 #[cfg(feature = "transparent-key-import")]
 use uuid::Uuid;
@@ -119,6 +118,22 @@ pub enum SqliteClientError {
     /// An error occurred in inserting data into or accessing data from one of the wallet's note
     /// commitment trees.
     CommitmentTree(ShardTreeError<commitment_tree::Error>),
+
+    /// A note commitment inserted while scanning conflicted with note commitment tree data
+    /// already stored by the wallet, meaning that the wallet's note commitment tree is
+    /// inconsistent with the chain currently being scanned.
+    ///
+    /// The usual cause is a chain reorganization deeper than the wallet's pruning depth
+    /// (`PRUNING_DEPTH` blocks) — for example a reorg across a network upgrade / hardfork —
+    /// which cannot be rewound in place: the reorg rewind only rolls the note commitment tree
+    /// back to the pruning floor, leaving the abandoned chain's commitments below that floor,
+    /// and re-scanning the replacement chain then conflicts with them. To recover, the wallet
+    /// must be rewound to (or below) the fork height and rescanned, or reset and resynced from
+    /// its birthday.
+    ///
+    /// The contained [`Address`] is the note commitment tree node at which the conflict was
+    /// detected.
+    NoteCommitmentTreeConflict(Address),
 
     /// The caller-supplied frontier passed to
     /// [`WalletDb::generate_orchard_witnesses_at_historical_height`] is
@@ -307,6 +322,15 @@ impl fmt::Display for SqliteClientError {
                 f,
                 "An error occurred accessing or updating note commitment tree data: {err}."
             ),
+            SqliteClientError::NoteCommitmentTreeConflict(addr) => write!(
+                f,
+                "Note commitment tree conflict at {addr:?}: the note commitments being inserted \
+                 are inconsistent with note commitment tree data already stored by the wallet. \
+                 This usually indicates a chain reorganization deeper than the pruning depth \
+                 (for example, across a network upgrade); the wallet must be rewound to or below \
+                 the fork height and rescanned, or reset and resynced from its birthday, to \
+                 recover."
+            ),
             #[cfg(feature = "orchard")]
             SqliteClientError::HistoricalFrontierInvalid(err) => write!(
                 f,
@@ -430,7 +454,17 @@ impl From<zcash_protocol::memo::Error> for SqliteClientError {
 
 impl From<ShardTreeError<commitment_tree::Error>> for SqliteClientError {
     fn from(e: ShardTreeError<commitment_tree::Error>) -> Self {
-        SqliteClientError::CommitmentTree(e)
+        match e {
+            // A note commitment tree conflict means the commitments being inserted are
+            // inconsistent with what the wallet has already stored (typically a chain reorg
+            // deeper than the pruning depth). Surface this as a dedicated, actionable error so
+            // callers can detect it and trigger a rewind/rescan or reset, rather than treating
+            // it as a generic tree access failure.
+            ShardTreeError::Insert(InsertionError::Conflict(addr)) => {
+                SqliteClientError::NoteCommitmentTreeConflict(addr)
+            }
+            other => SqliteClientError::CommitmentTree(other),
+        }
     }
 }
 

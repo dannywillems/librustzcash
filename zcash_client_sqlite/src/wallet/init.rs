@@ -192,6 +192,9 @@ fn sqlite_client_error_to_wallet_migration_error(e: SqliteClientError) -> Wallet
         SqliteClientError::AddressGeneration(e) => WalletMigrationError::AddressGeneration(e),
         SqliteClientError::BadAccountData(e) => WalletMigrationError::CorruptedData(e),
         SqliteClientError::CommitmentTree(e) => WalletMigrationError::CommitmentTree(Box::new(e)),
+        SqliteClientError::NoteCommitmentTreeConflict(addr) => WalletMigrationError::CorruptedData(
+            format!("note commitment tree conflict at {addr:?}"),
+        ),
         SqliteClientError::UnsupportedPoolType(pool) => WalletMigrationError::CorruptedData(
             format!("Wallet DB contains unsupported pool type {pool}"),
         ),
