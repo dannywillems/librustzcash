@@ -8,6 +8,25 @@ indicated by the `PLANNED` status in order to make it possible to correctly
 represent the transitive `semver` implications of changes within the enclosing
 workspace.
 
+## [0.22.0] - PLANNED
+
+### Added
+- `zcash_client_sqlite::error::SqliteClientError::NoteCommitmentTreeConflict`, a
+  dedicated error returned when a note commitment inserted while scanning
+  conflicts with note commitment tree data already stored by the wallet. This
+  most commonly results from a chain reorganization deeper than the pruning
+  depth (for example, across a network upgrade), which cannot be rewound in
+  place; recovery requires rewinding to or below the fork height and rescanning,
+  or resetting and resyncing the wallet from its birthday. Previously this
+  surfaced as a generic `CommitmentTree` error carrying the underlying
+  `shardtree` "Inserted root conflicts with existing root" message.
+
+### Changed
+- `From<ShardTreeError<commitment_tree::Error>> for SqliteClientError` now maps
+  `shardtree::error::InsertionError::Conflict` to the new
+  `SqliteClientError::NoteCommitmentTreeConflict` variant rather than to
+  `SqliteClientError::CommitmentTree`.
+
 ## [0.21.0] - 2026-06-02
 
 ### Changed
