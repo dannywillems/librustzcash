@@ -598,6 +598,9 @@ impl<CaErr, DbErr, TrErr> From<ChainError<DbErr, CaErr>> for Error<CaErr, DbErr,
             ChainError::Wallet(e) => Error::Wallet(e),
             ChainError::BlockSource(e) => Error::Cache(e),
             ChainError::Scan(e) => Error::Scan(e),
+            // The range wrapper only adds diagnostic context (the scanned block range) around a
+            // wallet/persistence error; unwrap it and convert the underlying cause.
+            ChainError::Range { cause, .. } => Self::from(*cause),
         }
     }
 }

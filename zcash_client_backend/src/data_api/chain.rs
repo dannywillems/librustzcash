@@ -657,9 +657,18 @@ where
         },
     )?;
 
+    // Persist the scanned blocks. Wrap any error with the range of blocks that was being
+    // scanned so that failures here (notably note commitment tree conflicts produced while
+    // updating the trees) can be diagnosed against the specific range. We do not wrap scan or
+    // block-source errors, so that callers can continue to match on `Error::Scan` (e.g. to
+    // detect chain-continuity errors and trigger a reorg rewind).
+    let scanned_range = scan_summary.scanned_range.clone();
     data_db
         .put_blocks(from_state, scanned_blocks)
-        .map_err(Error::Wallet)?;
+        .map_err(|e| Error::Range {
+            block_range: scanned_range,
+            cause: Box::new(Error::Wallet(e)),
+        })?;
     Ok(scan_summary)
 }
 

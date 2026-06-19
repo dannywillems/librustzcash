@@ -2,6 +2,9 @@
 
 use std::error;
 use std::fmt::{self, Debug, Display};
+use std::ops::Range;
+
+use zcash_protocol::consensus::BlockHeight;
 
 use crate::scanning::ScanError;
 
@@ -19,6 +22,18 @@ pub enum Error<WalletError, BlockSourceError> {
     /// commitments that could not be reconciled with the note commitment tree(s) maintained by the
     /// wallet.
     Scan(ScanError),
+
+    /// An error occurred while scanning a range of blocks. This wraps the underlying error
+    /// together with the range of block heights that was being scanned when the error occurred,
+    /// so that failures (such as note commitment tree conflicts produced while persisting scanned
+    /// blocks) can be diagnosed against the specific range being scanned.
+    Range {
+        /// The range of block heights (start inclusive, end exclusive) that was being scanned
+        /// when the wrapped error occurred.
+        block_range: Range<BlockHeight>,
+        /// The underlying error.
+        cause: Box<Error<WalletError, BlockSourceError>>,
+    },
 }
 
 impl<WE: fmt::Display, BE: fmt::Display> fmt::Display for Error<WE, BE> {
@@ -39,6 +54,14 @@ impl<WE: fmt::Display, BE: fmt::Display> fmt::Display for Error<WE, BE> {
             Error::Scan(e) => {
                 write!(f, "Scanning produced the following error: {e}")
             }
+            Error::Range { block_range, cause } => {
+                write!(
+                    f,
+                    "An error occurred while scanning the block range {}..{}: {cause}",
+                    u32::from(block_range.start),
+                    u32::from(block_range.end),
+                )
+            }
         }
     }
 }
@@ -52,6 +75,7 @@ where
         match &self {
             Error::Wallet(e) => Some(e),
             Error::BlockSource(e) => Some(e),
+            Error::Range { cause, .. } => Some(cause.as_ref()),
             _ => None,
         }
     }
