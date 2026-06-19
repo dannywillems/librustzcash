@@ -11,6 +11,13 @@ workspace.
 ## [0.24.0] - PLANNED
 
 ### Added
+- `zcash_client_backend::data_api::chain::error::Error::Range`, a variant that
+  wraps an underlying error together with the range of block heights that was
+  being scanned. `scan_cached_blocks` now returns errors from persisting scanned
+  blocks (e.g. note commitment tree conflicts) wrapped in this variant, so that
+  the failing block range is included in the error message for diagnosis.
+  Chain-continuity (`Error::Scan`) and block-source errors are not wrapped, so
+  callers can continue to match on them (for example to detect reorgs).
 - `zcash_client_backend::data_api::error::RewindError`
 - `zcash_client_backend::wallet::WalletTransparentOutput`:
   - `recipient_account`
