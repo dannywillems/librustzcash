@@ -12,7 +12,7 @@ use crate::{chain::init::init_cache_database, error::SqliteClientError};
 
 use super::BlockDb;
 
-#[cfg(feature = "unstable")]
+#[cfg(all(test, feature = "unstable"))]
 use {
     crate::{
         FsBlockDb, FsBlockDbError,
@@ -46,6 +46,12 @@ impl BlockCache {
             _cache_file: cache_file,
             db_cache,
         }
+    }
+}
+
+impl Default for BlockCache {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -106,13 +112,13 @@ impl TestCache for BlockCache {
     }
 }
 
-#[cfg(feature = "unstable")]
+#[cfg(all(test, feature = "unstable"))]
 pub(crate) struct FsBlockCache {
     fsblockdb_root: TempDir,
     db_meta: FsBlockDb,
 }
 
-#[cfg(feature = "unstable")]
+#[cfg(all(test, feature = "unstable"))]
 impl FsBlockCache {
     pub(crate) fn new() -> Self {
         let fsblockdb_root = tempfile::tempdir().unwrap();
@@ -126,21 +132,21 @@ impl FsBlockCache {
     }
 }
 
-#[cfg(feature = "unstable")]
+#[cfg(all(test, feature = "unstable"))]
 #[derive(Debug)]
-pub struct FsBlockCacheInsertionResult {
+pub(crate) struct FsBlockCacheInsertionResult {
     txids: Vec<TxId>,
     pub(crate) block_meta: BlockMeta,
 }
 
-#[cfg(feature = "unstable")]
+#[cfg(all(test, feature = "unstable"))]
 impl CacheInsertionResult for FsBlockCacheInsertionResult {
     fn txids(&self) -> &[TxId] {
         &self.txids[..]
     }
 }
 
-#[cfg(feature = "unstable")]
+#[cfg(all(test, feature = "unstable"))]
 impl TestCache for FsBlockCache {
     type BsError = FsBlockDbError;
     type BlockSource = FsBlockDb;

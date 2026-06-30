@@ -95,16 +95,19 @@ impl TestDb {
         &self.wallet_db
     }
 
+    #[cfg(test)]
     pub(crate) fn db_mut(
         &mut self,
     ) -> &mut WalletDb<Connection, LocalNetwork, FixedClock, ChaChaRng> {
         &mut self.wallet_db
     }
 
+    #[cfg(test)]
     pub(crate) fn conn(&self) -> &Connection {
         &self.wallet_db.conn
     }
 
+    #[cfg(test)]
     pub(crate) fn conn_mut(&mut self) -> &mut Connection {
         &mut self.wallet_db.conn
     }

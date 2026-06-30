@@ -1762,14 +1762,6 @@ impl<Cache, DsFactory> TestBuilder<Cache, DsFactory> {
         self
     }
 
-    /// Sets the account index for the test account.
-    ///
-    /// Does nothing unless either [`Self::with_account_from_sapling_activation`] or
-    /// [`Self::with_account_having_current_birthday`] is also called.
-    ///
-    /// # Panics
-    ///
-    /// - Must not be called twice.
     /// Sets the seed used to derive the test account, replacing the default all-zeros
     /// seed.
     ///
@@ -1780,6 +1772,14 @@ impl<Cache, DsFactory> TestBuilder<Cache, DsFactory> {
         self
     }
 
+    /// Sets the account index for the test account.
+    ///
+    /// Does nothing unless either [`Self::with_account_from_sapling_activation`] or
+    /// [`Self::with_account_having_current_birthday`] is also called.
+    ///
+    /// # Panics
+    ///
+    /// - Must not be called twice.
     pub fn set_account_index(mut self, index: zip32::AccountId) -> Self {
         assert!(self.account_index.is_none());
         self.account_index = Some(index);
